@@ -1,0 +1,46 @@
+[28-Jul-2017 02:14:58 UTC] PHP Warning:  include(/home/qithycom/public_html/ptpsi/application/views/errors/html/error_php.php): failed to open stream: No such file or directory in /home/qithycom/public_html/ptpsi/system/core/Exceptions.php on line 268
+[28-Jul-2017 02:14:58 UTC] PHP Warning:  include(/home/qithycom/public_html/ptpsi/application/views/errors/html/error_php.php): failed to open stream: No such file or directory in /home/qithycom/public_html/ptpsi/system/core/Exceptions.php on line 268
+[28-Jul-2017 02:14:58 UTC] PHP Warning:  include(): Failed opening '/home/qithycom/public_html/ptpsi/application/views/errors/html/error_php.php' for inclusion (include_path='.:/opt/cpanel/ea-php70/root/usr/share/pear') in /home/qithycom/public_html/ptpsi/system/core/Exceptions.php on line 268
+[28-Jul-2017 02:15:02 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/qithycom/public_html/ptpsi/system/core/compat/mbstring.php' (include_path='.:/opt/cpanel/ea-php70/root/usr/share/pear') in /home/qithycom/public_html/ptpsi/system/core/CodeIgniter.php on line 287
+[13-Dec-2017 11:33:41 Asia/Bangkok] PHP Fatal error:  Call to a member function row() on boolean in /home/smartsch/public_html/schools/application/views/meta.php on line 2
+[13-Feb-2018 21:20:34 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:34 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:34 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:34 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:35 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:35 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:35 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:36 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:39 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:40 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:40 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:40 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:41 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:41 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:42 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:42 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:42 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:43 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:43 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:44 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:44 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:46 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:47 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:47 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:47 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:48 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:48 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:48 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:49 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:49 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:50 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:57 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:20:57 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:21:35 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:21:35 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:21:36 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:21:36 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:21:36 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:21:36 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:21:37 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
+[13-Feb-2018 21:21:37 Asia/Jakarta] PHP Fatal error:  Call to a member function num_rows() on boolean in /home/smartsch/public_html/schools/application/controllers/Api.php on line 54
