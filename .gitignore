@@ -1,4 +1,2 @@
 .htaccess
 *.zip
-application/config/config.php
-application/config/database.php
