@@ -39,6 +39,7 @@ class Siswa_M extends CI_Model
 			// jika kosongkan data dicentang jalankan kode berikut
 			if (isset($_POST["drop"])) {
 				if ($_POST["drop"] == 1) {
+					$this->db->delete("catatan", array("sekolah_id" => $this->session->userdata("sekolah_id")));
 					$this->db->delete("absen", array("sekolah_id" => $this->session->userdata("sekolah_id")));
 					$this->db->delete("nilai", array("sekolah_id" => $this->session->userdata("sekolah_id")));
 					$this->db->delete("tabungan", array("sekolah_id" => $this->session->userdata("sekolah_id")));
