@@ -33,6 +33,10 @@ class Sekolah_M extends CI_Model
 			}
 		}
 
+
+		
+		$this->load->library('upload');
+		
 		//upload image
 		$data['uploadsekolah_picture'] = "";
 		if (isset($_FILES['sekolah_picture']) && $_FILES['sekolah_picture']['name'] != "") {
@@ -43,18 +47,42 @@ class Sekolah_M extends CI_Model
 			}
 			$config['file_name'] = $sekolah_picture;
 			$config['upload_path'] = 'assets/images/sekolah_picture/';
-			$config['allowed_types'] = 'gif|jpg|png|xls|xlsx|pdf|doc|docx';
+			$config['allowed_types'] = 'gif|jpg|png';
 			$config['max_size']	= '3000000000';
 			$config['max_width']  = '5000000000';
 			$config['max_height']  = '3000000000';
 
-			$this->load->library('upload', $config);
 
+			$this->upload->initialize($config);
 			if (! $this->upload->do_upload('sekolah_picture')) {
 				$data['uploadsekolah_picture'] = "Upload Gagal !<br/>" . $config['upload_path'] . $this->upload->display_errors();
 			} else {
 				$data['uploadsekolah_picture'] = "Upload Success !";
 				$input['sekolah_picture'] = $sekolah_picture;
+			}
+		}
+
+		//upload image
+		$data['uploadsekolah_picture2'] = "";
+		if (isset($_FILES['sekolah_picture2']) && $_FILES['sekolah_picture2']['name'] != "") {
+			$sekolah_picture2 = str_replace(' ', '_', $_FILES['sekolah_picture2']['name']);
+			$sekolah_picture2 = date("H_i_s_") . $sekolah_picture2;
+			if (file_exists('assets/images/sekolah_picture2/' . $sekolah_picture2)) {
+				unlink('assets/images/sekolah_picture2/' . $sekolah_picture2);
+			}
+			$config2['file_name'] = $sekolah_picture2;
+			$config2['upload_path'] = 'assets/images/sekolah_picture2/';
+			$config2['allowed_types'] = 'gif|jpg|png';
+			$config2['max_size']	= '3000000000';
+			$config2['max_width']  = '5000000000';
+			$config2['max_height']  = '3000000000';
+
+			$this->upload->initialize($config2);
+			if (! $this->upload->do_upload('sekolah_picture2')) {
+				$data['uploadsekolah_picture2'] = "Upload Gagal !<br/>" . $config2['upload_path'] . $this->upload->display_errors();
+			} else {
+				$data['uploadsekolah_picture2'] = "Upload Success !";
+				$input['sekolah_picture2'] = $sekolah_picture2;
 			}
 		}
 

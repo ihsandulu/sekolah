@@ -167,6 +167,42 @@
                                                 </div>
                                             </div>
                                             <div class="form-group">
+                                                <label class="control-label col-sm-2" for="sekolah_kota">City:</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="sekolah_kota" name="sekolah_kota" placeholder="Enter City" value="<?= $sekolah_kota; ?>">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-2" for="sekolah_telp">Telp.:</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="sekolah_telp" name="sekolah_telp" placeholder="Enter City" value="<?= $sekolah_telp; ?>">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-2" for="sekolah_email">Email:</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="sekolah_email" name="sekolah_email" placeholder="Enter City" value="<?= $sekolah_email; ?>">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-2" for="sekolah_website">Website:</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="sekolah_website" name="sekolah_website" placeholder="Enter City" value="<?= $sekolah_website; ?>">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-2" for="sekolah_npsn">NPSN:</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="sekolah_npsn" name="sekolah_npsn" placeholder="Enter City" value="<?= $sekolah_npsn; ?>">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-2" for="sekolah_nss">NSS:</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="sekolah_nss" name="sekolah_nss" placeholder="Enter City" value="<?= $sekolah_nss; ?>">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
                                                 <label class="control-label col-sm-2" for="sekolah_address">Address:</label>
                                                 <div class="col-sm-10">
                                                     <input type="text" class="form-control" id="sekolah_address" name="sekolah_address" placeholder="Enter Address" value="<?= $sekolah_address; ?>">
@@ -192,7 +228,7 @@
                                             </div>
 
                                             <div class="form-group">
-                                                <label class="control-label col-sm-2" for="sekolah_picture">Picture:</label>
+                                                <label class="control-label col-sm-2" for="sekolah_picture">Picture 1:</label>
                                                 <div class="col-sm-10" align="left">
                                                     <input type="file" id="sekolah_picture" name="sekolah_picture"><br />
                                                     <?php if ($sekolah_picture != "") {
@@ -222,6 +258,36 @@
                                             </div>
 
                                             <div class="form-group">
+                                                <label class="control-label col-sm-2" for="sekolah_picture2">Picture 2:</label>
+                                                <div class="col-sm-10" align="left">
+                                                    <input type="file" id="sekolah_picture2" name="sekolah_picture2"><br />
+                                                    <?php if ($sekolah_picture2 != "") {
+                                                        $sekolah_image = "assets/images/sekolah_picture2/" . $sekolah_picture2;
+                                                    } else {
+                                                        $sekolah_image = "assets/images/sekolah_picture2/putar.gif";
+                                                    } ?>
+                                                    <img id="sekolah_picture2_image" width="100" height="100" src="<?= base_url($sekolah_image); ?>" />
+                                                    <script>
+                                                        function readURL2(input) {
+                                                            if (input.files && input.files[0]) {
+                                                                var reader = new FileReader();
+
+                                                                reader.onload = function(e) {
+                                                                    $('#sekolah_picture2_image').attr('src', e.target.result);
+                                                                }
+
+                                                                reader.readAsDataURL(input.files[0]);
+                                                            }
+                                                        }
+
+                                                        $("#sekolah_picture2").change(function() {
+                                                            readURL2(this);
+                                                        });
+                                                    </script>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
                                                 <div class="col-sm-offset-2 col-sm-10">
                                                     <button type="submit" id="submit" class="btn btn-primary col-md-5" <?= $namabutton; ?> value="OK">Submit</button>
                                                     <button class="btn btn-warning col-md-offset-1 col-md-5" onClick="location.href=<?= site_url("sekolah"); ?>">Back</button>
@@ -233,7 +299,7 @@
                                     <?php if ($message != "") { ?>
                                         <div class="alert alert-info alert-dismissable">
                                             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                            <strong><?= $message; ?></strong><br /><?= $uploadsekolah_picture; ?>
+                                            <strong><?= $message; ?></strong><br /><?= $uploadsekolah_picture; ?><br /><?= $uploadsekolah_picture2; ?>
                                         </div>
                                     <?php } ?>
                                     <div class="box">
@@ -241,9 +307,9 @@
                                             <table id="dataTable" class="table table-condensed table-hover">
                                                 <thead>
                                                     <tr>
+                                                        <th class="col-md-1">Action</th>
                                                         <th>School</th>
                                                         <th>Address</th>
-                                                        <th class="col-md-1">Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -256,20 +322,20 @@
                                                     //echo $this->db->last_query();
                                                     foreach ($usr->result() as $sekolah) { ?>
                                                         <tr>
-                                                            <td><?= $sekolah->sekolah_name; ?></td>
-                                                            <td><?= $sekolah->sekolah_address; ?></td>
                                                             <td style="padding-left:0px; padding-right:0px;">
                                                                 <form method="post" class="col-md-6" style="padding:0px;">
                                                                     <button class="btn btn-warning " name="edit" value="OK"><span class="fa fa-edit" style="color:white;"></span> </button>
                                                                     <input type="hidden" name="sekolah_id" value="<?= $sekolah->sekolah_id; ?>" />
                                                                 </form>
                                                                 <?php if ($this->session->userdata("position_id") == "1") { ?>
-                                                                    <form method="post" class="col-md-6" style="padding:0px;">
+                                                                    <!-- <form method="post" class="col-md-6" style="padding:0px;">
                                                                         <button class="btn btn-danger delete" name="delete" value="OK"><span class="fa fa-close" style="color:white;"></span> </button>
                                                                         <input type="hidden" name="sekolah_id" value="<?= $sekolah->sekolah_id; ?>" />
-                                                                    </form>
+                                                                    </form> -->
                                                                 <?php } ?>
                                                             </td>
+                                                            <td><?= $sekolah->sekolah_name; ?></td>
+                                                            <td><?= $sekolah->sekolah_address; ?></td>
                                                         </tr>
                                                     <?php } ?>
                                                 </tbody>

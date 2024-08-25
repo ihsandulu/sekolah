@@ -39,7 +39,7 @@
 					return false;
 				}
 			});
-			
+
 		});
 	</script>
 	<script>
@@ -78,7 +78,7 @@
 						Transaction
 
 					</h1>
-					<?php if (!isset($_POST['new']) && !isset($_POST['edit']) && !isset($_GET['laporan'])) { ?>
+					<?php if (!isset($_POST['new']) && !isset($_POST['edit']) && !isset($_GET['laporan'])&&$this->session->userdata("position_id") != 4) { ?>
 
 						<form method="post" class="col-md-2" style="margin-top:-30px; float:right;">
 
@@ -172,9 +172,10 @@
 																		sekolah_id: '<?= $this->session->userdata("sekolah_id"); ?>'
 																	})
 																	.done(function(data) {
-																		$("#profil").html(data);
-																		let user_tahunajaran = $('#user_tahunajaran').val();
+																		$("#profil").html(data.message);
+																		let user_tahunajaran = data.user_tahunajaran;
 																		cektagihan(user_tahunajaran);
+																		$("#kelas_id").val(data.kelas_id);
 																	});
 															}
 														</script>
@@ -183,11 +184,11 @@
 											<?php } ?>
 
 											<div class="form-group">
-													<label class="control-label col-sm-2" for="transaction_tahun">Tahun Ajaran Masuk:</label>
-													<div class="col-sm-10">
+												<label class="control-label col-sm-2" for="transaction_tahun">Tahun Ajaran Masuk:</label>
+												<div class="col-sm-10">
 													<input readonly type="text" class="form-control" id="transaction_tahun" name="transaction_tahun" placeholder="Enter NISN" value="<?= $transaction_tahun; ?>" required>
-													</div>
 												</div>
+											</div>
 
 											<div class="form-group">
 												<label class="control-label col-sm-2" for="transaction_name">Transaction Name:</label>
@@ -197,16 +198,18 @@
 													<div id="tagihan" style="color:#000066;"></div>
 													<script>
 														function cektagihan(user_tahunajaran) {
+															// alert("<?= site_url("api/datatagihan"); ?>?user_nisn="+$("#user_nisn").val()+"&sekolah_id=<?= $this->session->userdata("sekolah_id"); ?>&user_tahunajaran="+user_tahunajaran);
 															$.get("<?= site_url("api/datatagihan"); ?>", {
 																	user_nisn: $("#user_nisn").val(),
 																	sekolah_id: '<?= $this->session->userdata("sekolah_id"); ?>',
-																	user_tahunajaran:user_tahunajaran
+																	user_tahunajaran: user_tahunajaran
 																})
 																.done(function(data) {
-																	$("#tagihan").html(data);
+																	$("#tagihan").html(data.tagihan);
 																});
 														}
-														function inputtagihan(id,name,tahunajaran,amount,amountnumber){
+
+														function inputtagihan(id, name, tahunajaran, amount, amountnumber) {
 															$("#transaction_bill").val(id);
 															$("#transaction_name").val(name);
 															$("#transaction_tahun").val(tahunajaran);
@@ -221,13 +224,14 @@
 												<div class="col-sm-10">
 													<input readonly tabindex="3" onKeyUp="uang(this)" type="number" class="form-control" id="transaction_amount" name="transaction_amount" placeholder="Enter Amount" value="<?= $transaction_amount; ?>" required min="1">
 													<div style="color:#BB0000; font-weight:bold; margin-top:5px;">Rp <span id="uang"><?= number_format($transaction_amount, 0, ",", "."); ?></span></div>
-													
+
 												</div>
 											</div>
 
 
 
 
+											<input type="hidden" id="kelas_id" name="kelas_id" value="<?= $kelas_id; ?>">
 											<input type="hidden" name="sekolah_id" value="<?= $this->session->userdata("sekolah_id"); ?>" />
 											<input type="hidden" name="transaction_id" value="<?= $transaction_id; ?>" />
 											<div class="form-group">
@@ -305,6 +309,9 @@
 														<input id="nama" name="nama" type="text" value="<?= $this->input->get("nama"); ?>" />
 													</div>
 													<!--  <button type="submit" class="btn btn-success fa fa-search" onMouseOver="search()"> Search</button> -->
+													<?php if (isset($_GET["laporan"])) { ?>
+														<input type="hidden" name="laporan" value="<?= $_GET["laporan"]; ?>" />
+													<?php } ?>
 													<button type="submit" class="btn btn-success fa fa-search" onMouseOver="searchnormal()"> Search</button>
 													<button type="submit" class="btn btn-info fa fa-print" onMouseOver="print()"> Print</button>
 													<script>
@@ -405,13 +412,6 @@
 											<table id="dataTabletransaksi" class="table table-condensed table-hover">
 												<thead>
 													<tr>
-														<th>Date</th>
-														<th>School</th>
-														<th>User</th>
-														<th>NISN/NIK</th>
-														<th>Transaction Name</th>
-														<th>Amount</th>
-														<th>Type/<br />Thn.Ajaran</th>
 														<?php if (isset($_GET['laporan'])) {
 															$colact = "col-md-1";
 															$colbtn = "col-md-12";
@@ -419,7 +419,18 @@
 															$colact = "col-md-2";
 															$colbtn = "col-md-4";
 														} ?>
-														<th class="<?= $colact; ?>">Action</th>
+														<?php
+														if ($this->session->userdata("position_id") != 4) { ?>
+															<th class="<?= $colact; ?>">Action</th>
+														<?php } ?>
+														<th>Date</th>
+														<th>School</th>
+														<th>Class</th>
+														<th>User</th>
+														<th>NISN/NIK</th>
+														<th>Transaction Name</th>
+														<th>Amount</th>
+														<th>Type/<br />Thn.Ajaran</th>
 													</tr>
 												</thead>
 												<tbody>
@@ -445,13 +456,15 @@
 													}
 													if ($this->session->userdata("position_id") == 4) {
 														$this->db->where("transaction.user_nisn", $this->session->userdata("user_nisn"));
-														$this->db->or_where("transaction.transaction_type", "Kredit");
+														$this->db
+															->or_where('transaction.transaction_type', 'Kredit')
+															->where('transaction.transaction_tahun', '2022');
 													}
 													$usr = $this->db
 														->join("sekolah", "sekolah.sekolah_id=transaction.sekolah_id", "left")
 														->join("(SELECT user_nisn as nisn, user_name as siswa FROM user)AS usersiswa", "usersiswa.nisn=transaction.user_nisn AND transaction.transaction_type='Debet'", "left")
 														->join("(SELECT user_name as guru, user_nik as nik FROM user)AS userguru", "userguru.nik=transaction.user_nik AND transaction.transaction_type='Kredit'", "left")
-														// ->join("user", "user.user_tahunajaran=transaction.transaction_tahun AND user.user_nisn != ''", "left")
+														->join("kelas", "kelas.kelas_id=transaction.kelas_id", "left")
 														->order_by("transaction_datetime", "desc")
 														->limit($halaman, $mulai)
 														->get("transaction");
@@ -464,49 +477,55 @@
 														}
 														$tahunajaran = $transaction->transaction_tahun;
 														if ($transaction->transaction_type == "Kredit") {
-															$user_name = $transaction->guru." (Guru)";
+															$user_name = $transaction->guru . " (Guru)";
 															$niknisn = $transaction->user_nik;
 														} else {
-															$user_name = $transaction->siswa." (Siswa)";
+															$user_name = $transaction->siswa . " (Siswa)";
 															$niknisn = $transaction->user_nisn;
 														}
 													?>
 														<tr style="<?= $back; ?>">
+															<?php
+															if ($this->session->userdata("position_id") != 4) { ?>
+																<td style="padding-left:0px; padding-right:0px;" align="center">
+																	<?php if ($transaction->transaction_type == "Debet") { ?>
+																		<form target="_blank" action="<?= site_url("transactionprint"); ?>" method="get" class="<?= $colbtn; ?>" style="padding:0px;">
+																			<button type="button" onClick="line('<?= $transaction->transaction_id; ?>','<?= $tahunajaran; ?>')" class="btn btn-success btn-xs btn-block" name="print" value="OK"><span class="fa fa-print" style="color:white;"></span> </button>
+																			<input type="hidden" name="transaction_id" value="<?= $transaction->transaction_id; ?>" />
+																		</form>
+																	<?php $longkap = "";
+																	} else {
+																		$longkap = "col-md-offset-4";
+																	} ?>
+																	<?php if (!isset($_GET['laporan'])) { ?>
+																		<form method="post" class="<?= $longkap; ?> col-md-4" style="padding:0px;">
+																			<button class="btn btn-warning  btn-xs btn-block" name="edit" value="OK"><span class="fa fa-edit" style="color:white;"></span> </button>
+																			<input type="hidden" name="transaction_id" value="<?= $transaction->transaction_id; ?>" />
+																			<?php if ($transaction->transaction_type == "Kredit") { ?>
+																				<input type="hidden" name="type" value="Kredit" />
+																			<?php } else { ?>
+																				<input type="hidden" name="type" value="Debet" />
+																			<?php } ?>
+																		</form>
+
+																		<form method="post" class="col-md-4" style="padding:0px;">
+																			<button class="btn btn-danger delete btn-xs btn-block" name="delete" value="OK" onclick="return confirm('Are you sure you want to delete this item?');"><span class="fa fa-close" style="color:white;"></span> </button>
+																			<input type="hidden" name="transaction_id" value="<?= $transaction->transaction_id; ?>" />
+																		</form>
+																	<?php } ?>
+																</td>
+															<?php } ?>
 															<td><?= $transaction->transaction_datetime; ?></td>
 															<td><?= $transaction->sekolah_name; ?></td>
+															<td><?= $transaction->kelas_name; ?></td>
 															<td><?= $user_name; ?></td>
 															<td><?= $niknisn; ?></td>
 															<td><?= $transaction->transaction_name; ?></td>
-															<td align="right"><?= number_format($transaction->transaction_amount, 0, ",", "."); ?></td>
+															<td align="right">
+																<?= number_format($transaction->transaction_amount, 0, ",", "."); ?>
+															</td>
 															<td>
 																<?= $transaction->transaction_type; ?><br />(<?= $tahunajaran; ?>)
-															</td>
-															<td style="padding-left:0px; padding-right:0px;" align="center">
-																<?php if ($transaction->transaction_type == "Debet") { ?>
-																	<form target="_blank" action="<?= site_url("transactionprint"); ?>" method="get" class="<?= $colbtn; ?>" style="padding:0px;">
-																		<button type="button" onClick="line('<?= $transaction->transaction_id; ?>','<?= $tahunajaran; ?>')" class="btn btn-success btn-xs btn-block" name="print" value="OK"><span class="fa fa-print" style="color:white;"></span> </button>
-																		<input type="hidden" name="transaction_id" value="<?= $transaction->transaction_id; ?>" />
-																	</form>
-																<?php $longkap = "";
-																} else {
-																	$longkap = "col-md-offset-4";
-																} ?>
-																<?php if (!isset($_GET['laporan'])) { ?>
-																	<form method="post" class="<?= $longkap; ?> col-md-4" style="padding:0px;">
-																		<button class="btn btn-warning  btn-xs btn-block" name="edit" value="OK"><span class="fa fa-edit" style="color:white;"></span> </button>
-																		<input type="hidden" name="transaction_id" value="<?= $transaction->transaction_id; ?>" />
-																		<?php if ($transaction->transaction_type == "Kredit") { ?>
-																			<input type="hidden" name="type" value="Kredit" />
-																		<?php } else { ?>
-																			<input type="hidden" name="type" value="Debet" />
-																		<?php } ?>
-																	</form>
-
-																	<form method="post" class="col-md-4" style="padding:0px;">
-																		<button class="btn btn-danger delete btn-xs btn-block" name="delete" value="OK" onclick="return confirm('Are you sure you want to delete this item?');"><span class="fa fa-close" style="color:white;"></span> </button>
-																		<input type="hidden" name="transaction_id" value="<?= $transaction->transaction_id; ?>" />
-																	</form>
-																<?php } ?>
 															</td>
 														</tr>
 													<?php } ?>

@@ -5,11 +5,11 @@
     <?php 
 	require_once("meta.php");
 	$status=array("1"=>"Masuk","Sakit","Izin","Alpha");
-	if(isset($_GET['absensi_date'])){$absensi_date=$_GET['absensi_date'];}else{$absensi_date=date("Y-m-d");}
-	if(isset($_GET['grup_id'])){$grup_id=$_GET['grup_id'];}else{$grup_id=0;}
+	if(isset($_GET['absen_date'])){$absen_date=$_GET['absen_date'];}else{$absen_date=date("Y-m-d");}
+	if(isset($_GET['kelas_id'])){$kelas_id=$_GET['kelas_id'];}else{$kelas_id=0;}
 	?>
     <style>
-	.absensi{
+	.absen{
 		border-radius:5px;
 		border:#FFCCCC solid 3px !important;
 		background-color:#EDE2EF !important;
@@ -18,13 +18,13 @@
 		text-align:center;
 		height:100px;		
 	}
-	.absensi:hover{
+	.absen:hover{
 		border:#FFCCCC solid 3px !important;
 		background-color:#BB93C8 !important;
 		color:#000 !important;
 		text-decoration:none;
 	}
-	.uabsensi{
+	.uabsen{
 		border-radius:5px;
 		border:#EBEBEB solid 3px !important;
 		background-color:#CCCCCC !important;
@@ -33,7 +33,7 @@
 		text-align:center;
 		height:100px;		
 	}
-	.uwabsensi{
+	.uwabsen{
 		border-radius:5px;
 		border:#EBEBEB solid 3px !important;
 		background-color:#CCCCCC !important;
@@ -41,13 +41,13 @@
 		padding:10px;
 		text-align:center;
 	}
-	.uabsensi:hover{
+	.uabsen:hover{
 		border:#EBEBEB solid 3px !important;
 		background-color:#666666 !important;
 		color:#FFF !important;
 		text-decoration:none;
 	}
-	.absensiisi{	
+	.absenisi{	
 		font-size:18px;
 		font-weight:bold;
 		text-shadow:white 1px 1px;
@@ -57,7 +57,7 @@
 		top:50%;
 		transform:translate(-50%,-50%);
 	}
-	.wabsensiisi{	
+	.wabsenisi{	
 		font-size:18px;
 		font-weight:bold;
 		text-shadow:white 1px 1px;
@@ -95,38 +95,35 @@
 
                 <div class="page-header">
                     <div class="col-md-12 col-sm-12 col-xs-12" style="font-size:18px; font-weight:bold;">
-                        Attendance : <?=$grup_name;?>                      
+                        Attendance : <?=$kelas_name;?>                      
                     </div>	
 					<div>
 					<form class="form-inline">
 					  <div class="form-group">
-						<label for="absensi_date">Date:</label>
-						<input type="date" class="form-control date" id="absensi_date" name="absensi_date" value="<?=$absensi_date;?>">
+						<label for="absen_date">Date:</label>
+						<input type="date" class="form-control date" id="absen_date" name="absen_date" value="<?=$absen_date;?>">
 					  </div>
 					  &nbsp;&nbsp;
 					  <div class="form-group">
-						<label for="grup_id">Group:</label>
-						<select name="grup_id" id="grup_id" class="form-control">
-							<option value="0" <?=($grup_id==0)?'selected="selected"':"";?>>Select Group</option>
+						<label for="kelas_id">Class:</label>
+						<select name="kelas_id" id="kelas_id" class="form-control">
+							<option value="0" <?=($kelas_id==0)?'selected="selected"':"";?>>Select Class</option>
 							<?php 
 							if($this->session->userdata("sekolah_id")>0){
-								$this->db->where("grup.sekolah_id",$this->session->userdata("sekolah_id"));
-							}
-							if($this->session->userdata("position_id")=="3"){
-								$this->db->where("grup_guru.user_id",$this->session->userdata("user_id"));
+								$this->db->where("kelas_sekolah.sekolah_id",$this->session->userdata("sekolah_id"));
 							}
 							$gru=$this->db
-							->join("grup_guru","grup_guru.grup_id=grup.grup_id","left")
-							->get("grup");
-							foreach($gru->result() as $grup){?>							
-							<option value="<?=$grup->grup_id;?>" <?=($grup_id==$grup->grup_id)?'selected="selected"':"";?>><?=$grup->grup_name;?></option>
+							->join("kelas","kelas.kelas_id=kelas_sekolah.kelas_id","left")
+							->get("kelas_sekolah");
+							foreach($gru->result() as $kelas){?>							
+							<option value="<?=$kelas->kelas_id;?>" <?=($kelas_id==$kelas->kelas_id)?'selected="selected"':"";?>><?=$kelas->kelas_name;?></option>
 							<?php }?>
 						</select>
 					  </div>
 					  
 					  <button type="submit" class="btn btn-default">Submit</button>
-					  <a target="_blank" href="pabsensi?absensi_date=<?=$absensi_date;?>&grup_id=<?=$grup_id;?>&report=print" class="btn btn-warning">Print</a>
-					  <a target="_blank" href="pabsensi?absensi_date=<?=$absensi_date;?>&grup_id=<?=$grup_id;?>&report=excel" class="btn btn-info">Excel</a>
+					  <a target="_blank" href="pabsen?absen_date=<?=$absen_date;?>&kelas_id=<?=$kelas_id;?>&report=print" class="btn btn-warning">Print</a>
+					  <a target="_blank" href="pabsen?absen_date=<?=$absen_date;?>&kelas_id=<?=$kelas_id;?>&report=excel" class="btn btn-info">Excel</a>
 					</form>
 					</div>                    					
                 </div>
@@ -134,8 +131,8 @@
 					<thead>
 						<tr>
 							<th>School</th>
-							<th>Group</th>
 							<th>Date</th>
+							<th>Class</th>
 							<th>Name</th>
 							<th>Status</th>
 							<th>Remarks</th>
@@ -145,37 +142,28 @@
 					<?php 
 					
 					if($this->session->userdata("sekolah_id")>0){
-						$this->db->where("absensi.sekolah_id",$this->session->userdata("sekolah_id"));
-					}
-					/* if($this->session->userdata("position_id")=="3"){
-						$this->db->where("grup_guru.user_id",$this->session->userdata("user_id"));
-					} */
+						$this->db->where("absen.sekolah_id",$this->session->userdata("sekolah_id"));
+					}				
 					
-					
-					$this->db->where("absensi.absensi_date",$absensi_date);
-					
-					/* if(isset($_GET['grup_id'])&&$_GET['grup_id']>0){
-						$this->db->where("absensi.grup_id",$grup_id);
-					} */
+					$this->db->where("absen.absen_date",$absen_date);
 					if($this->session->userdata("position_id")==4){
-						$this->db->where("absensi.user_id",$this->session->userdata("user_id"));
+						$this->db->where("absen.user_id",$this->session->userdata("user_id"));
 					}
 					$ab=$this->db
 					->select("*,user.user_name as siswa_name")
-					->join("sekolah","sekolah.sekolah_id=absensi.sekolah_id","left")
-					->join("grup","grup.grup_id=absensi.grup_id","left")
-					->join("grup_guru","grup_guru.grup_id=absensi.grup_id","left")
-					->join("user","user.user_id=absensi.user_id","left")
-					->get("absensi");
-					echo $this->db->last_query();
-					foreach($ab->result() as $absensi){?>
+					->join("sekolah","sekolah.sekolah_id=absen.sekolah_id","left")
+					->join("user","user.user_id=absen.user_id","left")
+					->join("kelas","kelas.kelas_id=absen.kelas_id","left")
+					->get("absen");
+					// echo $this->db->last_query();
+					foreach($ab->result() as $absen){?>
 						<tr>
-							<td><?=$absensi->sekolah_name;?></td>
-							<td><?=$absensi->grup_name;?></td>
-							<td><?=$absensi->absensi_date;?></td>
-							<td><?=$absensi->siswa_name;?></td>
-							<td><?=$status[$absensi->absensi_status];?></td>
-							<td><?=$absensi->absensi_remarks;?></td>
+							<td><?=$absen->sekolah_name;?></td>
+							<td><?=$absen->absen_date;?></td>
+							<td><?=$absen->kelas_name;?></td>
+							<td><?=$absen->siswa_name;?></td>
+							<td><?=$status[$absen->absen_status];?></td>
+							<td><?=$absen->absen_remarks;?></td>
 						</tr>
 					<?php }?>
 					</tbody>

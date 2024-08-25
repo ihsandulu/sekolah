@@ -12,19 +12,52 @@ class tabungan_M extends CI_Model
 			->where("user_nisn", $nisn)
 			->where("tabungan_type", $type)
 			->get("tabungan");
+		$uangn = 0;
+		// $uangn=$this->db->last_query();
 		foreach ($uang->result() as $uang) {
-			return $uang = $uang->saldo;
+			if (!is_null($uang->saldo)) {
+				$uangn = $uang->saldo;
+			}
 		}
+		return $uangn;
 	}
+
 
 	function validasi($tarikan, $nisn)
 	{
 		$saldo = $this->saldo("Debet", $nisn) - $this->saldo("Kredit", $nisn);
-		if ($saldo > $tarikan) {
-			return TRUE;
+		if ($saldo >= $tarikan) {
+			$hasil = TRUE;
 		} else {
-			return FALSE;
+			$hasil = FALSE;
 		}
+		return $hasil;
+	}
+
+	function validasikreditupdate($tarikan, $nisn, $tabungan_id)
+	{
+		$uang = $this->db
+			->select("SUM(tabungan_amount)as saldo")
+			->where("user_nisn", $nisn)
+			->where("tabungan_id !=", $tabungan_id)
+			->where("tabungan_type", "Kredit")
+			->get("tabungan");
+		$uangn = 0;
+		// $uangn=$this->db->last_query();
+		foreach ($uang->result() as $uang) {
+			if (!is_null($uang->saldo)) {
+				$uangn = $uang->saldo;
+			}
+		}
+		$awal = $this->saldo("Debet", $nisn);
+		$saldo = $awal - $uangn;
+		if ($saldo >= $tarikan) {
+			$hasil = TRUE;
+		} else {
+			$hasil = FALSE;
+		}
+		// $hasil = $saldo . ">= ". $tarikan."||".$awal."||".$uangn;
+		return $hasil;
 	}
 
 	public function data()
@@ -107,6 +140,10 @@ class tabungan_M extends CI_Model
 			}
 
 			if ($this->input->post("tabungan_type") == "Kredit") {
+				// echo $this->saldo("Debet", $input["user_nisn"])."-D<br/>";
+				// echo $this->saldo("Kredit", $input["user_nisn"])."-K";
+				// echo $this->validasi($input["tabungan_amount"], $input["user_nisn"]);die;
+
 				if ($this->validasi($input["tabungan_amount"], $input["user_nisn"])) {
 					$this->db->insert("tabungan", $input);
 					$data["s"] = $this->db->insert_id();
@@ -127,12 +164,29 @@ class tabungan_M extends CI_Model
 						$token = $user->token;
 						$tabungan_amount = $this->input->post("tabungan_amount");
 						$tabungan_remarks = $this->input->post("tabungan_remarks");
-						if($tabungan_remarks!=""){$untuk=" untuk keperluan ".$tabungan_remarks;}else{$untuk="";}
-						$pesan = "Siswa/i " . $user_name . " telah menarik tabungan sejumlah: " . number_format($tabungan_amount, 0, ",", ".") . ",-".$untuk;
+						if ($tabungan_remarks != "") {
+							$untuk = " untuk keperluan " . $tabungan_remarks;
+						} else {
+							$untuk = "";
+						}
+						$pesan = "Siswa/i " . $user_name . " telah menarik tabungan sejumlah: " . number_format($tabungan_amount, 0, ",", ".") . ",-" . $untuk;
 						foreach ($telp as $telepon) {
 							$urimessage = "https://qithy.my.id:8000/send-message?email=" . $email . "&token=" . $token . "&id=" . $server . "&message=" . urlencode($pesan) . "&number=" . $telepon . "";
-							$uripesan = file_get_contents($urimessage);
+							// $uripesan = file_get_contents($urimessage);
 							// echo $urimessage;die;
+
+							$ch = curl_init();
+							curl_setopt($ch, CURLOPT_URL, $urimessage);
+							curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+							curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36');
+
+							$response = curl_exec($ch);
+
+							if (curl_errno($ch)) {
+								echo 'Error:' . curl_error($ch);
+							}
+
+							curl_close($ch);
 						}
 					}
 				} else {
@@ -158,12 +212,29 @@ class tabungan_M extends CI_Model
 					$token = $user->token;
 					$tabungan_amount = $this->input->post("tabungan_amount");
 					$tabungan_remarks = $this->input->post("tabungan_remarks");
-					if($tabungan_remarks!=""){$untuk=" untuk ".$tabungan_remarks;}else{$untuk="";}
-					$pesan = "Siswa/i " . $user_name . " telah menabung sejumlah: " . number_format($tabungan_amount, 0, ",", ".") . ",-".$untuk;
+					if ($tabungan_remarks != "") {
+						$untuk = " untuk " . $tabungan_remarks;
+					} else {
+						$untuk = "";
+					}
+					$pesan = "Siswa/i " . $user_name . " telah menabung sejumlah: " . number_format($tabungan_amount, 0, ",", ".") . ",-" . $untuk;
 					foreach ($telp as $telepon) {
 						$urimessage = "https://qithy.my.id:8000/send-message?email=" . $email . "&token=" . $token . "&id=" . $server . "&message=" . urlencode($pesan) . "&number=" . $telepon . "";
-						$uripesan = file_get_contents($urimessage);
+						// $uripesan = file_get_contents($urimessage);
 						// echo $urimessage;die;
+
+						$ch = curl_init();
+						curl_setopt($ch, CURLOPT_URL, $urimessage);
+						curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+						curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36');
+
+						$response = curl_exec($ch);
+
+						if (curl_errno($ch)) {
+							echo 'Error:' . curl_error($ch);
+						}
+
+						curl_close($ch);
 					}
 				}
 			}
@@ -176,8 +247,10 @@ class tabungan_M extends CI_Model
 					$input[$e] = $this->input->post($e);
 				}
 			}
-			if ($this->validasi($input["tabungan_amount"], $input["user_nisn"])) {
-				$this->db->update("tabungan", $input, array("tabungan_id" => $this->input->post("tabungan_id")));
+			$tabungan_id = $this->input->post("tabungan_id");
+			// echo $this->validasikreditupdate($input["tabungan_amount"], $input["user_nisn"], $tabungan_id);
+			if ($this->validasikreditupdate($input["tabungan_amount"], $input["user_nisn"], $tabungan_id)) {
+				$this->db->update("tabungan", $input, array("tabungan_id" => $tabungan_id));
 				$data["message"] = "Update Success";
 				//echo $this->db->last_query();die;
 			} else {

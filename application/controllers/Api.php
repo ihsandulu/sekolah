@@ -62,18 +62,19 @@ class api extends CI_Controller
 
 		$saldo = $tagihan - $pembayaran;
 
-
 		if ($user->num_rows() > 0) {
 			foreach ($user->result() as $user) {
-				$message = "Name: " . $user->user_name . ". Class: " . $user->kelas_name . ". Tagihan: Rp " . number_format($saldo, 0, ",", ".");
-				$user_tahunajaran = $user->user_tahunajaran;
+				$data["message"] = "Name: " . $user->user_name . ". Class: " . $user->kelas_name . ". Tagihan: Rp " . number_format($saldo, 0, ",", ".");
+				$data["user_tahunajaran"] = $user->user_tahunajaran;
+				$data["kelas_id"] =$user->kelas_id;
 			}
 		} else {
-			$message = "No Data!";
-			$user_tahunajaran = "";
+			$data["message"] = "No Data!";
+			$data["user_tahunajaran"] =date("Y");
+			$data["kelas_id"] ="0";
 		}
-		$message .= "<input id='user_tahunajaran' type='hidden' value='" . $user_tahunajaran . "'/>";
-		echo $message;
+		// echo $data["message"];
+		$this->djson($data);
 	}
 
 	function datatagihan()
@@ -105,12 +106,19 @@ class api extends CI_Controller
 		//echo $this->db->last_query();
 
 		if ($tagihan->num_rows() > 0) {
-			foreach ($tagihan->result() as $row) { ?>
-				<span class="btn btn-warning" onclick="inputtagihan('<?= $row->transaction_id; ?>','<?= $row->transaction_name; ?>','<?= $row->transaction_tahun; ?>','<?= $row->transaction_amount; ?>','<?= number_format($row->transaction_amount, 0, ",", "."); ?>,-')"><?= $row->transaction_name; ?></span>
-			<?php }
+			foreach ($tagihan->result() as $row) {
+				$data["tagihan"] = '<span class="btn btn-warning" onclick="inputtagihan(\'' .
+					$row->transaction_id . '\',\'' .
+					$row->transaction_name . '\',\'' .
+					$row->transaction_tahun . '\',\'' .
+					$row->transaction_amount . '\',\'' .
+					number_format($row->transaction_amount, 0, ",", ".") . ',-\')">' .
+					$row->transaction_name . '</span>';
+			}
 		} else {
-			echo "No Data!";
+			$data["tagihan"] = "No Data!";
 		}
+		$this->djson($data);
 	}
 
 	function saldo($type, $nisn)
@@ -136,11 +144,13 @@ class api extends CI_Controller
 		if ($cek->num_rows() > 0) {
 			foreach ($cek->result() as $cek) {
 				$saldo = $this->saldo("Debet", $this->input->get("user_nisn")) - $this->saldo("Kredit", $this->input->get("user_nisn"));
-				echo "Name: " . $cek->user_name . ". Class: " . $cek->kelas_name . ". Saldo: Rp " . number_format($saldo, 0, ",", ".");
+				$data["profil"] = "Name: " . $cek->user_name . ". Class: " . $cek->kelas_name . ". Saldo: Rp " . number_format($saldo, 0, ",", ".");
+				$data["kelas_id"] = $cek->kelas_id;
 			}
 		} else {
-			echo "No Data!";
+			$data["profil"] = "No Data!";
 		}
+		$this->djson($data);
 	}
 
 	function cekuser()
@@ -167,6 +177,21 @@ class api extends CI_Controller
 			->where("matpel_name", $matpel_name)
 			->where("sekolah_id", $sekolah_id)
 			->get("matpel");
+		if ($cek->num_rows() > 0) {
+			echo "ada";
+		} else {
+			echo "kosong";
+		}
+	}
+
+	function cekmatpelgroup()
+	{
+		$matpelgroup_name = $this->input->get("matpelgroup_name");
+		$sekolah_id = $this->session->userdata("sekolah_id");
+		$cek = $this->db
+			->where("matpelgroup_name", $matpelgroup_name)
+			->where("sekolah_id", $sekolah_id)
+			->get("matpelgroup");
 		if ($cek->num_rows() > 0) {
 			echo "ada";
 		} else {
@@ -1151,6 +1176,7 @@ class api extends CI_Controller
 				foreach ($user->result() as $user) {
 					$input["absen_date"] = date("Y-m-d");
 					$input["absen_nisn"] = $user->user_nisn;
+					$input["kelas_id"] = $user->kelas_id;
 					$input["user_id"] = $user->user_id;
 					$input["absen_remarks"] = "Absen Barcode";
 					$input["sekolah_id"] = $this->session->userdata("sekolah_id");
@@ -1215,7 +1241,7 @@ class api extends CI_Controller
 				$where["absen_date"] = date("Y-m-d");
 				$absen = $this->db
 					->join("user", "user.user_id=absen.user_id", "left")
-					->join("kelas", "kelas.kelas_id=user.kelas_id", "left")
+					->join("kelas", "kelas.kelas_id=absen.kelas_id", "left")
 					->order_by("absen_datetime", "desc")
 					->get_where("absen", $where);
 				// echo $this->db->last_query();
@@ -1307,7 +1333,7 @@ class api extends CI_Controller
 				<?php } ?>
 			</tbody>
 		</table>
-<?php
+	<?php
 	}
 
 
@@ -1445,7 +1471,7 @@ class api extends CI_Controller
 		$kelas_sekolah = $this->db
 			->where("sekolah_id", $this->session->userdata("sekolah_id"))
 			->get("kelas_sekolah");
-			// echo $this->db->last_query();die;
+		// echo $this->db->last_query();die;
 		foreach ($kelas_sekolah->result() as $kelas_sekolah) {
 			$kelas_sekolah_notifabsen = $kelas_sekolah->kelas_sekolah_notifabsen;
 			// echo date("H:i") ."==". substr($kelas_sekolah_notifabsen, 0, 5);
@@ -1512,6 +1538,79 @@ class api extends CI_Controller
 		$this->djson($data);
 	}
 
+	function liststudent()
+	{
+		$user_id = $this->input->get("user_id");
+		$kelas_id = $this->input->get("kelas_id");
+	?>
+		<option value="" <?= ($user_id == "") ? "selected" : ""; ?>>Choose Student</option>
+		<?php
+		$user = $this->db->from("user")
+			->where("user.sekolah_id", $this->session->userdata("sekolah_id"))
+			->where("kelas_id", $kelas_id)
+			->get();
+		// echo $this->db->last_query();
+		foreach ($user->result() as $row) { ?>
+			<option value="<?= $row->user_id; ?>" <?= ($user_id == $row->user_id) ? "selected" : ""; ?>><?= $row->user_name; ?></option>
+		<?php } ?>
+	<?php }
+
+	function listmatpel()
+	{
+		$matpel_id = $this->input->get("matpel_id");
+	?>
+		<option value="" <?= ($matpel_id == "") ? "selected" : ""; ?>>Choose Subject</option>
+		<?php
+		$matpel = $this->db->from("matpel_sekolah")
+			->join("matpel", "matpel.matpel_id=matpel_sekolah.matpel_id", "left")
+			->where("matpel.sekolah_id", $this->session->userdata("sekolah_id"))
+			->get();
+		// echo $this->db->last_query();
+		foreach ($matpel->result() as $row) { ?>
+			<option value="<?= $row->matpel_id; ?>" <?= ($matpel_id == $row->matpel_id) ? "selected" : ""; ?>><?= $row->matpel_name; ?></option>
+		<?php } ?>
+	<?php }
+
+	function listsumatif()
+	{
+		$sumatif_id = $this->input->get("sumatif_id");
+	?>
+		<option value="" <?= ($sumatif_id == "") ? "selected" : ""; ?>>Choose Sumatif</option>
+		<?php
+		$sumatif = $this->db->from("sumatif")
+			->where("sumatif.sekolah_id", $this->session->userdata("sekolah_id"))
+			->get();
+		// echo $this->db->last_query();
+		foreach ($sumatif->result() as $row) { ?>
+			<option value="<?= $row->sumatif_id; ?>" <?= ($sumatif_id == $row->sumatif_id) ? "selected" : ""; ?>><?= $row->sumatif_name; ?></option>
+		<?php } ?>
+	<?php }
+
+
+	function listsiswakelas()
+	{
+		$user_id = $this->input->get("user_id");
+		$kelas_id = $this->input->get("kelas_id");
+	?>
+		<option value="0" <?= ($user_id == 0) ? 'selected="selected"' : ""; ?>>All</option>
+		<?php
+		if ($this->session->userdata("sekolah_id") > 0) {
+			$this->db->where("user.sekolah_id", $this->session->userdata("sekolah_id"));
+		}
+		if ($user_id > 0) {
+			$this->db->where("user.user_id", $user_id);
+		}
+		if ($kelas_id > 0) {
+			$this->db->where("user.kelas_id", $kelas_id);
+		}
+		$mat = $this->db
+			->where("position_id", "4")
+			->get("user");
+		foreach ($mat->result() as $user) { ?>
+			<option value="<?= $user->user_id; ?>" <?= ($user_id == $user->user_id) ? 'selected="selected"' : ""; ?>><?= $user->user_name; ?></option>
+		<?php } ?>
+<?php
+	}
 
 
 	private function djson($value = array())

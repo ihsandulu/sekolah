@@ -59,7 +59,7 @@
 						Account
 
 					</h1>
-					<?php if (!isset($_POST['new']) && !isset($_POST['edit']) && !isset($_GET['laporan'])) { ?>
+					<?php if (!isset($_POST['new']) && !isset($_POST['edit']) && !isset($_GET['laporan'])&& $this->session->userdata("position_id") != 4) { ?>
 
 						<form method="post" class="col-md-2" style="margin-top:-30px; float:right;">
 
@@ -118,7 +118,8 @@
 																	sekolah_id: '<?= $this->session->userdata("sekolah_id"); ?>'
 																})
 																.done(function(data) {
-																	$("#profil").html(data);
+																	$("#profil").html(data.profil);
+																	$("#kelas_id").val(data.kelas_id);
 																});
 														}
 													</script>
@@ -150,7 +151,7 @@
 
 
 
-
+											<input type="hidden" id="kelas_id" name="kelas_id" value="<?= $kelas_id; ?>">
 											<input type="hidden" name="sekolah_id" value="<?= $this->session->userdata("sekolah_id"); ?>" />
 											<input type="hidden" name="tabungan_id" value="<?= $tabungan_id; ?>" />
 											<input type="hidden" name="user_id" value="<?= $this->session->userdata("user_id"); ?>" />
@@ -225,13 +226,6 @@
 											<table id="dataTable" class="table table-condensed table-hover">
 												<thead>
 													<tr>
-														<th>Date</th>
-														<th>School</th>
-														<th>User</th>
-														<th>NISN/NIK</th>
-														<th>Remarks</th>
-														<th>Amount</th>
-														<th>Type</th>
 														<?php if (isset($_GET['laporan'])) {
 															$colact = "col-md-1";
 															$colbtn = "col-md-12";
@@ -239,7 +233,18 @@
 															$colact = "col-md-2";
 															$colbtn = "col-md-4";
 														} ?>
-														<th class="<?= $colact; ?>">Action</th>
+														<?php
+														if ($this->session->userdata("position_id") != 4) { ?>
+															<th class="<?= $colact; ?>">Action</th>
+														<?php } ?>
+														<th>Date</th>
+														<th>School</th>
+														<th>Class</th>
+														<th>User</th>
+														<th>NISN/NIK</th>
+														<th>Remarks</th>
+														<th>Amount</th>
+														<th>Type</th>
 													</tr>
 												</thead>
 												<tbody>
@@ -258,14 +263,15 @@
 													}
 
 													if ($this->session->userdata("position_id") == 4) {
-														$this->db->where("tabungan.user_id", $this->session->userdata("user_id"));
+														$this->db->where("tabungan.user_nisn", $this->session->userdata("user_nisn"));
 													}
 
 													$usr = $this->db
 														->join("sekolah", "sekolah.sekolah_id=tabungan.sekolah_id", "left")
-														->join("user", "user.user_nisn=tabungan.user_nisn", "left")->order_by("tabungan_datetime", "desc")
+														->join("user", "user.user_nisn=tabungan.user_nisn", "left")
+														->join("kelas", "kelas.kelas_id=tabungan.kelas_id", "left")->order_by("tabungan_datetime", "desc")
 														->get("tabungan");
-													//echo $this->db->last_query();
+													// echo $this->db->last_query();
 													foreach ($usr->result() as $tabungan) {
 														if ($tabungan->user_nisn == "") {
 															$back = "background-color:#FEDCC5";
@@ -273,36 +279,39 @@
 															$back = "";
 														} ?>
 														<tr style="<?= $back; ?>">
+															<?php if ($this->session->userdata("position_id") != 4) { ?>
+																<td style="padding-left:0px; padding-right:0px;" align="center">
+																	<form target="_blank" action="<?= site_url("tabunganprint"); ?>" method="get" class="<?= $colbtn; ?>" style="padding:0px;">
+																		<button type="button" onClick="line('<?= $tabungan->tabungan_id; ?>')" class="btn btn-success btn-xs btn-block" name="print" value="OK"><span class="fa fa-print" style="color:white;"></span> </button>
+																		<input type="hidden" name="tabungan_id" value="<?= $tabungan->tabungan_id; ?>" />
+																	</form>
+
+																	<?php if (!isset($_GET['laporan'])) { ?>
+																		<form method="post" class="col-md-4" style="padding:0px;">
+																			<button class="btn btn-warning  btn-xs btn-block" name="edit" value="OK"><span class="fa fa-edit" style="color:white;"></span> </button>
+																			<input type="hidden" name="tabungan_id" value="<?= $tabungan->tabungan_id; ?>" />
+																			<?php if ($tabungan->tabungan_type == "Kredit") { ?>
+																				<input type="hidden" name="type" value="Kredit" />
+																			<?php } else { ?>
+																				<input type="hidden" name="type" value="Debet" />
+																			<?php } ?>
+																		</form>
+
+																		<form method="post" class="col-md-4" style="padding:0px;">
+																			<button class="btn btn-danger delete btn-xs btn-block" name="delete" value="OK"><span class="fa fa-close" style="color:white;"></span> </button>
+																			<input type="hidden" name="tabungan_id" value="<?= $tabungan->tabungan_id; ?>" />
+																		</form>
+																	<?php } ?>
+																</td>
+															<?php } ?>
 															<td><?= $tabungan->tabungan_datetime; ?></td>
 															<td><?= $tabungan->sekolah_name; ?></td>
+															<td><?= $tabungan->kelas_name; ?></td>
 															<td><?= $tabungan->user_name; ?></td>
 															<td><?= $tabungan->user_nisn; ?></td>
 															<td><?= $tabungan->tabungan_remarks; ?></td>
 															<td align="right"><?= number_format($tabungan->tabungan_amount, 0, ",", "."); ?></td>
 															<td><?= $tabungan->tabungan_type; ?></td>
-															<td style="padding-left:0px; padding-right:0px;" align="center">
-																<form target="_blank" action="<?= site_url("tabunganprint"); ?>" method="get" class="<?= $colbtn; ?>" style="padding:0px;">
-																	<button type="button" onClick="line('<?= $tabungan->tabungan_id; ?>')" class="btn btn-success btn-xs btn-block" name="print" value="OK"><span class="fa fa-print" style="color:white;"></span> </button>
-																	<input type="hidden" name="tabungan_id" value="<?= $tabungan->tabungan_id; ?>" />
-																</form>
-
-																<?php if (!isset($_GET['laporan'])) { ?>
-																	<form method="post" class="col-md-4" style="padding:0px;">
-																		<button class="btn btn-warning  btn-xs btn-block" name="edit" value="OK"><span class="fa fa-edit" style="color:white;"></span> </button>
-																		<input type="hidden" name="tabungan_id" value="<?= $tabungan->tabungan_id; ?>" />
-																		<?php if ($tabungan->tabungan_type == "Kredit") { ?>
-																			<input type="hidden" name="type" value="Kredit" />
-																		<?php } else { ?>
-																			<input type="hidden" name="type" value="Debet" />
-																		<?php } ?>
-																	</form>
-
-																	<form method="post" class="col-md-4" style="padding:0px;">
-																		<button class="btn btn-danger delete btn-xs btn-block" name="delete" value="OK"><span class="fa fa-close" style="color:white;"></span> </button>
-																		<input type="hidden" name="tabungan_id" value="<?= $tabungan->tabungan_id; ?>" />
-																	</form>
-																<?php } ?>
-															</td>
 														</tr>
 													<?php } ?>
 												</tbody>

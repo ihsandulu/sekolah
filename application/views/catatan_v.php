@@ -16,7 +16,7 @@
                         <i class="ace-icon fa fa-home home-icon"></i>
                         <a href="<?= site_url(); ?>">Home</a>
                     </li>
-                    <li class="active">Class</li>
+                    <li class="active">Note</li>
                 </ul><!-- /.breadcrumb -->
 
 
@@ -24,13 +24,13 @@
             <div class="page-content">
 
                 <div class="page-header">
-                    <h1>Class</h1>
+                    <h1>Note</h1>
                     <?php if (!isset($_POST['new']) && !isset($_POST['edit'])) { ?>
 
                         <form method="post" class="col-md-2" style="margin-top:-30px; float:right;">
 
                             <button name="new" class="btn btn-info btn-block btn-sm" value="OK" style="">New</button>
-                            <input type="hidden" name="kelas_id" />
+                            <input type="hidden" name="user_id" />
 
                         </form>
 
@@ -45,10 +45,10 @@
                                     <div class="">
                                         <?php if (isset($_POST['edit'])) {
                                             $namabutton = 'name="change"';
-                                            $judul = "Update Class";
+                                            $judul = "Update Note";
                                         } else {
                                             $namabutton = 'name="create"';
-                                            $judul = "New Class";
+                                            $judul = "New Note";
                                         } ?>
                                         <div class="lead">
                                             <h3><?= $judul; ?></h3>
@@ -56,50 +56,66 @@
                                         <form class="form-horizontal" method="post" enctype="multipart/form-data">
 
                                             <div class="form-group">
-                                                <label class="control-label col-sm-2" for="kelas_name">Class:</label>
+                                                <label class="control-label col-sm-2" for="kelas_id">Class:</label>
                                                 <div class="col-sm-10">
-                                                    <input type="text" class="form-control" id="kelas_name" name="kelas_name" placeholder="Enter Class" value="<?= $kelas_name; ?>">
+                                                    <select class="form-control" id="kelas_id" name="kelas_id">
+                                                        <option value="" <?= ($kelas_id == "") ? "selected" : ""; ?>>Choose Class</option>
+                                                        <?php
+                                                        $kelas = $this->db->from("kelas_sekolah")
+                                                            ->join("kelas", "kelas.kelas_id=kelas_sekolah.kelas_id", "left")
+                                                            ->where("kelas_sekolah.sekolah_id", $this->session->userdata("sekolah_id"))
+                                                            ->get();
+                                                        foreach ($kelas->result() as $row) { ?>
+                                                            <option value="<?= $row->kelas_id; ?>" <?= ($kelas_id == $row->kelas_id) ? "selected" : ""; ?>><?= $row->kelas_name; ?></option>
+                                                        <?php } ?>
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label class="control-label col-sm-2" for="kelas_wali">Homeroom Teacher (Wali Kelas):</label>
+                                                <label class="control-label col-sm-2" for="user_id">Student:</label>
                                                 <div class="col-sm-10">
-                                                    <select class="form-control" id="kelas_wali" name="kelas_wali">
-                                                        <option value="0" <?= ($kelas_wali == "0") ? "selected" : ""; ?>>Choose Teacher</option>
-                                                        <?php
-                                                        $user = $this->db->where("position_id", "3")->get("user");
-                                                        foreach ($user->result() as $row) { ?>
-                                                            <option value="<?= $row->user_id; ?>" <?= ($kelas_wali == $row->user_id) ? "selected" : ""; ?>><?= $row->user_name; ?></option>
-                                                        <?php } ?>
+                                                    <select class="form-control" id="user_id" name="user_id">
+
+                                                    </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-offset-2 col-md-10 alert alert-danger alert-dismissable fade in" id="cekkelas" style="display:none;">
-                                                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                                <strong>Attention!</strong> Class has been created.
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-2" for="catatan_note">Note:</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="catatan_note" name="catatan_note" value="<?= $catatan_note; ?>">
+                                                </div>
                                             </div>
 
+
+
+
+
                                             <script>
-                                                $("#kelas_name").keyup(function() {
-                                                    $.get("<?= site_url("api/cekkelas"); ?>", {
-                                                            kelas_name: $("#kelas_name").val()
+                                                function caricatatan() {
+                                                    let kelas_id = $('#kelas_id').val();
+                                                    // alert('<?= site_url("api/liststudent"); ?>?user_id=<?= $user_id; ?>&kelas_id='+kelas_id);
+
+                                                    //siswa
+                                                    $.get("<?= site_url("api/liststudent"); ?>", {
+                                                            user_id: '<?= $user_id; ?>',
+                                                            kelas_id: kelas_id
                                                         })
                                                         .done(function(data) {
-                                                            if (data == "ada") {
-                                                                $("#cekkelas").fadeIn();
-                                                                $("#submit").prop("disabled", "disabled");
-                                                            } else {
-                                                                $("#cekkelas").fadeOut();
-                                                                $("#submit").prop("disabled", "");
-                                                            }
+                                                            $('#user_id').html(data);
                                                         });
-                                                });
+
+                                                    
+                                                }
+                                                $("#kelas_id").change(caricatatan);
+                                                caricatatan();
                                             </script>
+
                                             <input type="hidden" name="sekolah_id" value="<?= $this->session->userdata("sekolah_id"); ?>" />
-                                            <input type="hidden" name="kelas_id" value="<?= $kelas_id; ?>" />
+                                            <input type="hidden" name="catatan_id" value="<?= $catatan_id; ?>" />
                                             <div class="form-group">
                                                 <div class="col-sm-offset-2 col-sm-10">
                                                     <button type="submit" id="submit" class="btn btn-primary col-md-5" <?= $namabutton; ?> value="OK">Submit</button>
-                                                    <button class="btn btn-warning col-md-offset-1 col-md-5" onClick="location.href=<?= site_url("kelas"); ?>">Back</button>
+                                                    <button class="btn btn-warning col-md-offset-1 col-md-5" onClick="location.href=<?= site_url("user"); ?>">Back</button>
                                                 </div>
                                             </div>
                                         </form>
@@ -108,7 +124,7 @@
                                     <?php if ($message != "") { ?>
                                         <div class="alert alert-info alert-dismissable">
                                             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                            <strong><?= $message; ?></strong><br /><?= $uploadkelas_picture; ?>
+                                            <strong><?= $message; ?></strong>
                                         </div>
                                     <?php } ?>
                                     <div class="box">
@@ -116,38 +132,42 @@
                                             <table id="dataTable" class="table table-condensed table-hover">
                                                 <thead>
                                                     <tr>
-                                                        <th class="col-md-1">Action</th>
+                                                        <th class="col-md-2">Action</th>
+                                                        <th>School</th>
                                                         <th>Class</th>
-                                                        <th>Homeroom Teacher</th>
+                                                        <th>NISN</th>
+                                                        <th>Name</th>
+                                                        <th>Note</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <?php
                                                     if ($this->session->userdata("sekolah_id") > 0) {
-                                                        $this->db->where("kelas.sekolah_id", $this->session->userdata("sekolah_id"));
+                                                        $this->db->where("catatan.sekolah_id", $this->session->userdata("sekolah_id"));
                                                     }
                                                     $usr = $this->db
-                                                        ->select("kelas.*,user.user_name")
-                                                        ->join("user", "user.user_id=kelas.kelas_wali", "left")
-                                                        ->order_by("kelas_name", "asc")
-                                                        ->get("kelas");
+                                                        ->join("sekolah", "sekolah.sekolah_id=catatan.sekolah_id", "left")
+                                                        ->join("kelas", "kelas.kelas_id=catatan.kelas_id", "left")
+                                                        ->join("user", "user.user_id=catatan.user_id", "left")
+                                                        ->get("catatan");
                                                     // echo $this->db->last_query();
-                                                    foreach ($usr->result() as $kelas) { ?>
+                                                    foreach ($usr->result() as $catatan) { ?>
                                                         <tr>
                                                             <td style="padding-left:0px; padding-right:0px;">
-
-                                                                <form method="post" class="col-md-6" style="padding:0px;">
+                                                                <form method="post" class="col-md-3" style="padding:0px;">
                                                                     <button class="btn btn-warning " name="edit" value="OK"><span class="fa fa-edit" style="color:white;"></span> </button>
-                                                                    <input type="hidden" name="kelas_id" value="<?= $kelas->kelas_id; ?>" />
+                                                                    <input type="hidden" name="catatan_id" value="<?= $catatan->catatan_id; ?>" />
                                                                 </form>
-
-                                                                <form method="post" class="col-md-6" style="padding:0px;">
+                                                                <form method="post" class="col-md-3" style="padding:0px;">
                                                                     <button class="btn btn-danger delete" name="delete" value="OK"><span class="fa fa-close" style="color:white;"></span> </button>
-                                                                    <input type="hidden" name="kelas_id" value="<?= $kelas->kelas_id; ?>" />
+                                                                    <input type="hidden" name="catatan_id" value="<?= $catatan->catatan_id; ?>" />
                                                                 </form>
                                                             </td>
-                                                            <td><?= $kelas->kelas_name; ?></td>
-                                                            <td><?= $kelas->user_name; ?></td>
+                                                            <td><?= $catatan->sekolah_name; ?></td>
+                                                            <td><?= $catatan->kelas_name; ?></td>
+                                                            <td><?= $catatan->user_nisn; ?></td>
+                                                            <td><?= $catatan->user_name; ?></td>
+                                                            <td><?= $catatan->catatan_note; ?></td>
                                                         </tr>
                                                     <?php } ?>
                                                 </tbody>

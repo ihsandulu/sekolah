@@ -185,15 +185,19 @@
                         <input class="form-control" name="filesiswa" type="file" />
                       </div>
                       <div class="form-group">
-                        <input id="drop" class="" name="drop" type="checkbox" value="1" />
-                        <label for="drop"> Erase all student data</label>
+                        <input checked id="drop" class="" name="drop" type="radio" value="0" />
+                        <label for="drop"> Update Student Data</label>
+                      </div>
+                      <div class="form-group">
+                        <input id="drop" class="" name="drop" type="radio" value="1" />
+                        <label for="drop"> Delete All Student Data and All Transaction</label>
                       </div>
                       <div class="form-group">
                         <button class="btn btn-primary" type="submit" name="import">Import</button>
                       </div>
                     </form>
                     <div class="well col-md-offset-1 col-md-5" style="padding:30px; height:210px;" align="center">
-                      <a target="_blank" href="<?= base_url("siswa.xlsx"); ?>" class="fa fa-download btn btn-lg btn-success" style="top:50%; position:relative; top:50%; transform:translate(0,-50%);" /> Download Excel Template</a>
+                      <a target="_blank" href="<?= base_url("siswa1.xlsx"); ?>" class="fa fa-download btn btn-lg btn-success" style="top:50%; position:relative; top:50%; transform:translate(0,-50%);" /> Download Excel Template</a>
                     </div>
                     <form method="post" style="float:right; margin-bottom:20px;">
                       <button name="repair_tahun_ajaran" value="OK">Repair Tahun Ajaran Sesuai Kelas</button>
@@ -203,13 +207,13 @@
                       <table id="dataTable" class="table table-condensed table-hover">
                         <thead>
                           <tr>
+                            <th class="col-md-2">Action</th>
                             <th>School</th>
                             <th>Year</th>
                             <th>NISN</th>
                             <th>Class</th>
                             <th>Name</th>
                             <th>Telephone</th>
-                            <th class="col-md-2">Action</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -224,18 +228,12 @@
                             ->join("kelas", "kelas.kelas_id=user.kelas_id", "left")
                             ->join("position", "position.position_id=user.position_id", "left")
                             ->where("user.position_id", "4")
-                            ->group_by("user.user_id") 
+                            ->group_by("user.user_id")
                             ->get("user");
 
                           // echo $this->db->last_query();
                           foreach ($usr->result() as $user) { ?>
                             <tr>
-                              <td><?= $user->sekolah_name; ?></td>
-                              <td><?= $user->user_tahunajaran; ?></td>
-                              <td><?= $user->user_nisn; ?></td>
-                              <td><?= $user->kelas_name; ?></td>
-                              <td><?= $user->user_name; ?></td>
-                              <td><?= $user->nomor_telepon; ?></td>
                               <td style="padding-left:0px; padding-right:0px;">
                                 <form method="get" class="col-md-4" style="padding:0px;" action="<?= base_url("telpon"); ?>">
                                   <button class="btn btn-success " value="OK"><span class="fa fa-phone" style="color:white;"></span> </button>
@@ -252,6 +250,12 @@
                                   <input type="hidden" name="user_id" value="<?= $user->user_id; ?>" />
                                 </form>
                               </td>
+                              <td><?= $user->sekolah_name; ?></td>
+                              <td><?= $user->user_tahunajaran; ?></td>
+                              <td><?= $user->user_nisn; ?></td>
+                              <td><?= $user->kelas_name; ?></td>
+                              <td><?= $user->user_name; ?></td>
+                              <td><?= $user->nomor_telepon; ?></td>
                             </tr>
                           <?php } ?>
                         </tbody>

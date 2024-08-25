@@ -9,23 +9,6 @@ class kelas_M extends CI_Model
         $data = array();
         $data["message"] = "";
         session_write_close();
-        //cek grup
-        $grupd["grup_id"] = $this->input->get("grup_id");
-        $gr = $this->db
-            ->get_where('grup', $grupd);
-        //echo $this->db->last_query();die;	
-        if ($gr->num_rows() > 0) {
-            foreach ($gr->result() as $grup) {
-                foreach ($this->db->list_fields('grup') as $field) {
-                    $data[$field] = $grup->$field;
-                }
-            }
-        } else {
-
-            foreach ($this->db->list_fields('grup') as $field) {
-                $data[$field] = "";
-            }
-        }
 
 
 
@@ -86,27 +69,32 @@ class kelas_M extends CI_Model
             }
             $this->db->update("kelas", $input, array("kelas_id" => $this->input->post("kelas_id")));
             $data["message"] = "Update Success";
-            //echo $this->db->last_query();die;
+            // echo $this->db->last_query();
         }
 
         //cek kelas
-        $kelasd["kelas_id"] = $this->input->post("kelas_id");
+        $kelasd["kelas.kelas_id"] = $this->input->post("kelas_id");
         $mater = $this->db
+            ->select("kelas.*,user.user_name")
+            ->join("user", "user.user_id=kelas.kelas_wali", "left")
             ->get_where('kelas', $kelasd);
-        //echo $this->db->last_query();die;	
+        // echo $this->db->last_query();	
         if ($mater->num_rows() > 0) {
             foreach ($mater->result() as $kelas) {
                 foreach ($this->db->list_fields('kelas') as $field) {
                     $data[$field] = $kelas->$field;
                 }
+                $data["user_name"] = $kelas->user_name;
             }
         } else {
-
             foreach ($this->db->list_fields('kelas') as $field) {
                 $data[$field] = "";
             }
+            foreach ($this->db->list_fields('user') as $field) {
+                $data[$field] = "";
+                $data["user_name"] = "";
+            }
         }
-        $data["grup_id"] = $grupd["grup_id"];
         return $data;
     }
 }
