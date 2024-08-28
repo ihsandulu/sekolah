@@ -25,7 +25,7 @@ class utama_M extends CI_Model {
 		$us=$this->db
 		->where("sekolah_id",$this->session->userdata("sekolah_id"))
 		->get('sekolah');	
-		//echo $this->db->last_query();die;	
+		echo $this->db->last_query();die;	
 		if($us->num_rows()>0)
 		{
 			foreach($us->result() as $sekolah){		
