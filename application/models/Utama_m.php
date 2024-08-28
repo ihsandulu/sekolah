@@ -9,10 +9,7 @@ class utama_M extends CI_Model {
 		$data["message"]="";	
 		session_write_close();
 
-		if(is_null($this->session->userdata("sekolah_id"))){
-			$this->session->sess_destroy();
-				redirect(site_url("login"));
-		}
+		
 		
 		if(isset($_POST["kelas_sekolah_notifabsen"])){
 			$this->db
@@ -24,11 +21,11 @@ class utama_M extends CI_Model {
 		}
 
 
-		//cek sekolah		
+		//cek sekolah
 		$us=$this->db
 		->where("sekolah_id",$this->session->userdata("sekolah_id"))
 		->get('sekolah');	
-		// echo $this->db->last_query();die;	
+		//echo $this->db->last_query();die;	
 		if($us->num_rows()>0)
 		{
 			foreach($us->result() as $sekolah){		
