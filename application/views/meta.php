@@ -2,6 +2,10 @@
 date_default_timezone_set("Asia/Bangkok");
 $identity = $this->db->get("identity")->row();
 
+if(is_null($this->session->userdata("sekolah_id"))){
+	$this->session->sess_destroy();
+		redirect(site_url("login"));
+}
 //cek user
 $userd["user_id"] = $this->session->userdata("user_id");
 if (current_url() != site_url("login")) {

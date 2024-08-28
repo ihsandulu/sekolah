@@ -21,7 +21,7 @@ class utama_M extends CI_Model {
 		}
 
 
-		//cek sekolah
+		//cek sekolah		
 		$us=$this->db
 		->where("sekolah_id",$this->session->userdata("sekolah_id"))
 		->get('sekolah');	
