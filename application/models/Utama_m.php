@@ -9,7 +9,10 @@ class utama_M extends CI_Model {
 		$data["message"]="";	
 		session_write_close();
 
-		
+		if(is_null($this->session->userdata("sekolah_id"))){
+			$this->session->sess_destroy();
+				redirect(site_url("login"));
+		}
 		
 		if(isset($_POST["kelas_sekolah_notifabsen"])){
 			$this->db

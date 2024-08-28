@@ -1,6 +1,8 @@
 <?php
 date_default_timezone_set("Asia/Bangkok");
-$identity = $this->db->get("identity")->row();
+$identity1 = $this->db->get("identity");
+echo $this->db->last_query();die;
+$identity = $identity1->row();
 
 if(is_null($this->session->userdata("sekolah_id"))){
 	$this->session->sess_destroy();
