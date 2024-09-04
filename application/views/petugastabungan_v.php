@@ -16,7 +16,7 @@
             <i class="ace-icon fa fa-home home-icon"></i>
             <a href="<?= site_url(); ?>">Home</a>
           </li>
-          <li class="active">Teacher</li>
+          <li class="active">Savings Officer (Petugas Tabungan)</li>
         </ul><!-- /.breadcrumb -->
 
 
@@ -24,7 +24,7 @@
       <div class="page-content">
 
         <div class="page-header">
-          <h1>Teacher</h1>
+          <h1>Savings Officer (Petugas Tabungan)</h1>
           <?php if (!isset($_POST['new']) && !isset($_POST['edit'])) { ?>
 
             <form method="post" class="col-md-2" style="margin-top:-30px; float:right;">
@@ -45,10 +45,10 @@
                   <div class="">
                     <?php if (isset($_POST['edit'])) {
                       $namabutton = 'name="change"';
-                      $judul = "Update Teacher";
+                      $judul = "Update Savings Officer (Petugas Tabungan)";
                     } else {
                       $namabutton = 'name="create"';
-                      $judul = "New Teacher";
+                      $judul = "New Savings Officer (Petugas Tabungan)";
                     } ?>
                     <div class="lead">
                       <h3><?= $judul; ?></h3>
@@ -158,7 +158,7 @@
                       </div>
 
                       <input type="hidden" name="sekolah_id" value="<?= $this->session->userdata("sekolah_id"); ?>" />
-                      <input type="hidden" name="position_id" value="3" />
+                      <input type="hidden" name="position_id" value="5" />
                       <input type="hidden" name="user_id" value="<?= $user_id; ?>" />
                       <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10">
@@ -194,7 +194,7 @@
                           $usr = $this->db
                             ->join("sekolah", "sekolah.sekolah_id=user.sekolah_id", "left")
                             ->join("position", "position.position_id=user.position_id", "left")
-                            ->where("user.position_id", "3")
+                            ->where("user.position_id", "5")
                             ->get("user");
                           //echo $this->db->last_query();
                           foreach ($usr->result() as $user) { ?>

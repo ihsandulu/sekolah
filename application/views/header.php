@@ -167,6 +167,15 @@
                                 </li>
 
                                 <li class="">
+                                    <a href="<?= site_url("petugastabungan"); ?>">
+                                        <i class="menu-icon fa fa-caret-right"></i>
+                                        Savings Officer
+                                    </a>
+
+                                    <b class="arrow"></b>
+                                </li>
+
+                                <li class="">
                                     <a href="<?= site_url("siswa"); ?>">
                                         <i class="menu-icon fa fa-caret-right"></i>
                                         Student
@@ -268,18 +277,18 @@
                     </ul>
                 </li>
             <?php } ?>
-            <?php if($this->session->userdata("position_id") !=4){?>
-            <li class="">
-                <a href="#" class="dropdown-toggle">
-                    <i class="menu-icon fa fa-list"></i>
-                    <span class="menu-text"> Transaction </span>
+            <?php if ($this->session->userdata("position_id") != 4) { ?>
+                <li class="">
+                    <a href="#" class="dropdown-toggle">
+                        <i class="menu-icon fa fa-list"></i>
+                        <span class="menu-text"> Transaction </span>
 
-                    <b class="arrow fa fa-angle-down"></b>
-                </a>
+                        <b class="arrow fa fa-angle-down"></b>
+                    </a>
 
-                <b class="arrow"></b>
-                <ul class="submenu">
-                    <!-- <li class="">
+                    <b class="arrow"></b>
+                    <ul class="submenu">
+                        <!-- <li class="">
                         <a href="<?= site_url("grupt"); ?>">
                             <i class="menu-icon fa fa-caret-right"></i>
                             Group
@@ -287,54 +296,60 @@
 
                         <b class="arrow"></b>
                     </li> -->
-                    <?php if ($this->session->userdata("position_id") != 4) { ?>
+                        <?php if ($this->session->userdata("position_id") != 4 && $this->session->userdata("position_id") != 5) { ?>
+                            <li class="">
+                                <a href="<?= site_url("catatan"); ?>">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Student Note
+                                </a>
+
+                                <b class="arrow"></b>
+                            </li>
+                        <?php } ?>
+                        <?php if ($this->session->userdata("position_id") != 3 && $this->session->userdata("position_id") != 5) { ?>
+                            <li class="">
+                                <a href="<?= site_url("transaction"); ?>">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Transaction
+                                </a>
+
+                                <b class="arrow"></b>
+                            </li>
+                            <?php } ?>
+                        <?php if ($this->session->userdata("position_id") != 3) { ?>
+                            <li class="">
+                                <a href="<?= site_url("tabungan"); ?>">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Account
+                                </a>
+
+                                <b class="arrow"></b>
+                            </li>
+                        <?php } ?>
+                        <?php if ($this->session->userdata("position_id") != 5) {?>                           
                         <li class="">
-                            <a href="<?= site_url("catatan"); ?>">
+                            <a href="<?= site_url("nilai"); ?>">
                                 <i class="menu-icon fa fa-caret-right"></i>
-                                Student Note
+                                Score
                             </a>
 
                             <b class="arrow"></b>
-                        </li>
-                    <?php } ?>
-                    <?php if ($this->session->userdata("position_id") != 3) { ?>
+                        </li>                        
+                        <?php } ?>
+                        <?php if ($this->session->userdata("position_id") != 5) {?>  
                         <li class="">
-                            <a href="<?= site_url("transaction"); ?>">
+                            <a href="<?= site_url("attandance"); ?>">
                                 <i class="menu-icon fa fa-caret-right"></i>
-                                Transaction
+                                Attendance
                             </a>
-
                             <b class="arrow"></b>
-                        </li>
-                        <li class="">
-                            <a href="<?= site_url("tabungan"); ?>">
-                                <i class="menu-icon fa fa-caret-right"></i>
-                                Account
-                            </a>
+                        </li>                  
+                        <?php } ?>
 
-                            <b class="arrow"></b>
-                        </li>
-                    <?php } ?>
-                    <li class="">
-                        <a href="<?= site_url("nilai"); ?>">
-                            <i class="menu-icon fa fa-caret-right"></i>
-                            Score
-                        </a>
+                    </ul>
 
-                        <b class="arrow"></b>
-                    </li>
-                    <li class="">
-                        <a href="<?= site_url("attandance"); ?>">
-                            <i class="menu-icon fa fa-caret-right"></i>
-                            Attendance
-                        </a>
-                        <b class="arrow"></b>
-                    </li>
-
-                </ul>
-
-            </li>
-            <?php }?>
+                </li>
+            <?php } ?>
 
             <li class="">
                 <a href="#" class="dropdown-toggle">
@@ -347,7 +362,7 @@
                 <b class="arrow"></b>
 
                 <ul class="submenu">
-                    <?php if ($this->session->userdata("position_id") != 4) { ?>
+                    <?php if ($this->session->userdata("position_id") != 4 && $this->session->userdata("position_id") != 5) { ?>
                         <li class="">
                             <a href="<?= site_url("rraport"); ?>">
                                 <i class="menu-icon fa fa-caret-right"></i>
@@ -357,7 +372,7 @@
                             <b class="arrow"></b>
                         </li>
                     <?php } ?>
-                    <?php if ($this->session->userdata("position_id") != 3) { ?>
+                    <?php if ($this->session->userdata("position_id") != 3 && $this->session->userdata("position_id") != 5) { ?>
                         <li class="">
                             <a href="<?= site_url("transaction?laporan=ok"); ?>">
                                 <i class="menu-icon fa fa-caret-right"></i>
@@ -366,6 +381,8 @@
 
                             <b class="arrow"></b>
                         </li>
+                        <?php } ?>
+                        <?php if ($this->session->userdata("position_id") != 3) { ?>
                         <li class="">
                             <a href="<?= site_url("tabungan?laporan=ok"); ?>">
                                 <i class="menu-icon fa fa-caret-right"></i>
@@ -375,6 +392,7 @@
                             <b class="arrow"></b>
                         </li>
                     <?php } ?>
+                    <?php if ($this->session->userdata("position_id") != 5) { ?>
                     <li class="">
                         <!-- <a href="<?= site_url("rabsensi"); ?>">
                             <i class="menu-icon fa fa-caret-right"></i>
@@ -387,6 +405,7 @@
 
                         <b class="arrow"></b>
                     </li>
+                    <?php } ?>
                     <!-- <li class="">
                         <a href="<?= site_url("rnilai"); ?>">
                             <i class="menu-icon fa fa-caret-right"></i>

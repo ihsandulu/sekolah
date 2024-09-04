@@ -66,12 +66,12 @@ class api extends CI_Controller
 			foreach ($user->result() as $user) {
 				$data["message"] = "Name: " . $user->user_name . ". Class: " . $user->kelas_name . ". Tagihan: Rp " . number_format($saldo, 0, ",", ".");
 				$data["user_tahunajaran"] = $user->user_tahunajaran;
-				$data["kelas_id"] =$user->kelas_id;
+				$data["kelas_id"] = $user->kelas_id;
 			}
 		} else {
 			$data["message"] = "No Data!";
-			$data["user_tahunajaran"] =date("Y");
-			$data["kelas_id"] ="0";
+			$data["user_tahunajaran"] = date("Y");
+			$data["kelas_id"] = "0";
 		}
 		// echo $data["message"];
 		$this->djson($data);
@@ -523,6 +523,43 @@ class api extends CI_Controller
 		foreach ($sisa->result() as $gurugrup) {
 			?>
 			<option value="<?= $gurugrup->grup_guru_id; ?>"><?= $gurugrup->grup_name; ?></option>
+			<?php }
+	}
+
+
+	function isi_matpel_id_guru()
+	{
+		$sekolah_id = $this->input->get("sekolah_id");
+		$user_id = $this->input->get("user_id");
+		$gru = $this->db
+			->where("matpel.sekolah_id", $sekolah_id)
+			->get("matpel");
+		foreach ($gru->result() as $matpel) {
+			$matpelguru = $this->db
+				->where("user_id", $user_id)
+				->where("matpel_id", $matpel->matpel_id)
+				->where("sekolah_id", $sekolah_id)
+				->get("matpelguru")->num_rows();
+			if ($matpelguru == 0) {
+			?>
+				<option value="<?= $matpel->matpel_id; ?>"><?= $matpel->matpel_name; ?></option>
+			<?php }
+		}
+	}
+
+	function isi_matpelguru()
+	{
+		$sekolah_id = $this->input->get("sekolah_id");
+		$user_id = $this->input->get("user_id");
+		$sisa = $this->db
+			->join("matpel", "matpel.matpel_id=matpelguru.matpel_id", "left")
+			->where("matpelguru.sekolah_id", $sekolah_id)
+			->where("matpelguru.user_id", $user_id)
+			->get("matpelguru");
+		//$a = $this->db->last_query();
+		foreach ($sisa->result() as $gurumatpelguru) {
+			?>
+			<option value="<?= $gurumatpelguru->matpelguru_id; ?>"><?= $gurumatpelguru->matpel_name; ?></option>
 		<?php }
 	}
 
@@ -539,6 +576,7 @@ class api extends CI_Controller
 		}
 	}
 
+
 	function deletegrupguru()
 	{
 		$input["sekolah_id"] = $this->input->get("sekolah_id");
@@ -546,6 +584,29 @@ class api extends CI_Controller
 		foreach ($grup_guru_id as $a => $b) {
 			$input["grup_guru_id"] = $b;
 			$this->db->delete("grup_guru", $input);
+			echo $this->db->last_query() . ",";
+		}
+	}
+
+	function inputmatpelguru()
+	{
+		$input["sekolah_id"] = $this->input->get("sekolah_id");
+		$input["user_id"] = $this->input->get("user_id");
+		$matpel_id = $this->input->get("matpel_id");
+		foreach ($matpel_id as $a => $b) {
+			$input["matpel_id"] = $b;
+			$this->db->insert("matpelguru", $input);
+			echo $this->db->insert_id() . ",";
+		}
+	}
+
+	function deletematpelguru()
+	{
+		$input["sekolah_id"] = $this->input->get("sekolah_id");
+		$matpelguru_id = $this->input->get("matpelguru_id");
+		foreach ($matpelguru_id as $a => $b) {
+			$input["matpelguru_id"] = $b;
+			$this->db->delete("matpelguru", $input);
 			echo $this->db->last_query() . ",";
 		}
 	}
@@ -1558,12 +1619,14 @@ class api extends CI_Controller
 	function listmatpel()
 	{
 		$matpel_id = $this->input->get("matpel_id");
+		$user_id = $this->input->get("user_id");
 	?>
 		<option value="" <?= ($matpel_id == "") ? "selected" : ""; ?>>Choose Subject</option>
 		<?php
-		$matpel = $this->db->from("matpel_sekolah")
-			->join("matpel", "matpel.matpel_id=matpel_sekolah.matpel_id", "left")
-			->where("matpel.sekolah_id", $this->session->userdata("sekolah_id"))
+		$matpel = $this->db->from("matpelguru")
+			->join("matpel", "matpel.matpel_id=matpelguru.matpel_id", "left")
+			->where("matpelguru.sekolah_id", $this->session->userdata("sekolah_id"))
+			->where("matpelguru.user_id", $user_id)
 			->get();
 		// echo $this->db->last_query();
 		foreach ($matpel->result() as $row) { ?>
@@ -1596,9 +1659,6 @@ class api extends CI_Controller
 		<?php
 		if ($this->session->userdata("sekolah_id") > 0) {
 			$this->db->where("user.sekolah_id", $this->session->userdata("sekolah_id"));
-		}
-		if ($user_id > 0) {
-			$this->db->where("user.user_id", $user_id);
 		}
 		if ($kelas_id > 0) {
 			$this->db->where("user.kelas_id", $kelas_id);

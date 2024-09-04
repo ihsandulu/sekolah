@@ -59,7 +59,7 @@
 						Account
 
 					</h1>
-					<?php if (!isset($_POST['new']) && !isset($_POST['edit']) && !isset($_GET['laporan'])&& $this->session->userdata("position_id") != 4) { ?>
+					<?php if (!isset($_POST['new']) && !isset($_POST['edit']) && !isset($_GET['laporan']) && $this->session->userdata("position_id") != 4) { ?>
 
 						<form method="post" class="col-md-2" style="margin-top:-30px; float:right;">
 
@@ -203,6 +203,66 @@
 															<label for="from">To:</label>
 															<input id="to" name="to" type="date" value="<?= $this->input->post("to"); ?>" />
 														</div>
+														<div class="form-group">
+															<label for="kelas_id">Class:</label>
+															<?php
+															if (isset($_POST["kelas_id"])) {
+																$kelas_id = $this->input->post("kelas_id");
+															} else {
+																$kelas_id = 0;
+															}
+															if (isset($_POST["user_id"])) {
+																$user_id = $this->input->post("user_id");
+															} else {
+																$user_id = 0;
+															}
+															$this->db->join("kelas", "kelas.kelas_id=kelas_guru.kelas_id", "left");
+															if ($this->session->userdata("sekolah_id") > 0) {
+																$this->db->where("kelas.sekolah_id", $this->session->userdata("sekolah_id"));
+															}
+															
+															$gru = $this->db->group_by("kelas_guru.kelas_id")
+																->get("kelas_guru");
+															// echo $this->db->last_query();
+															// echo $this->session->userdata("position_id");
+															?>
+															<select onchange="listsiswasekolah();" name="kelas_id" id="kelas_id" class="form-control" onChange="cari_user(this.value)">
+																<option value="0" <?= ($kelas_id == 0) ? 'selected="selected"' : ""; ?>>All Class</option>
+																<?php
+
+																foreach ($gru->result() as $kelas) { ?>
+																	<option value="<?= $kelas->kelas_id; ?>" <?= ($kelas_id == $kelas->kelas_id) ? 'selected="selected"' : ""; ?>><?= $kelas->kelas_name; ?></option>
+																<?php } ?>
+															</select>
+														</div>
+
+														<script>
+															function listsiswasekolah() {
+																let kelas_id = $("#kelas_id").val();
+																// alert("<?= base_url("api/listsiswakelas"); ?>?kelas_id="+kelas_id+"&user_id=<?= $user_id; ?>");
+																if (kelas_id > 0) {
+																	$.get("<?= base_url("api/listsiswakelas"); ?>", {
+																			kelas_id: kelas_id,
+																			user_id: '<?= $user_id; ?>'
+																		})
+																		.done(function(data) {
+																			$("#user_id").html(data);
+																		});
+																} else {
+																	$("#user_id").html('');
+																}
+															}
+
+															listsiswasekolah();
+														</script>
+
+
+														<div class="form-group">
+															<label for="user_id">Student:</label>
+															<select name="user_id" id="user_id" class="form-control">
+
+															</select>
+														</div>
 														<button type="submit" class="btn btn-success fa fa-search" onMouseOver="search()"> Search</button>
 														<button type="submit" class="btn btn-info fa fa-print" onMouseOver="print()"> Print</button>
 														<script>
@@ -260,6 +320,14 @@
 													}
 													if ($this->session->userdata("sekolah_id") > 0) {
 														$this->db->where("tabungan.sekolah_id", $this->session->userdata("sekolah_id"));
+													}
+
+													
+													if (isset($_POST['kelas_id']) && $_POST['kelas_id'] > 0) {
+														$this->db->where("kelas.kelas_id", $kelas_id);
+													}
+													if (isset($_POST['user_id']) && $_POST['user_id'] > 0) {
+														$this->db->where("user.user_id", $_POST['user_id']);
 													}
 
 													if ($this->session->userdata("position_id") == 4) {

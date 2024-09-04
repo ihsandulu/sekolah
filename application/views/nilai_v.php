@@ -3,7 +3,25 @@
 
 <head>
     <?php
-    require_once("meta.php"); ?>
+    require_once("meta.php");
+    $user_id = $this->session->userdata("user_id");
+    ?>
+    <style>
+        .mt-5 {
+            margin-top: 20px !important;
+        }
+
+        .mb-5 {
+            margin-bottom: 20px !important;
+        }
+
+        .tengah {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
 </head>
 
 <body class="no-skin">
@@ -61,10 +79,11 @@
                                                     <select class="form-control" id="kelas_id" name="kelas_id">
                                                         <option value="" <?= ($kelas_id == "") ? "selected" : ""; ?>>Choose Class</option>
                                                         <?php
-                                                        $kelas = $this->db->from("kelas_sekolah")
-                                                            ->join("kelas", "kelas.kelas_id=kelas_sekolah.kelas_id", "left")
-                                                            ->where("kelas_sekolah.sekolah_id", $this->session->userdata("sekolah_id"))
-                                                            ->order_by("kelas_name","ASC")
+                                                        $kelas = $this->db->from("kelas_guru")
+                                                            ->join("kelas", "kelas.kelas_id=kelas_guru.kelas_id", "left")
+                                                            ->where("kelas_guru.sekolah_id", $this->session->userdata("sekolah_id"))
+                                                            ->where("kelas_guru.user_id", $this->session->userdata("user_id"))
+                                                            ->order_by("kelas_name", "ASC")
                                                             ->get();
                                                         foreach ($kelas->result() as $row) { ?>
                                                             <option value="<?= $row->kelas_id; ?>" <?= ($kelas_id == $row->kelas_id) ? "selected" : ""; ?>><?= $row->kelas_name; ?></option>
@@ -122,10 +141,10 @@
                                                         });
 
                                                     //matapelajaran
-                                                    // alert('<?= site_url("api/listmatpel"); ?>?matpel_id=<?= $matpel_id; ?>&kelas_id='+kelas_id);
+                                                    // alert('<?= site_url("api/listmatpel"); ?>?matpel_id=<?= $matpel_id; ?>&kelas_id='+kelas_id+'&user_id=<?= $user_id; ?>');
                                                     $.get("<?= site_url("api/listmatpel"); ?>", {
                                                             matpel_id: '<?= $matpel_id; ?>',
-                                                            kelas_id: kelas_id
+                                                            user_id: '<?= $user_id; ?>'
                                                         })
                                                         .done(function(data) {
                                                             $('#matpel_id').html(data);
@@ -164,63 +183,155 @@
                                     <?php } ?>
                                     <div class="box">
                                         <div id="collapse4" class="body table-responsive">
-                                            <table id="dataTable" class="table table-condensed table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <?php if ($this->session->userdata("position_id") != 4) { ?>
-                                                            <th class="col-md-2">Action</th>
-                                                        <?php } ?>
-                                                        <th>School</th>
-                                                        <th>Class</th>
-                                                        <th>Subject</th>
-                                                        <th>Sumatif</th>
-                                                        <th>NIK</th>
-                                                        <th>Name</th>
-                                                        <th>Score</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php
-                                                    if ($this->session->userdata("sekolah_id") > 0) {
-                                                        $this->db->where("nilai.sekolah_id", $this->session->userdata("sekolah_id"));
-                                                    }
+                                            <?php
+                                            if ($this->session->userdata("position_id") != 4) {
+                                            ?>
+                                                <div class="page-header  mb-5">
+                                                    <div>
 
-													if ($this->session->userdata("position_id") == 4) {
-														$this->db->where("nilai.user_id", $this->session->userdata("user_id"));
-													}
-                                                    $usr = $this->db
-                                                        ->join("sekolah", "sekolah.sekolah_id=nilai.sekolah_id", "left")
-                                                        ->join("matpel", "matpel.matpel_id=nilai.matpel_id", "left")
-                                                        ->join("sumatif", "sumatif.sumatif_id=nilai.sumatif_id", "left")
-                                                        ->join("kelas", "kelas.kelas_id=nilai.kelas_id", "left")
-                                                        ->join("user", "user.user_id=nilai.user_id", "left")
-                                                        ->get("nilai");
-                                                    // echo $this->db->last_query();
-                                                    foreach ($usr->result() as $nilai) { ?>
+                                                        <form class="form-inline col-md-6">
+
+                                                            <div class="form-group">
+                                                                <label for="kelas_id">Class:</label>
+                                                                <?php
+                                                                if (isset($_GET["kelas_id"])) {
+                                                                    $kelas_id = $this->input->get("kelas_id");
+                                                                } else {
+                                                                    $kelas_id = 0;
+                                                                }
+                                                                if (isset($_GET["user_id"])) {
+                                                                    $user_id = $this->input->get("user_id");
+                                                                } else {
+                                                                    $user_id = 0;
+                                                                }
+                                                                $this->db->join("kelas", "kelas.kelas_id=kelas_guru.kelas_id", "left");
+                                                                if ($this->session->userdata("sekolah_id") > 0) {
+                                                                    $this->db->where("kelas.sekolah_id", $this->session->userdata("sekolah_id"));
+                                                                }
+                                                                if ($this->session->userdata("position_id") != 1 && $this->session->userdata("position_id") != 2) {
+                                                                    $this->db->where("kelas_guru.user_id", $this->session->userdata("user_id"));
+                                                                }
+                                                                $gru = $this->db->group_by("kelas_guru.kelas_id")
+                                                                    ->get("kelas_guru");
+                                                                // echo $this->db->last_query();
+                                                                // echo $this->session->userdata("position_id");
+                                                                ?>
+                                                                <select onchange="listsiswasekolah();" name="kelas_id" id="kelas_id" class="form-control" onChange="cari_user(this.value)">
+                                                                    <option value="0" <?= ($kelas_id == 0) ? 'selected="selected"' : ""; ?>>Choose Class</option>
+                                                                    <?php
+
+                                                                    foreach ($gru->result() as $kelas) { ?>
+                                                                        <option value="<?= $kelas->kelas_id; ?>" <?= ($kelas_id == $kelas->kelas_id) ? 'selected="selected"' : ""; ?>><?= $kelas->kelas_name; ?></option>
+                                                                    <?php } ?>
+                                                                </select>
+                                                            </div>
+
+                                                            <script>
+                                                                function listsiswasekolah() {
+                                                                    let kelas_id = $("#kelas_id").val();
+                                                                    // alert("<?= base_url("api/listsiswakelas"); ?>?kelas_id="+kelas_id+"&user_id=<?= $user_id; ?>");
+                                                                    if (kelas_id > 0) {
+                                                                        $.get("<?= base_url("api/listsiswakelas"); ?>", {
+                                                                                kelas_id: kelas_id,
+                                                                                user_id: '<?= $user_id; ?>'
+                                                                            })
+                                                                            .done(function(data) {
+                                                                                $("#user_id").html(data);
+                                                                            });
+                                                                    } else {
+                                                                        $("#user_id").html('');
+                                                                    }
+                                                                }
+
+                                                                listsiswasekolah();
+                                                            </script>
+
+
+                                                            <div class="form-group">
+                                                                <label for="user_id">Student:</label>
+                                                                <select name="user_id" id="user_id" class="form-control">
+
+                                                                </select>
+                                                            </div>
+
+                                                            <button type="submit" class="btn btn-default">Submit</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            <?php } ?>
+                                            <br />
+
+                                            <?php
+                                            if (isset($_GET["kelas_id"]) && $_GET["kelas_id"] > 0) {
+                                            ?>
+                                                <table id="dataTable" class="table table-condensed table-hover ">
+                                                    <thead>
                                                         <tr>
                                                             <?php if ($this->session->userdata("position_id") != 4) { ?>
-                                                                <td style="padding-left:0px; padding-right:0px;">
-                                                                    <form method="post" class="col-md-3" style="padding:0px;">
-                                                                        <button class="btn btn-warning " name="edit" value="OK"><span class="fa fa-edit" style="color:white;"></span> </button>
-                                                                        <input type="hidden" name="nilai_id" value="<?= $nilai->nilai_id; ?>" />
-                                                                    </form>
-                                                                    <form method="post" class="col-md-3" style="padding:0px;">
-                                                                        <button class="btn btn-danger delete" name="delete" value="OK"><span class="fa fa-close" style="color:white;"></span> </button>
-                                                                        <input type="hidden" name="nilai_id" value="<?= $nilai->nilai_id; ?>" />
-                                                                    </form>
-                                                                </td>
+                                                                <th class="col-md-2">Action</th>
                                                             <?php } ?>
-                                                            <td><?= $nilai->sekolah_name; ?></td>
-                                                            <td><?= $nilai->kelas_name; ?></td>
-                                                            <td><?= $nilai->matpel_name; ?></td>
-                                                            <td><?= $nilai->sumatif_name; ?></td>
-                                                            <td><?= $nilai->user_nik; ?></td>
-                                                            <td><?= $nilai->user_name; ?></td>
-                                                            <td><?= $nilai->nilai_score; ?></td>
+                                                            <th>School</th>
+                                                            <th>Class</th>
+                                                            <th>Subject</th>
+                                                            <th>Sumatif</th>
+                                                            <th>NIK</th>
+                                                            <th>Name</th>
+                                                            <th>Score</th>
                                                         </tr>
-                                                    <?php } ?>
-                                                </tbody>
-                                            </table>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php
+                                                        if ($this->session->userdata("sekolah_id") > 0) {
+                                                            $this->db->where("nilai.sekolah_id", $this->session->userdata("sekolah_id"));
+                                                        }
+
+                                                        if ($this->session->userdata("position_id") == 4) {
+                                                            $this->db->where("nilai.user_id", $this->session->userdata("user_id"));
+                                                        }
+                                                        if (isset($_GET['kelas_id']) && $_GET['kelas_id'] > 0) {
+                                                            $this->db->where("kelas.kelas_id", $kelas_id);
+                                                        }
+                                                        if (isset($_GET['user_id']) && $_GET['user_id'] > 0) {
+                                                            $this->db->where("user.user_id", $_GET['user_id']);
+                                                        }
+                                                        $usr = $this->db
+                                                            ->join("sekolah", "sekolah.sekolah_id=nilai.sekolah_id", "left")
+                                                            ->join("matpel", "matpel.matpel_id=nilai.matpel_id", "left")
+                                                            ->join("sumatif", "sumatif.sumatif_id=nilai.sumatif_id", "left")
+                                                            ->join("kelas", "kelas.kelas_id=nilai.kelas_id", "left")
+                                                            ->join("user", "user.user_id=nilai.user_id", "left")
+                                                            ->get("nilai");
+                                                        // echo $this->db->last_query();
+                                                        foreach ($usr->result() as $nilai) { ?>
+                                                            <tr>
+                                                                <?php if ($this->session->userdata("position_id") != 4) { ?>
+                                                                    <td style="padding-left:0px; padding-right:0px;">
+                                                                        <form method="post" class="col-md-3" style="padding:0px;">
+                                                                            <button class="btn btn-warning " name="edit" value="OK"><span class="fa fa-edit" style="color:white;"></span> </button>
+                                                                            <input type="hidden" name="nilai_id" value="<?= $nilai->nilai_id; ?>" />
+                                                                        </form>
+                                                                        <form method="post" class="col-md-3" style="padding:0px;">
+                                                                            <button class="btn btn-danger delete" name="delete" value="OK"><span class="fa fa-close" style="color:white;"></span> </button>
+                                                                            <input type="hidden" name="nilai_id" value="<?= $nilai->nilai_id; ?>" />
+                                                                        </form>
+                                                                    </td>
+                                                                <?php } ?>
+                                                                <td><?= $nilai->sekolah_name; ?></td>
+                                                                <td><?= $nilai->kelas_name; ?></td>
+                                                                <td><?= $nilai->matpel_name; ?></td>
+                                                                <td><?= $nilai->sumatif_name; ?></td>
+                                                                <td><?= $nilai->user_nik; ?></td>
+                                                                <td><?= $nilai->user_name; ?></td>
+                                                                <td><?= $nilai->nilai_score; ?></td>
+                                                            </tr>
+                                                        <?php } ?>
+                                                    </tbody>
+                                                </table>
+                                            <?php } else { ?>
+                                                <div class="tengah">
+                                                    <h1><b>Choose Class First!</b></h1>
+                                                </div>
+                                            <?php } ?>
                                         </div>
                                     </div>
                                 <?php } ?>

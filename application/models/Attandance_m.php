@@ -65,7 +65,9 @@ class Attandance_M extends CI_Model
                 }
             }
             $double = $this->db
-                ->where("user_id", $input["user_id"])
+            ->where("user_id", $input["user_id"])
+            ->where("absen_date", $input["absen_date"])
+            ->where("absen_type", $input["absen_type"])
                 ->get("absen");
             if ($double->num_rows() == 0) {
                 $this->db->insert("absen", $input);

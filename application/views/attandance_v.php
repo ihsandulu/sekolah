@@ -55,6 +55,12 @@
                                         </div>
                                         <form class="form-horizontal" method="post" enctype="multipart/form-data">
 
+                                        <div class="form-group">
+                                                <label class="control-label col-sm-2" for="absen_date">Date:</label>
+                                                <div class="col-sm-10">
+                                                    <input type="date" class="form-control" id="absen_date" name="absen_date" value="<?= $absen_date; ?>">
+                                                </div>
+                                            </div>
                                             <div class="form-group">
                                                 <label class="control-label col-sm-2" for="kelas_id">Class:</label>
                                                 <div class="col-sm-10">

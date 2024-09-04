@@ -22,6 +22,7 @@
 					<tr>
 					  <th>Date</th>
 					  <th>School</th>
+					  <th>Class</th>
 						<th>User</th>
 						<th>NISN/NIK</th>
 						<th>Transaction Name</th>
@@ -46,6 +47,20 @@
 					if($this->session->userdata("sekolah_id")>0){
 						$this->db->where("transaction.sekolah_id",$this->session->userdata("sekolah_id"));
 					}
+
+					
+													
+					if (isset($_POST['kelas_id']) && $_POST['kelas_id'] > 0) {
+						$this->db->where("kelas.kelas_id", $kelas_id);
+					}
+					if (isset($_POST['user_id']) && $_POST['user_id'] > 0) {
+						$this->db->where("user.user_id", $_POST['user_id']);
+					}
+					
+					if ($this->session->userdata("position_id") == 4) {
+						$this->db->where("tabungan.user_nisn", $this->session->userdata("user_nisn"));
+					}
+
 					$usr=$this->db
 					->join("sekolah","sekolah.sekolah_id=transaction.sekolah_id","left")
 					->join("user","user.user_nik=transaction.`user_nik` AND user.user_nisn=transaction.user_nisn","left")                                                ->order_by("transaction_datetime","desc")
@@ -56,7 +71,8 @@
 					if($transaction->user_nisn==""){$back="background-color:#FEDCC5";}else{$back="";}?>
 					<tr style="<?=$back;?>">
 					  <td><?=$transaction->transaction_datetime;?></td>											
-						<td><?=$transaction->sekolah_name;?></td>
+					  <td><?=$transaction->sekolah_name;?></td>										
+					  <td><?=$transaction->kelas_name;?></td>
 						<td><?=$transaction->user_name;?></td>
 						<td><?=$transaction->user_nisn;?></td>
 					  <td><?=$transaction->transaction_name;?></td>	

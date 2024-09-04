@@ -99,8 +99,21 @@
         .displayinline {
             display: inline;
         }
-        .mt-5{margin-top: 20px!important;}
-        .mb-5{margin-bottom: 50px!important;}
+
+        .mt-5 {
+            margin-top: 20px !important;
+        }
+
+        .mb-5 {
+            margin-bottom: 50px !important;
+        }
+
+        .tengah {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
     </style>
 </head>
 
@@ -128,16 +141,33 @@
 
                             <div class="form-group">
                                 <label for="kelas_id">Class:</label>
+                                <?php
+                                if (isset($_GET["kelas_id"])) {
+                                    $kelas_id = $this->input->get("kelas_id");
+                                } else {
+                                    $kelas_id = 0;
+                                }
+                                if (isset($_GET["user_id"])) {
+                                    $user_id = $this->input->get("user_id");
+                                } else {
+                                    $user_id = 0;
+                                }
+                                $this->db->join("kelas", "kelas.kelas_id=kelas_guru.kelas_id", "left");
+                                if ($this->session->userdata("sekolah_id") > 0) {
+                                    $this->db->where("kelas.sekolah_id", $this->session->userdata("sekolah_id"));
+                                }
+                                if ($this->session->userdata("position_id") != 1 && $this->session->userdata("position_id") != 2) {
+                                    $this->db->where("kelas_guru.user_id", $this->session->userdata("user_id"));
+                                }
+                                $gru = $this->db->group_by("kelas_guru.kelas_id")
+                                    ->get("kelas_guru");
+                                // echo $this->db->last_query();
+                                // echo $this->session->userdata("position_id");
+                                ?>
                                 <select onchange="listsiswasekolah();" name="kelas_id" id="kelas_id" class="form-control" onChange="cari_user(this.value)">
-                                    <option value="0" <?= ($kelas_id == 0) ? 'selected="selected"' : ""; ?>>All</option>
+                                    <option value="0" <?= ($kelas_id == 0) ? 'selected="selected"' : ""; ?>>Choose Class</option>
                                     <?php
-                                    if ($this->session->userdata("sekolah_id") > 0) {
-                                        $this->db->where("kelas.sekolah_id", $this->session->userdata("sekolah_id"));
-                                    }
-                                    $gru = $this->db
-                                        ->join("kelas", "kelas.kelas_id=kelas_sekolah.kelas_id", "left")
-                                        ->group_by("kelas_sekolah.kelas_id")
-                                        ->get("kelas_sekolah");
+
                                     foreach ($gru->result() as $kelas) { ?>
                                         <option value="<?= $kelas->kelas_id; ?>" <?= ($kelas_id == $kelas->kelas_id) ? 'selected="selected"' : ""; ?>><?= $kelas->kelas_name; ?></option>
                                     <?php } ?>
@@ -147,15 +177,20 @@
                             <script>
                                 function listsiswasekolah() {
                                     let kelas_id = $("#kelas_id").val();
-                                    // alert(kelas_id);
-                                    $.get("<?= base_url("api/listsiswakelas"); ?>", {
-                                            user_id: '<?= $user_id; ?>',
-                                            kelas_id: kelas_id
-                                        })
-                                        .done(function(data) {
-                                            $("#user_id").html(data);
-                                        });
+                                    // alert("<?= base_url("api/listsiswakelas"); ?>?kelas_id="+kelas_id+"&user_id=<?= $user_id; ?>");
+                                    if (kelas_id > 0) {
+                                        $.get("<?= base_url("api/listsiswakelas"); ?>", {
+                                                kelas_id: kelas_id,
+                                                user_id: '<?= $user_id; ?>'
+                                            })
+                                            .done(function(data) {
+                                                $("#user_id").html(data);
+                                            });
+                                    }else{
+                                        $("#user_id").html('');
+                                    }
                                 }
+
                                 listsiswasekolah();
                             </script>
 
@@ -173,31 +208,33 @@
 
                             <div class="form-group">
                                 <label for="sekolah_raportdate">Raport Date:</label>
-                                <input type="date" name="sekolah_raportdate" id="sekolah_raportdate" class="form-control" value="<?=$sekolah_raportdate;?>">
+                                <input type="date" name="sekolah_raportdate" id="sekolah_raportdate" class="form-control" value="<?= $sekolah_raportdate; ?>">
                             </div>
                             <button name="change" value="OK" type="submit" class="btn btn-default">Submit</button>
                             <script>
-                            <?php if(isset($_POST["change"])){?>
-                                $(document).ready(function(){
-                                    showToast("Report Date Changed!");
-                                });
-                                <?php }?>
+                                <?php if (isset($_POST["change"])) { ?>
+                                    $(document).ready(function() {
+                                        showToast("Report Date Changed!");
+                                    });
+                                <?php } ?>
                             </script>
                         </form>
                     </div>
                 </div>
-                <table id="dataTable" class="table table-hovered table-condensed">
-                    <thead>
-                        <tr>
-                            <th>Action</th>
-                            <th>School</th>
-                            <th>Class</th>
-                            <th>Student</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        if (isset($_GET["user_id"])) {
+                <?php
+                if (isset($_GET["kelas_id"]) && $_GET["kelas_id"] > 0) {
+                ?>
+                    <table id="dataTable" class="table table-hovered table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Action</th>
+                                <th>School</th>
+                                <th>Class</th>
+                                <th>Student</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
                             if ($this->session->userdata("sekolah_id") > 0) {
                                 $this->db->where("user.sekolah_id", $this->session->userdata("sekolah_id"));
                             }
@@ -216,7 +253,7 @@
                                 ->get("user");
                             // echo $this->db->last_query();
                             foreach ($tdetail->result() as $user) {
-                        ?>
+                            ?>
                                 <tr>
                                     <td>
                                         <div class="col-md-12">
@@ -228,10 +265,14 @@
                                     <td><?= $user->user_name; ?></td>
 
                                 </tr>
-                        <?php }
-                        } ?>
-                    </tbody>
-                </table>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                <?php } else { ?>
+                    <div class="tengah">
+                        <h1><b>Choose Class First!</b></h1>
+                    </div>
+                <?php } ?>
 
             </div>
         </div>

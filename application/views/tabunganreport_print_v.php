@@ -22,7 +22,8 @@
 					<tr>
 					  <th>Date</th>
 					  <th>School</th>
-						<th>User</th>
+					  <th>Class</th>
+					  <th>User</th>
 						<th>NISN/NIK</th>
 						<th>Remarks</th>
 						<th>Amount</th>
@@ -43,8 +44,23 @@
 					if($this->session->userdata("sekolah_id")>0){
 						$this->db->where("tabungan.sekolah_id",$this->session->userdata("sekolah_id"));
 					}
+						
+					$kelas_id=$_POST['kelas_id'];
+					if (isset($_POST['kelas_id']) && $_POST['kelas_id'] > 0) {
+						$this->db->where("kelas.kelas_id", $kelas_id);
+					}
+					$user_id=$_POST['user_id'];
+					if (isset($_POST['user_id']) && $_POST['user_id'] > 0) {
+						$this->db->where("user.user_id", $_POST['user_id']);
+					}
+					
+					if ($this->session->userdata("position_id") == 4) {
+						$this->db->where("tabungan.user_nisn", $this->session->userdata("user_nisn"));
+					}
+
 					$usr=$this->db
 					->join("sekolah","sekolah.sekolah_id=tabungan.sekolah_id","left")
+					->join("kelas","kelas.kelas_id=tabungan.kelas_id","left")
 					->join("user","user.user_nisn=tabungan.user_nisn","left")                                                
 					->order_by("tabungan_datetime","desc")
 					->get("tabungan");
@@ -57,7 +73,8 @@
 					if($tabungan->user_nisn==""){$back="background-color:#FEDCC5";}else{$back="";}?>
 					<tr style="<?=$back;?>">
 					  <td><?=$tabungan->tabungan_datetime;?></td>											
-						<td><?=$tabungan->sekolah_name;?></td>
+					  <td><?=$tabungan->sekolah_name;?></td>										
+					  <td><?=$tabungan->kelas_name;?></td>
 						<td><?=$tabungan->user_name;?></td>
 						<td><?=$tabungan->user_nisn;?></td>
 					  <td><?=$tabungan->tabungan_remarks;?></td>	
