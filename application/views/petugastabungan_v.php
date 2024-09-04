@@ -201,12 +201,6 @@
                             <tr>
                               <td style="padding-left:0px; padding-right:0px;">
                                 <form method="post" class="col-md-3" style="padding:0px;">
-                                  <a data-toggle="tooltip" title="Class" class="btn btn-info" href="<?= site_url("kelas_guru?user_id=" . $user->user_id); ?>"><span class="fa fa-institution" style="color:white;"></span> </a>
-                                </form>
-                                <form method="post" class="col-md-3" style="padding:0px;">
-                                  <a data-toggle="tooltip" title="Matpel" class="btn btn-success" href="<?= site_url("matpelguru?user_id=" . $user->user_id); ?>"><span class="fa fa-database" style="color:white;"></span> </a>
-                                </form>
-                                <form method="post" class="col-md-3" style="padding:0px;">
                                   <button class="btn btn-warning " name="edit" value="OK"><span class="fa fa-edit" style="color:white;"></span> </button>
                                   <input type="hidden" name="user_id" value="<?= $user->user_id; ?>" />
                                 </form>
