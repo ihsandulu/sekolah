@@ -248,6 +248,24 @@
                             <b class="arrow"></b>
                         </li>
 
+                        <li class="">
+                            <a target="_blank" href="<?= site_url("barcodecetak"); ?>">
+                                <i class="menu-icon fa fa-caret-right"></i>
+                                Student Barcode Print
+                            </a>
+
+                            <b class="arrow"></b>
+                        </li>
+
+                        <li class="">
+                            <a target="_self" href="<?= site_url("mpelanggaran"); ?>">
+                                <i class="menu-icon fa fa-caret-right"></i>
+                                Violation Name
+                            </a>
+
+                            <b class="arrow"></b>
+                        </li>
+
                         <!--  <li class="">
                         <a href="<?= site_url("grup"); ?>">
                             <i class="menu-icon fa fa-caret-right"></i>
@@ -315,7 +333,7 @@
 
                                 <b class="arrow"></b>
                             </li>
-                            <?php } ?>
+                        <?php } ?>
                         <?php if ($this->session->userdata("position_id") != 3) { ?>
                             <li class="">
                                 <a href="<?= site_url("tabungan"); ?>">
@@ -326,28 +344,35 @@
                                 <b class="arrow"></b>
                             </li>
                         <?php } ?>
-                        <?php if ($this->session->userdata("position_id") != 5) {?>                           
-                        <li class="">
-                            <a href="<?= site_url("nilai"); ?>">
-                                <i class="menu-icon fa fa-caret-right"></i>
-                                Score
-                            </a>
+                        <?php if ($this->session->userdata("position_id") != 5) { ?>
+                            <li class="">
+                                <a href="<?= site_url("nilai"); ?>">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Score
+                                </a>
 
-                            <b class="arrow"></b>
-                        </li>                        
+                                <b class="arrow"></b>
+                            </li>
                         <?php } ?>
-                        <?php if ($this->session->userdata("position_id") != 5) {?>  
-                        <li class="">
-                            <a href="<?= site_url("attandance"); ?>">
-                                <i class="menu-icon fa fa-caret-right"></i>
-                                Attendance
-                            </a>
-                            <b class="arrow"></b>
-                        </li>                  
+                        <?php if ($this->session->userdata("position_id") != 5) { ?>
+                            <li class="">
+                                <a href="<?= site_url("attandance"); ?>">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Attendance
+                                </a>
+                                <b class="arrow"></b>
+                            </li>
                         <?php } ?>
-
+                        <?php if ($this->session->userdata("position_id") != 5) { ?>
+                            <li class="">
+                                <a href="<?= site_url("pelanggaran"); ?>">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Violation
+                                </a>
+                                <b class="arrow"></b>
+                            </li>
+                        <?php } ?>
                     </ul>
-
                 </li>
             <?php } ?>
 
@@ -381,8 +406,8 @@
 
                             <b class="arrow"></b>
                         </li>
-                        <?php } ?>
-                        <?php if ($this->session->userdata("position_id") != 3) { ?>
+                    <?php } ?>
+                    <?php if ($this->session->userdata("position_id") != 3) { ?>
                         <li class="">
                             <a href="<?= site_url("tabungan?laporan=ok"); ?>">
                                 <i class="menu-icon fa fa-caret-right"></i>
@@ -393,19 +418,28 @@
                         </li>
                     <?php } ?>
                     <?php if ($this->session->userdata("position_id") != 5) { ?>
-                    <li class="">
-                        <!-- <a href="<?= site_url("rabsensi"); ?>">
+                        <li class="">
+                            <!-- <a href="<?= site_url("rabsensi"); ?>">
                             <i class="menu-icon fa fa-caret-right"></i>
                             Attendance
                         </a> -->
-                        <a href="<?= site_url("rabsen"); ?>">
-                            <i class="menu-icon fa fa-caret-right"></i>
-                            Attendance
-                        </a>
+                            <a href="<?= site_url("rabsen"); ?>">
+                                <i class="menu-icon fa fa-caret-right"></i>
+                                Attendance
+                            </a>
 
-                        <b class="arrow"></b>
-                    </li>
+                            <b class="arrow"></b>
+                        </li>
                     <?php } ?>
+                        <?php if ($this->session->userdata("position_id") != 5) { ?>
+                            <li class="">
+                                <a href="<?= site_url("pelanggaran?laporan=ok"); ?>">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Violation
+                                </a>
+                                <b class="arrow"></b>
+                            </li>
+                        <?php } ?>
                     <!-- <li class="">
                         <a href="<?= site_url("rnilai"); ?>">
                             <i class="menu-icon fa fa-caret-right"></i>

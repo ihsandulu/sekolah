@@ -151,7 +151,7 @@
 
 
 
-											<input type="hidden" id="kelas_id" name="kelas_id" value="<?= $kelas_id; ?>">
+											<input type="text" id="kelas_id" name="kelas_id" value="<?= $kelas_id; ?>">
 											<input type="hidden" name="sekolah_id" value="<?= $this->session->userdata("sekolah_id"); ?>" />
 											<input type="hidden" name="tabungan_id" value="<?= $tabungan_id; ?>" />
 											<input type="hidden" name="user_id" value="<?= $this->session->userdata("user_id"); ?>" />
@@ -171,7 +171,42 @@
 										</div>
 									<?php } ?>
 									<div class="box">
+
 										<div id="collapse4" class="body table-responsive">
+											<form id="importn" method="post" class="col-md-12 form well" enctype="multipart/form-data">
+												<div class="form-group">
+													<label>Import Excel : </label>
+													<input class="form-control" name="filesiswa" type="file" />
+												</div>
+												<div class="form-group">
+													<input id="drop" class="" name="drop" type="checkbox" value="1" />
+													<label for="drop"> Delete All Transaction</label>
+												</div>
+												<div class="form-group">
+													<button class="btn btn-primary" type="submit" name="import">Import</button>
+													<button class="btn btn-danger" type="button" onclick="tutupimport()">Close</button>
+												</div>
+											</form>
+											<button id="btnimport" class="btn btn-primary" type="button" onclick="bukaimport()">Import From Another Application</button>
+											<button id="btntemplate" class="btn btn-success" type="button" onclick="printtemplate()"><i class="fa fa-print"></i> Print Template</button>
+											<script>
+												function tutupimport() {
+													$("#importn").hide();
+													$("#btnimport").show();
+												}
+
+												function bukaimport() {
+													$("#importn").show();
+													$("#btnimport").hide();
+												}
+												tutupimport();
+
+												function printtemplate() {
+													window.open("<?= base_url('printtabungan'); ?>", '_blank');
+												}
+											</script>
+											<br />
+											<br />
 											<?php if (isset($_GET['laporan'])) { ?>
 												<div class="col-md-12" style="border:#FDDABB dashed 1px; margin-bottom:30px; padding:10px;">
 													<form id="sp" method="post" target="_blank" class="form-inline" action="<?= site_url("tabunganreport_print"); ?>">
@@ -220,7 +255,7 @@
 															if ($this->session->userdata("sekolah_id") > 0) {
 																$this->db->where("kelas.sekolah_id", $this->session->userdata("sekolah_id"));
 															}
-															
+
 															$gru = $this->db->group_by("kelas_guru.kelas_id")
 																->get("kelas_guru");
 															// echo $this->db->last_query();
@@ -263,8 +298,8 @@
 
 															</select>
 														</div>
-														<button type="submit" class="btn btn-success fa fa-search" onMouseOver="search()"> Search</button>
-														<button type="submit" class="btn btn-info fa fa-print" onMouseOver="print()"> Print</button>
+														<button name="search" type="submit" class="btn btn-success fa fa-search" onMouseOver="search()"> Search</button>
+														<button type="button" class="btn btn-info fa fa-print" onMouseOver="print()"> Print</button>
 														<script>
 															function search() {
 																$("#sp").attr({
@@ -322,11 +357,11 @@
 														$this->db->where("tabungan.sekolah_id", $this->session->userdata("sekolah_id"));
 													}
 
-													
-													if (isset($_POST['kelas_id']) && $_POST['kelas_id'] > 0) {
+
+													if (isset($_POST['search']) && $_POST['kelas_id'] > 0) {
 														$this->db->where("kelas.kelas_id", $kelas_id);
 													}
-													if (isset($_POST['user_id']) && $_POST['user_id'] > 0) {
+													if (isset($_POST['search']) && $_POST['user_id'] > 0) {
 														$this->db->where("user.user_id", $_POST['user_id']);
 													}
 

@@ -1649,6 +1649,28 @@ class api extends CI_Controller
 		<?php } ?>
 	<?php }
 
+public function siswa()
+{
+    // Ambil nilai user_nisn dari input GET
+    $user_nisn = $this->input->get("user_nisn", TRUE); // Menggunakan filter XSS
+
+    // Query untuk mendapatkan data user berdasarkan user_nisn dan sekolah_id
+    $user = $this->db->from("user")
+        ->where("user.sekolah_id", $this->session->userdata("sekolah_id"))
+        ->where("user_nisn", $user_nisn)
+        ->get();
+
+    // Cek apakah data ditemukan
+    if ($user->num_rows() > 0) {
+        $row = $user->row(); // Mengambil baris pertama
+        echo json_encode(['kelas_id' => $row->kelas_id,'user_name' => $row->user_name]); // Mengembalikan sebagai JSON
+    } else {
+        // Jika tidak ditemukan, kembalikan pesan error
+        echo json_encode(['error' => 'Data tidak ditemukan']);
+    }
+}
+
+
 
 	function listsiswakelas()
 	{

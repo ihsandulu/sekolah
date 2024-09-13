@@ -87,6 +87,102 @@ class tabungan_M extends CI_Model
 			}
 		}
 
+
+		if (isset($_POST['import'])) {
+
+			// jika kosongkan data dicentang jalankan kode berikut
+			if (isset($_POST["drop"])) {
+				if ($_POST["drop"] == 1) {
+					//delete data tabungan semua
+					$this->db->delete("tabungan", array("sekolah_id" => $this->session->userdata("sekolah_id")));
+
+					//import excel
+					if ($_FILES['filesiswa']['name'] != "") {
+						$file = $_FILES['filesiswa']['tmp_name'];
+						//load the excel library
+						$this->load->library('excel');
+						//read file from path
+						$objPHPExcel = PHPExcel_IOFactory::load($file);
+						//get only the Cell Collection
+						$cell_collection = $objPHPExcel->getActiveSheet()->getCellCollection();
+						//extract to a PHP readable array format
+						$row = 0;
+						$column = 0;
+						foreach ($cell_collection as $cell) {
+							$column = $objPHPExcel->getActiveSheet()->getCell($cell)->getColumn();
+							$row = $objPHPExcel->getActiveSheet()->getCell($cell)->getRow();
+							$data_value = $objPHPExcel->getActiveSheet()->getCell($cell)->getValue();
+
+							//header will/should be in row 1 only. 
+							if ($row == 1) {
+								$header[$row][$column] = $data_value;
+							} else {
+								$arr_data[$row][$column] = $data_value;
+							}
+						}
+
+						// import data excel mulai baris ke-2 (karena tabel xls ada header pada baris 1)
+						$gagal = 0;
+						$sukses = 0;
+						//echo $row." ".$column;die;
+						// uraikan
+						for ($x = 2; $x <= $row; $x++) {
+							if (isset($arr_data[$x]["H"])) {
+								if ($arr_data[$x]["H"] == "T") {
+									$type = "Kredit";
+								} else {
+									$type = "Debet";
+								}
+							} else {
+								// Nilai default jika indeks "H" tidak ada
+								$type = "Debet";
+							}
+
+							$dateValue = $arr_data[$x]["E"];
+							if (is_numeric($dateValue)) {
+								$timestamp = PHPExcel_Shared_Date::ExcelToPHP($dateValue);
+								$tabungan_datetime = date("Y-m-d 00:00:00", $timestamp);
+							} else {
+								$dateString = explode("/", $dateValue);
+								if (count($dateString) === 3) {
+									$tabungan_datetime = $dateString[2] . "-" . $dateString[1] . "-" . $dateString[0] . " 00:00:00";
+								} else {
+									$tabungan_datetime = "1970-01-01 00:00:00";
+								}
+							}
+
+
+							$user = $this->db->where("user_nisn", $arr_data[$x]["B"])->get("user");
+							if ($user->num_rows() > 0) {
+								foreach ($user->result() as $user) {
+									$input["user_nisn"] = $arr_data[$x]["B"];
+									$input["tabungan_datetime"] = $tabungan_datetime;
+									$input["tabungan_amount"] = $arr_data[$x]["F"];
+									$input["user_id"] = $user->user_id;
+									$input["tabungan_type"] = $type;
+									$input["tabungan_remarks"] = "Hasil Import";
+									$input["sekolah_id"] = $this->session->userdata("sekolah_id");
+									$input["tabungan_tahun"] = $user->user_tahunajaran;
+									$input["kelas_id"] = $user->kelas_id;
+									$this->db->insert("tabungan", $input);
+									
+									$user_id = $this->db->insert_id();
+									$sukses++;
+								}
+							} else {
+								$gagal++;
+							}
+						}
+						$data["message"] = "Keterangan Import Data Tabungan : Sukses=" . $sukses . ", Gagal=" . $gagal;
+					}
+				} else {
+					$data["message"] = "Import gagal karena pilihan 'Delete All Transaction' tidak di pilih!";
+				}
+			} else {
+				$data["message"] = "Import gagal karena pilihan 'Delete All Transaction' tidak di pilih!";
+			}
+		}
+
 		//upload image
 		$data['uploadtabungan_picture'] = "";
 		if (isset($_FILES['tabungan_picture']) && $_FILES['tabungan_picture']['name'] != "") {
