@@ -195,7 +195,7 @@
                             </ul>
                         </li>
 
-                        <?php if ($this->session->userdata("position_id") == "1") { ?>
+                        <?php if ($this->session->userdata("position_id") == "1" || $this->session->userdata("position_id") == "2") { ?>
                             <li class="">
                                 <a href="<?= site_url("matpelgroup"); ?>">
                                     <i class="menu-icon fa fa-caret-right"></i>
@@ -206,7 +206,7 @@
                             </li>
                         <?php } ?>
 
-                        <?php if ($this->session->userdata("position_id") == "1") { ?>
+                        <?php if ($this->session->userdata("position_id") == "1" || $this->session->userdata("position_id") == "2") { ?>
                             <li class="">
                                 <a href="<?= site_url("matpel"); ?>">
                                     <i class="menu-icon fa fa-caret-right"></i>
@@ -217,7 +217,7 @@
                             </li>
                         <?php } ?>
 
-                        <?php if ($this->session->userdata("position_id") == "1") { ?>
+                        <?php if ($this->session->userdata("position_id") == "1" || $this->session->userdata("position_id") == "2") { ?>
                             <li class="">
                                 <a href="<?= site_url("sumatif"); ?>">
                                     <i class="menu-icon fa fa-caret-right"></i>
@@ -228,7 +228,7 @@
                             </li>
                         <?php } ?>
 
-                        <?php if ($this->session->userdata("position_id") == "1") { ?>
+                        <?php if ($this->session->userdata("position_id") == "1" || $this->session->userdata("position_id") == "2") { ?>
                             <li class="">
                                 <a href="<?= site_url("kelas"); ?>">
                                     <i class="menu-icon fa fa-caret-right"></i>
