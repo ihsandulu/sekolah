@@ -16,7 +16,10 @@
 			/* this affects the margin in the printer settings */
 		}
 
-		div,
+		div{
+			margin: 0px;
+			padding: 0px;
+		}
 		body {
 			margin: 0px;
 			padding: 10px;
