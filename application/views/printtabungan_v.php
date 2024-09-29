@@ -43,7 +43,7 @@
             border: black solid 1px;
             padding: 0px;
             margin: 0px;
-            height: 988px;
+            height: 888px;
         }
 
         .tabel {
@@ -59,7 +59,7 @@
             margin-top: 5px;
         }
         #footer{
-            height: 64px;
+            height: 0px;
         }
     </style>
 </head>
