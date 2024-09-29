@@ -22,7 +22,7 @@
 		}
 		body {
 			margin: 0px;
-			padding: 10px;
+			padding: 0px 20px 0px 20px;
 		}
 
         .kartu {
