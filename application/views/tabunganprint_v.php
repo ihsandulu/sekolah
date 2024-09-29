@@ -27,14 +27,17 @@
 			text-align: center;
 			font-size: 12px;
 		}
+		.tabel{font-size: 10px!important;}
 	</style>
 </head>
 
-<body style="padding-left:5px;">
+<body style="padding-left:5px; padding-top:250px;">
 	<?php
 	$line = $this->input->get("line");
 	$where["tabungan_id"] = $this->input->get("tabungan_id");
-	$print = $this->db->get_where("tabungan", $where);
+	$print = $this->db
+	->join("tabungankode","tabungankode.tabungankode_id=tabungan.tabungankode_id","left")
+	->get_where("tabungan", $where);
 	//echo $this->db->last_query();
 	foreach ($print->result() as $print) { ?>
 		<?php for ($x = 1; $x <= $line; $x++) { ?>
@@ -48,7 +51,7 @@
 
 				<div class="col-xs-1 tabel"><?= $line; ?></div>
 				<div class="col-xs-3 tabel"><?= date("d/m/Y", strtotime($print->tabungan_datetime)); ?></div>
-				<div class="col-xs-5 tabel"><?= $print->tabungan_type; ?> - <?= number_format($print->tabungan_amount, 0, ",", "."); ?></div>
+				<div class="col-xs-5 tabel"><?= $print->tabungankode_kode; ?> - <?= number_format($print->tabungan_amount, 0, ",", "."); ?></div>
 				<div class="col-xs-3 tabel">
 					<?php
 					//user

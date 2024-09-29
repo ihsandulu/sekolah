@@ -55,7 +55,7 @@
                                         </div>
                                         <form class="form-horizontal" method="post" enctype="multipart/form-data">
 
-                                        <div class="form-group">
+                                            <div class="form-group">
                                                 <label class="control-label col-sm-2" for="absen_date">Date:</label>
                                                 <div class="col-sm-10">
                                                     <input type="date" class="form-control" id="absen_date" name="absen_date" value="<?= $absen_date; ?>">
@@ -70,7 +70,7 @@
                                                         $kelas = $this->db->from("kelas_sekolah")
                                                             ->join("kelas", "kelas.kelas_id=kelas_sekolah.kelas_id", "left")
                                                             ->where("kelas_sekolah.sekolah_id", $this->session->userdata("sekolah_id"))
-                                                            ->order_by("kelas_name","ASC")
+                                                            ->order_by("kelas_name", "ASC")
                                                             ->get();
                                                         foreach ($kelas->result() as $row) { ?>
                                                             <option value="<?= $row->kelas_id; ?>" <?= ($kelas_id == $row->kelas_id) ? "selected" : ""; ?>><?= $row->kelas_name; ?></option>
@@ -81,20 +81,27 @@
                                             <div class="form-group">
                                                 <label class="control-label col-sm-2" for="user_id">Student:</label>
                                                 <div class="col-sm-10">
-                                                    <select class="form-control" id="user_id" name="user_id">
+                                                    <select onchange="isinisn()" class="form-control" id="user_id" name="user_id">
 
                                                     </select>
+                                                    <input id="absen_nisn" name="absen_nisn" type="hidden" />
+                                                    <script>
+                                                        function isinisn() {
+                                                            let absen_nisn = $("#user_id option:selected").attr("absen_nisn");
+                                                            $("#absen_nisn").val(absen_nisn);
+                                                        }
+                                                    </script>
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <label class="control-label col-sm-2" for="absen_type">Attandance:</label>
                                                 <div class="col-sm-10">
                                                     <select class="form-control" id="absen_type" name="absen_type">
-                                                    <option value="0" <?=($absen_type=="0")?"selected":"";?>>ALPHA</option>
-                                                    <option value="1" <?=($absen_type=="1")?"selected":"";?>>IN</option>
-                                                    <option value="2" <?=($absen_type=="2")?"selected":"";?>>OUT</option>
-                                                    <option value="3" <?=($absen_type=="3")?"selected":"";?>>SICK</option>
-                                                    <option value="4" <?=($absen_type=="4")?"selected":"";?>>PERMISSION</option>
+                                                        <option value="0" <?= ($absen_type == "0") ? "selected" : ""; ?>>ALPHA</option>
+                                                        <option value="1" <?= ($absen_type == "1") ? "selected" : ""; ?>>IN</option>
+                                                        <option value="2" <?= ($absen_type == "2") ? "selected" : ""; ?>>OUT</option>
+                                                        <option value="3" <?= ($absen_type == "3") ? "selected" : ""; ?>>SICK</option>
+                                                        <option value="4" <?= ($absen_type == "4") ? "selected" : ""; ?>>PERMISSION</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -119,7 +126,7 @@
                                                             $('#user_id').html(data);
                                                         });
 
-                                                    
+
                                                 }
                                                 $("#kelas_id").change(cariabsen);
                                                 cariabsen();
@@ -142,6 +149,97 @@
                                             <strong><?= $message; ?></strong>
                                         </div>
                                     <?php } ?>
+                                    <div class="page-header  mb-5">
+                                        <div>
+
+                                            <form class="form-inline ">
+                                                <?php
+                                                if (isset($_GET["from"]) && $_GET["from"] != "") {
+                                                    $from = $_GET["from"];
+                                                } else {
+                                                    $from = date("Y-m-d");
+                                                }
+                                                if (isset($_GET["to"]) && $_GET["to"] != "") {
+                                                    $to = $_GET["to"];
+                                                } else {
+                                                    $to = date("Y-m-d");
+                                                }
+                                                ?>
+                                                <div class="form-group">
+                                                    <label for="from">From:</label>
+                                                    <input type="date" name="from" id="from" class="form-control" value="<?= $from; ?>">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="to">To:</label>
+                                                    <input type="date" name="to" id="to" class="form-control" value="<?= $to; ?>">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="kelas_id">Class:</label>
+                                                    <?php
+                                                    if (isset($_GET["kelas_id"])) {
+                                                        $kelas_id = $this->input->get("kelas_id");
+                                                    } else {
+                                                        $kelas_id = 0;
+                                                    }
+                                                    if (isset($_GET["user_id"])) {
+                                                        $user_id = $this->input->get("user_id");
+                                                    } else {
+                                                        $user_id = 0;
+                                                    }
+                                                    $this->db->join("kelas", "kelas.kelas_id=kelas_guru.kelas_id", "left");
+                                                    if ($this->session->userdata("sekolah_id") > 0) {
+                                                        $this->db->where("kelas.sekolah_id", $this->session->userdata("sekolah_id"));
+                                                    }
+                                                    if ($this->session->userdata("position_id") != 1 && $this->session->userdata("position_id") != 2) {
+                                                        $this->db->where("kelas_guru.user_id", $this->session->userdata("user_id"));
+                                                    }
+                                                    $gru = $this->db->group_by("kelas_guru.kelas_id")
+                                                        ->get("kelas_guru");
+                                                    // echo $this->db->last_query();
+                                                    // echo $this->session->userdata("position_id");
+                                                    ?>
+                                                    <select onchange="listsiswasekolah();" name="kelas_id" id="kelas_id" class="form-control" onChange="cari_user(this.value)">
+                                                        <option value="0" <?= ($kelas_id == 0) ? 'selected="selected"' : ""; ?>>Choose Class</option>
+                                                        <?php
+
+                                                        foreach ($gru->result() as $kelas) { ?>
+                                                            <option value="<?= $kelas->kelas_id; ?>" <?= ($kelas_id == $kelas->kelas_id) ? 'selected="selected"' : ""; ?>><?= $kelas->kelas_name; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+
+                                                <script>
+                                                    function listsiswasekolah() {
+                                                        let kelas_id = $("#kelas_id").val();
+                                                        // alert("<?= base_url("api/listsiswakelas"); ?>?kelas_id="+kelas_id+"&user_id=<?= $user_id; ?>");
+                                                        if (kelas_id > 0) {
+                                                            $.get("<?= base_url("api/listsiswakelas"); ?>", {
+                                                                    kelas_id: kelas_id,
+                                                                    user_id: '<?= $user_id; ?>'
+                                                                })
+                                                                .done(function(data) {
+                                                                    $("#user_id").html(data);
+                                                                });
+                                                        } else {
+                                                            $("#user_id").html('');
+                                                        }
+                                                    }
+
+                                                    listsiswasekolah();
+                                                </script>
+
+
+                                                <div class="form-group">
+                                                    <label for="user_id">Student:</label>
+                                                    <select name="user_id" id="user_id" class="form-control">
+
+                                                    </select>
+                                                </div>
+
+                                                <button type="submit" class="btn btn-default">Submit</button>
+                                            </form>
+                                        </div>
+                                    </div>
                                     <div class="box">
                                         <div id="collapse4" class="body table-responsive">
                                             <table id="dataTable" class="table table-condensed table-hover">
@@ -159,18 +257,31 @@
                                                 </thead>
                                                 <tbody>
                                                     <?php
+                                                    if (isset($_GET["from"]) && $_GET["from"] != "") {
+                                                        $this->db->where("absen.absen_date >=", $from);
+                                                    }
+                                                    if (isset($_GET["to"]) && $_GET["to"] != "") {
+                                                        $this->db->where("absen.absen_date <=", $to);
+                                                    }
                                                     if ($this->session->userdata("sekolah_id") > 0) {
                                                         $this->db->where("absen.sekolah_id", $this->session->userdata("sekolah_id"));
+                                                    }
+                                                    if (isset($_GET['kelas_id']) && $_GET['kelas_id'] > 0) {
+                                                        $this->db->where("absen.kelas_id", $_GET['kelas_id']);
+                                                    }
+                                                    if (isset($_GET['user_id']) && $_GET['user_id'] > 0) {
+                                                        $this->db->where("absen.user_id", $_GET['user_id']);
                                                     }
                                                     $usr = $this->db
                                                         ->join("sekolah", "sekolah.sekolah_id=absen.sekolah_id", "left")
                                                         ->join("kelas", "kelas.kelas_id=absen.kelas_id", "left")
                                                         ->join("user", "user.user_id=absen.user_id", "left")
+                                                        ->where("absen_year", date("Y"))
                                                         ->get("absen");
                                                     // echo $this->db->last_query();
-                                                    foreach ($usr->result() as $absen) { 
-                                                        $type = array("Alpha","In","Out","Sick","Permission")
-                                                        ?>
+                                                    foreach ($usr->result() as $absen) {
+                                                        $type = array("Alpha", "In", "Out", "Sick", "Permission")
+                                                    ?>
                                                         <tr>
                                                             <td style="padding-left:0px; padding-right:0px;">
                                                                 <form method="post" class="col-md-3" style="padding:0px;">

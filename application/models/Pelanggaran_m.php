@@ -68,6 +68,7 @@ class pelanggaran_M extends CI_Model {
 		//insert
 		if($this->input->post("create")=="OK"){
 			foreach($this->input->post() as $e=>$f){if($e!='create'){$input[$e]=$this->input->post($e);}}
+			$input["pelanggaran_year"]=date("Y");
 			$this->db->insert("pelanggaran",$input);
 		}
 		//echo $_POST["create"];die;

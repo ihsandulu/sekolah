@@ -64,12 +64,29 @@ class Attandance_M extends CI_Model
                     $input[$e] = $this->input->post($e);
                 }
             }
+            if($input["absen_type"]==1||$input["absen_type"]==2){
+                $this->db->group_start()
+                ->where("absen_type", "0")
+                ->or_where("absen_type", "3")
+                ->or_where("absen_type", "4")
+                ->or_where("absen_type", $input["absen_type"])
+                ->group_end();
+            }else{
+                $this->db->group_start()
+                ->where("absen_type", "0")
+                ->or_where("absen_type", "3")
+                ->or_where("absen_type", "4")
+                ->or_where("absen_type", "1")
+                ->or_where("absen_type", "2")
+                ->group_end();
+            }
             $double = $this->db
             ->where("user_id", $input["user_id"])
-            ->where("absen_date", $input["absen_date"])
-            ->where("absen_type", $input["absen_type"])
-                ->get("absen");
+            ->where("absen_date", $input["absen_date"])			
+			->get("absen");
+		// echo $this->db->last_query();
             if ($double->num_rows() == 0) {
+                $input["absen_year"] = date("Y");
                 $this->db->insert("absen", $input);
                 // echo $this->db->last_query();
                 $data["message"] = "Insert Data Success";

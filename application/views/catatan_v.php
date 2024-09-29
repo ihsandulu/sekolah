@@ -64,6 +64,7 @@
                                                         $kelas = $this->db->from("kelas_sekolah")
                                                             ->join("kelas", "kelas.kelas_id=kelas_sekolah.kelas_id", "left")
                                                             ->where("kelas_sekolah.sekolah_id", $this->session->userdata("sekolah_id"))
+                                                            ->order_by("kelas_name")
                                                             ->get();
                                                         foreach ($kelas->result() as $row) { ?>
                                                             <option value="<?= $row->kelas_id; ?>" <?= ($kelas_id == $row->kelas_id) ? "selected" : ""; ?>><?= $row->kelas_name; ?></option>
@@ -104,7 +105,7 @@
                                                             $('#user_id').html(data);
                                                         });
 
-                                                    
+
                                                 }
                                                 $("#kelas_id").change(caricatatan);
                                                 caricatatan();
@@ -133,6 +134,7 @@
                                                 <thead>
                                                     <tr>
                                                         <th class="col-md-2">Action</th>
+                                                        <th>Year</th>
                                                         <th>School</th>
                                                         <th>Class</th>
                                                         <th>NISN</th>
@@ -149,6 +151,7 @@
                                                         ->join("sekolah", "sekolah.sekolah_id=catatan.sekolah_id", "left")
                                                         ->join("kelas", "kelas.kelas_id=catatan.kelas_id", "left")
                                                         ->join("user", "user.user_id=catatan.user_id", "left")
+                                                        ->where("catatan_year",date("Y"))
                                                         ->get("catatan");
                                                     // echo $this->db->last_query();
                                                     foreach ($usr->result() as $catatan) { ?>
@@ -163,6 +166,7 @@
                                                                     <input type="hidden" name="catatan_id" value="<?= $catatan->catatan_id; ?>" />
                                                                 </form>
                                                             </td>
+                                                            <td><?= $catatan->catatan_year; ?></td>
                                                             <td><?= $catatan->sekolah_name; ?></td>
                                                             <td><?= $catatan->kelas_name; ?></td>
                                                             <td><?= $catatan->user_nisn; ?></td>

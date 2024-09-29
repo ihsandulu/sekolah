@@ -9,10 +9,23 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <style>
+        @page {
+			size: auto;
+			/* auto is the initial value */
+			margin: 0;
+			/* this affects the margin in the printer settings */
+		}
+
+		div,
+		body {
+			margin: 0px;
+			padding: 0px;
+		}
+
         .kartu {
-            border: black solid 1px;
-            padding: 15px;
-            margin: 5px;
+            /* border: black solid 1px; */
+            padding: 0px;
+            margin: 0px;
         }
 
         .img {

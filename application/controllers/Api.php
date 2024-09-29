@@ -559,7 +559,7 @@ class api extends CI_Controller
 		//$a = $this->db->last_query();
 		foreach ($sisa->result() as $gurumatpelguru) {
 			?>
-			<option value="<?= $gurumatpelguru->matpelguru_id; ?>"><?= $gurumatpelguru->matpel_name; ?></option>
+			<option value="<?= $gurumatpelguru->matpelguru_id; ?>"><?= $gurumatpelguru->matpel_name; ?> (<?= $gurumatpelguru->matpelguru_sumatif; ?> Sumatif)</option>
 		<?php }
 	}
 
@@ -590,6 +590,7 @@ class api extends CI_Controller
 
 	function inputmatpelguru()
 	{
+		$input["matpelguru_sumatif"] = $this->input->get("matpelguru_sumatif");
 		$input["sekolah_id"] = $this->input->get("sekolah_id");
 		$input["user_id"] = $this->input->get("user_id");
 		$matpel_id = $this->input->get("matpel_id");
@@ -1220,13 +1221,18 @@ class api extends CI_Controller
 		} else {
 			$type = "Pulang";
 		}
-		$whereabsen["absen_date"] = date("Y-m-d");
-		$whereabsen["absen_type"] = $_GET["type"];
-		$whereabsen["absen_nisn"] = $_GET["nisn"];
 		$absen = $this->db
 			->join("user", "user.user_id=absen.user_id", "left")
 			->join("telpon", "telpon.user_id=user.user_id", "left")
-			->get_where("absen", $whereabsen);
+			->where("absen_date", date("Y-m-d"))
+			->where("absen_nisn", $_GET["nisn"])
+			->group_start()
+			->where("absen_type", "0")
+			->or_where("absen_type", "3")
+			->or_where("absen_type", "4")
+			->or_where("absen_type", $_GET["type"])
+			->group_end()
+			->get("absen");
 		// echo $this->db->last_query();
 		if ($absen->num_rows() == 0) {
 			$where["user_nisn"] = $_GET["nisn"];
@@ -1235,6 +1241,7 @@ class api extends CI_Controller
 			// echo $this->db->last_query();
 			if ($user->num_rows() > 0) {
 				foreach ($user->result() as $user) {
+					$input["absen_year"] = date("Y");
 					$input["absen_date"] = date("Y-m-d");
 					$input["absen_nisn"] = $user->user_nisn;
 					$input["kelas_id"] = $user->kelas_id;
@@ -1273,7 +1280,7 @@ class api extends CI_Controller
 			}
 
 			$data["success"] = 0;
-			$data["message"] = "Tidak memerlukan scan ulang!<br/>Anda sudah absen " . $type . " hari ini!";
+			$data["message"] = "Duplikat data!";
 		}
 		$this->djson($data);
 	}
@@ -1608,11 +1615,12 @@ class api extends CI_Controller
 		<?php
 		$user = $this->db->from("user")
 			->where("user.sekolah_id", $this->session->userdata("sekolah_id"))
+			->where("position_id", "4")
 			->where("kelas_id", $kelas_id)
 			->get();
 		// echo $this->db->last_query();
 		foreach ($user->result() as $row) { ?>
-			<option value="<?= $row->user_id; ?>" <?= ($user_id == $row->user_id) ? "selected" : ""; ?>><?= $row->user_name; ?></option>
+			<option absen_nisn="<?= $row->user_nisn; ?>" value="<?= $row->user_id; ?>" <?= ($user_id == $row->user_id) ? "selected" : ""; ?>><?= $row->user_name; ?></option>
 		<?php } ?>
 	<?php }
 
@@ -1639,6 +1647,8 @@ class api extends CI_Controller
 		$sumatif_id = $this->input->get("sumatif_id");
 	?>
 		<option value="" <?= ($sumatif_id == "") ? "selected" : ""; ?>>Choose Sumatif</option>
+		<option value="100" <?= ($sumatif_id == "100") ? "selected" : ""; ?>>Tengah Semester</option>
+		<option value="101" <?= ($sumatif_id == "101") ? "selected" : ""; ?>>Akhir Semester</option>
 		<?php
 		$sumatif = $this->db->from("sumatif")
 			->where("sumatif.sekolah_id", $this->session->userdata("sekolah_id"))
@@ -1649,26 +1659,26 @@ class api extends CI_Controller
 		<?php } ?>
 	<?php }
 
-public function siswa()
-{
-    // Ambil nilai user_nisn dari input GET
-    $user_nisn = $this->input->get("user_nisn", TRUE); // Menggunakan filter XSS
+	public function siswa()
+	{
+		// Ambil nilai user_nisn dari input GET
+		$user_nisn = $this->input->get("user_nisn", TRUE); // Menggunakan filter XSS
 
-    // Query untuk mendapatkan data user berdasarkan user_nisn dan sekolah_id
-    $user = $this->db->from("user")
-        ->where("user.sekolah_id", $this->session->userdata("sekolah_id"))
-        ->where("user_nisn", $user_nisn)
-        ->get();
+		// Query untuk mendapatkan data user berdasarkan user_nisn dan sekolah_id
+		$user = $this->db->from("user")
+			->where("user.sekolah_id", $this->session->userdata("sekolah_id"))
+			->where("user_nisn", $user_nisn)
+			->get();
 
-    // Cek apakah data ditemukan
-    if ($user->num_rows() > 0) {
-        $row = $user->row(); // Mengambil baris pertama
-        echo json_encode(['kelas_id' => $row->kelas_id,'user_name' => $row->user_name]); // Mengembalikan sebagai JSON
-    } else {
-        // Jika tidak ditemukan, kembalikan pesan error
-        echo json_encode(['error' => 'Data tidak ditemukan']);
-    }
-}
+		// Cek apakah data ditemukan
+		if ($user->num_rows() > 0) {
+			$row = $user->row(); // Mengambil baris pertama
+			echo json_encode(['kelas_id' => $row->kelas_id, 'user_name' => $row->user_name]); // Mengembalikan sebagai JSON
+		} else {
+			// Jika tidak ditemukan, kembalikan pesan error
+			echo json_encode(['error' => 'Data tidak ditemukan']);
+		}
+	}
 
 
 
@@ -1690,6 +1700,28 @@ public function siswa()
 			->get("user");
 		foreach ($mat->result() as $user) { ?>
 			<option value="<?= $user->user_id; ?>" <?= ($user_id == $user->user_id) ? 'selected="selected"' : ""; ?>><?= $user->user_name; ?></option>
+		<?php } ?>
+<?php
+	}
+
+	function listsiswakelasnisn()
+	{
+		$user_nisn = $this->input->get("user_nisn");
+		$kelas_id = $this->input->get("kelas_id");
+	?>
+		<option value="0" <?= ($user_nisn == 0) ? 'selected="selected"' : ""; ?>>All</option>
+		<?php
+		if ($this->session->userdata("sekolah_id") > 0) {
+			$this->db->where("user.sekolah_id", $this->session->userdata("sekolah_id"));
+		}
+		if ($kelas_id > 0) {
+			$this->db->where("user.kelas_id", $kelas_id);
+		}
+		$mat = $this->db
+			->where("position_id", "4")
+			->get("user");
+		foreach ($mat->result() as $user) { ?>
+			<option value="<?= $user->user_nisn; ?>" <?= ($user_nisn == $user->user_nisn) ? 'selected="selected"' : ""; ?>><?= $user->user_name; ?></option>
 		<?php } ?>
 <?php
 	}

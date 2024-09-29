@@ -76,7 +76,7 @@
                                             <div class="form-group">
                                                 <label class="control-label col-sm-2" for="kelas_id">Class:</label>
                                                 <div class="col-sm-10">
-                                                    <select class="form-control" id="kelas_id" name="kelas_id">
+                                                    <select onchange="kelasname()" class="form-control" id="kelas_id" name="kelas_id">
                                                         <option value="" <?= ($kelas_id == "") ? "selected" : ""; ?>>Choose Class</option>
                                                         <?php
                                                         $kelas = $this->db->from("kelas_guru")
@@ -86,39 +86,67 @@
                                                             ->order_by("kelas_name", "ASC")
                                                             ->get();
                                                         foreach ($kelas->result() as $row) { ?>
-                                                            <option value="<?= $row->kelas_id; ?>" <?= ($kelas_id == $row->kelas_id) ? "selected" : ""; ?>><?= $row->kelas_name; ?></option>
+                                                            <option kelas_name="<?= $row->kelas_name; ?>" value="<?= $row->kelas_id; ?>" <?= ($kelas_id == $row->kelas_id) ? "selected" : ""; ?>><?= $row->kelas_name; ?></option>
                                                         <?php } ?>
                                                     </select>
+                                                    <input type="hidden" id="kelas_name" name="kelas_name" />
+                                                    <script>
+                                                        function kelasname() {
+                                                            let kelas_name = $("#kelas_id option:selected").attr("kelas_name");
+                                                            $("#kelas_name").val(kelas_name);
+                                                        }
+                                                    </script>
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <label class="control-label col-sm-2" for="user_id">Student:</label>
                                                 <div class="col-sm-10">
-                                                    <select class="form-control" id="user_id" name="user_id">
+                                                    <select onchange="username()" class="form-control" id="user_id" name="user_id">
 
                                                     </select>
+                                                    <input type="hidden" id="user_name" name="user_name" />
+                                                    <script>
+                                                        function username() {
+                                                            let user_name = $("#user_id option:selected").text();
+                                                            $("#user_name").val(user_name);
+                                                        }
+                                                    </script>
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <label class="control-label col-sm-2" for="matpel_id">Subject:</label>
                                                 <div class="col-sm-10">
-                                                    <select class="form-control" id="matpel_id" name="matpel_id">
+                                                    <select onchange="matpelname()" class="form-control" id="matpel_id" name="matpel_id">
 
                                                     </select>
+                                                    <input type="hidden" id="matpel_name" name="matpel_name" />
+                                                    <script>
+                                                        function matpelname() {
+                                                            let matpel_name = $("#matpel_id option:selected").text();
+                                                            $("#matpel_name").val(matpel_name);
+                                                        }
+                                                    </script>
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <label class="control-label col-sm-2" for="sumatif_id">Sumatif:</label>
                                                 <div class="col-sm-10">
-                                                    <select class="form-control" id="sumatif_id" name="sumatif_id">
+                                                    <select onchange="sumatifname()" class="form-control" id="sumatif_id" name="sumatif_id">
 
                                                     </select>
+                                                    <input type="hidden" id="sumatif_name" name="sumatif_name" />
+                                                    <script>
+                                                        function sumatifname() {
+                                                            let sumatif_name = $("#sumatif_id option:selected").text();
+                                                            $("#sumatif_name").val(sumatif_name);
+                                                        }
+                                                    </script>
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <label class="control-label col-sm-2" for="nilai_score">Score:</label>
                                                 <div class="col-sm-10">
-                                                    <input type="text" class="form-control" id="nilai_score" name="nilai_score" value="<?= $nilai_score; ?>">
+                                                    <input type="number" min="78" class="form-control" id="nilai_score" name="nilai_score" value="<?= $nilai_score; ?>">
                                                 </div>
                                             </div>
 
@@ -258,6 +286,28 @@
                                                         </form>
                                                     </div>
                                                 </div>
+                                                <div class="col-md-12" style="margin-top:10px; margin-bottom:10px;">
+                                                    <?php
+                                                    if (isset($_GET["kelas_id"]) && $_GET["kelas_id"] != "") {
+                                                        $kelas_id = $_GET["kelas_id"];
+                                                    } else {
+                                                        $kelas_id = "";
+                                                    }
+                                                    if (isset($_GET["user_id"]) && $_GET["user_id"] != "") {
+                                                        $user_id = $_GET["user_id"];
+                                                    } else {
+                                                        $user_id = "";
+                                                    }
+                                                    $matpelguru = $this->db
+                                                        ->join("matpel", "matpel.matpel_id=matpelguru.matpel_id", "left")
+                                                        ->where("user_id", $this->session->userdata("user_id"))
+                                                        ->get("matpelguru");
+                                                    foreach ($matpelguru->result() as $matpelguru) {
+                                                        $matpel_id = $matpelguru->matpel_id;
+                                                    ?>
+                                                        <a title="Raport STS <?= $matpelguru->matpel_name; ?>" href="<?= base_url("raportsts?matpel_id=" . $matpel_id . "&kelas_id=" . $kelas_id . "&user_id=" . $user_id."&matpel_name=".$matpelguru->matpel_name); ?>" target="_blank" type="submit" class="btn btn-success fa fa-file-excel-o" style="font-size:12px;"> Raport STS <?= $matpelguru->matpel_name; ?></a>
+                                                    <?php } ?>
+                                                </div>
                                             <?php } ?>
                                             <br />
 
@@ -270,6 +320,7 @@
                                                             <?php if ($this->session->userdata("position_id") != 4) { ?>
                                                                 <th class="col-md-2">Action</th>
                                                             <?php } ?>
+                                                            <th>Tahun</th>
                                                             <th>School</th>
                                                             <th>Class</th>
                                                             <th>Subject</th>
@@ -289,20 +340,30 @@
                                                             $this->db->where("nilai.user_id", $this->session->userdata("user_id"));
                                                         }
                                                         if (isset($_GET['kelas_id']) && $_GET['kelas_id'] > 0) {
-                                                            $this->db->where("kelas.kelas_id", $kelas_id);
+                                                            $this->db->where("kelas.kelas_id", $_GET['user_id']);
                                                         }
                                                         if (isset($_GET['user_id']) && $_GET['user_id'] > 0) {
                                                             $this->db->where("user.user_id", $_GET['user_id']);
                                                         }
                                                         $usr = $this->db
+                                                            ->select("*,nilai.sumatif_id as sumatif_id")
                                                             ->join("sekolah", "sekolah.sekolah_id=nilai.sekolah_id", "left")
                                                             ->join("matpel", "matpel.matpel_id=nilai.matpel_id", "left")
                                                             ->join("sumatif", "sumatif.sumatif_id=nilai.sumatif_id", "left")
                                                             ->join("kelas", "kelas.kelas_id=nilai.kelas_id", "left")
                                                             ->join("user", "user.user_id=nilai.user_id", "left")
+                                                            ->where("nilai_year",date("Y"))
                                                             ->get("nilai");
                                                         // echo $this->db->last_query();
-                                                        foreach ($usr->result() as $nilai) { ?>
+                                                        foreach ($usr->result() as $nilai) {
+                                                            $sumatif_name = $nilai->sumatif_name;
+                                                            if ($nilai->sumatif_id == "100") {
+                                                                $sumatif_name = "Sumatif Tengah Semester";
+                                                            }
+                                                            if ($nilai->sumatif_id == "101") {
+                                                                $sumatif_name = "Sumatif Akhir Semester";
+                                                            }
+                                                        ?>
                                                             <tr>
                                                                 <?php if ($this->session->userdata("position_id") != 4) { ?>
                                                                     <td style="padding-left:0px; padding-right:0px;">
@@ -316,10 +377,11 @@
                                                                         </form>
                                                                     </td>
                                                                 <?php } ?>
+                                                                <td><?= $nilai->nilai_year; ?></td>
                                                                 <td><?= $nilai->sekolah_name; ?></td>
                                                                 <td><?= $nilai->kelas_name; ?></td>
                                                                 <td><?= $nilai->matpel_name; ?></td>
-                                                                <td><?= $nilai->sumatif_name; ?></td>
+                                                                <td><?= $sumatif_name; ?></td>
                                                                 <td><?= $nilai->user_nik; ?></td>
                                                                 <td><?= $nilai->user_name; ?></td>
                                                                 <td><?= $nilai->nilai_score; ?></td>

@@ -60,23 +60,16 @@
 
 					</h1>
 					<?php if (!isset($_POST['new']) && !isset($_POST['edit']) && !isset($_GET['laporan']) && $this->session->userdata("position_id") != 4) { ?>
-
 						<form method="post" class="col-md-2" style="margin-top:-30px; float:right;">
-
 							<button name="new" class="btn btn-warning btn-block btn-sm fa fa-unlink" value="OK" style=""> Withdrawal</button>
 							<input type="hidden" name="tabungan_id" />
 							<input type="hidden" name="type" value="Kredit" />
-
 						</form>
-
 						<form method="post" class="col-md-2" style="margin-top:-30px; float:right;">
-
 							<button name="new" class="btn btn-success btn-block btn-sm fa fa-money" value="OK" style=""> Deposit</button>
 							<input type="hidden" name="tabungan_id" />
 							<input type="hidden" name="type" value="Debet" />
-
 						</form>
-
 					<?php } ?>
 				</div>
 
@@ -126,7 +119,22 @@
 												</div>
 											</div>
 
-
+											<div class="form-group">
+												<label class="control-label col-sm-2" for="tabungankode_id">Type:</label>
+												<div class="col-sm-10">
+													<select tabindex="2" class="form-control" id="tabungankode_id" name="tabungankode_id" placeholder="Notes">
+														<option value="0" <?= ($tabungankode_id == "0") ? "selected" : ""; ?>>Choose Type</option>
+														<?php
+														$tabungankode = $this->db
+															->where("tabungankode_type", $tipe)
+															->order_by("tabungankode_name")
+															->get("tabungankode");
+														foreach ($tabungankode->result() as $tabungankode) { ?>
+															<option value="<?= $tabungankode->tabungankode_id; ?>" <?= ($tabungankode_id == $tabungankode->tabungankode_id) ? "selected" : ""; ?>><?= $tabungankode->tabungankode_kode; ?> - <?= $tabungankode->tabungankode_name; ?></option>
+														<?php } ?>
+													</select>
+												</div>
+											</div>
 											<div class="form-group">
 												<label class="control-label col-sm-2" for="tabungan_remarks">Remarks:</label>
 												<div class="col-sm-10">
@@ -151,14 +159,17 @@
 
 
 
-											<input type="text" id="kelas_id" name="kelas_id" value="<?= $kelas_id; ?>">
+											<input type="hidden" id="kelas_id" name="kelas_id" value="<?= $kelas_id; ?>">
 											<input type="hidden" name="sekolah_id" value="<?= $this->session->userdata("sekolah_id"); ?>" />
 											<input type="hidden" name="tabungan_id" value="<?= $tabungan_id; ?>" />
 											<input type="hidden" name="user_id" value="<?= $this->session->userdata("user_id"); ?>" />
 											<div class="form-group">
 												<div class="col-sm-offset-2 col-sm-10">
 													<button type="submit" id="submit" class="btn btn-primary col-md-5" <?= $namabutton; ?> value="OK">Submit</button>
-													<a class="btn btn-warning col-md-offset-1 col-md-5" href="<?= site_url("tabungan"); ?>">Back</a>
+													<?php
+													$full_url = current_url() . '?' . $_SERVER['QUERY_STRING'];
+													?>
+													<a class="btn btn-warning col-md-offset-1 col-md-5" href="<?= $full_url; ?>">Back</a>
 												</div>
 											</div>
 										</form>
@@ -207,218 +218,415 @@
 											</script>
 											<br />
 											<br />
-											<?php if (isset($_GET['laporan'])) { ?>
-												<div class="col-md-12" style="border:#FDDABB dashed 1px; margin-bottom:30px; padding:10px;">
-													<form id="sp" method="post" target="_blank" class="form-inline" action="<?= site_url("tabunganreport_print"); ?>">
-														<div class="form-group">
-															<label for="type">Type:</label>
-															<select id="type" name="type" onChange="lihatkelas()">
-																<option value="">All</option>
-																<option value="Debet" <?= ($this->input->post("type") == "Debet") ? "selected" : ""; ?>>Debet</option>
-																<option value="Kredit" <?= ($this->input->post("type") == "Kredit") ? "selected" : ""; ?>>Kredit</option>
-															</select>
-															<script>
-																function lihatkelas() {
-																	var tipe = $("#type").val();
-																	if (tipe == "Kredit") {
-																		$("#divkelas").show();
-																	} else {
-																		$("#divkelas").hide();
-																	}
-																}
-															</script>
-														</div>
-
-
-														<div class="form-group">
-															<label for="from">From:</label>
-															<input id="from" name="from" type="date" value="<?= $this->input->post("from"); ?>" />
-														</div>
-														<div class="form-group">
-															<label for="from">To:</label>
-															<input id="to" name="to" type="date" value="<?= $this->input->post("to"); ?>" />
-														</div>
-														<div class="form-group">
-															<label for="kelas_id">Class:</label>
-															<?php
-															if (isset($_POST["kelas_id"])) {
-																$kelas_id = $this->input->post("kelas_id");
-															} else {
-																$kelas_id = 0;
-															}
-															if (isset($_POST["user_id"])) {
-																$user_id = $this->input->post("user_id");
-															} else {
-																$user_id = 0;
-															}
-															$this->db->join("kelas", "kelas.kelas_id=kelas_guru.kelas_id", "left");
-															if ($this->session->userdata("sekolah_id") > 0) {
-																$this->db->where("kelas.sekolah_id", $this->session->userdata("sekolah_id"));
-															}
-
-															$gru = $this->db->group_by("kelas_guru.kelas_id")
-																->get("kelas_guru");
-															// echo $this->db->last_query();
-															// echo $this->session->userdata("position_id");
-															?>
-															<select onchange="listsiswasekolah();" name="kelas_id" id="kelas_id" class="form-control" onChange="cari_user(this.value)">
-																<option value="0" <?= ($kelas_id == 0) ? 'selected="selected"' : ""; ?>>All Class</option>
-																<?php
-
-																foreach ($gru->result() as $kelas) { ?>
-																	<option value="<?= $kelas->kelas_id; ?>" <?= ($kelas_id == $kelas->kelas_id) ? 'selected="selected"' : ""; ?>><?= $kelas->kelas_name; ?></option>
-																<?php } ?>
-															</select>
-														</div>
-
+											<?php //if (isset($_GET['laporan'])) { 
+											?>
+											<div class="col-md-12" style="border:#FDDABB dashed 1px; margin-bottom:30px; padding:10px;">
+												<?php
+												if (isset($_GET["laporan"])) {
+													$url = site_url("tabungan?laporan=OK");
+												} else {
+													$url = site_url("tabungan");
+												}
+												?>
+												<form id="sp" method="get" class="form-inline" action="<?= $url; ?>">
+													<div class="form-group">
+														<label for="type">Type:</label>
+														<select id="type" name="type" onChange="lihatkelas()">
+															<option value="detail" <?= ($this->input->get("type") == "detail") ? "selected" : ""; ?>>Detail</option>
+															<option value="all" <?= ($this->input->get("type") == "all") ? "selected" : ""; ?>>All Class</option>
+															<option value="current" <?= ($this->input->get("type") == "current") ? "selected" : ""; ?>>Current Class</option>
+															<option value="Debet" <?= ($this->input->get("type") == "Debet") ? "selected" : ""; ?>>Debet</option>
+															<option value="Kredit" <?= ($this->input->get("type") == "Kredit") ? "selected" : ""; ?>>Kredit</option>
+														</select>
 														<script>
-															function listsiswasekolah() {
-																let kelas_id = $("#kelas_id").val();
-																// alert("<?= base_url("api/listsiswakelas"); ?>?kelas_id="+kelas_id+"&user_id=<?= $user_id; ?>");
-																if (kelas_id > 0) {
-																	$.get("<?= base_url("api/listsiswakelas"); ?>", {
-																			kelas_id: kelas_id,
-																			user_id: '<?= $user_id; ?>'
-																		})
-																		.done(function(data) {
-																			$("#user_id").html(data);
-																		});
+															function lihatkelas() {
+																var tipe = $("#type").val();
+																/* if (tipe == "Kredit") {
+																	$("#divkelas").show();
 																} else {
-																	$("#user_id").html('');
+																	$("#divkelas").hide();
+																} */
+																if (tipe != "detail") {
+																	$("#from").val("<?= date("Y-") . substr($this->session->userdata("sekolah_tglajar"), 5); ?>");
+																}
+
+																if (tipe == "all") {
+																	$(".hideclass").hide();
+																} else {
+																	$(".hideclass").show();
 																}
 															}
-
-															listsiswasekolah();
+															$(document).ready(function() {
+																lihatkelas();
+															});
 														</script>
-
-
-														<div class="form-group">
-															<label for="user_id">Student:</label>
-															<select name="user_id" id="user_id" class="form-control">
-
-															</select>
-														</div>
-														<button name="search" type="submit" class="btn btn-success fa fa-search" onMouseOver="search()"> Search</button>
-														<button type="button" class="btn btn-info fa fa-print" onMouseOver="print()"> Print</button>
-														<script>
-															function search() {
-																$("#sp").attr({
-																	"action": "<?= site_url("tabungan?laporan=OK"); ?>",
-																	"target": "_self"
-																});
-															}
-
-															function print() {
-																$("#sp").attr({
-																	"action": "<?= site_url("tabunganreport_print"); ?>",
-																	"target": "_blank"
-																});
-															}
-														</script>
-													</form>
-												</div>
-											<?php } ?>
-											<table id="dataTable" class="table table-condensed table-hover">
-												<thead>
-													<tr>
-														<?php if (isset($_GET['laporan'])) {
-															$colact = "col-md-1";
-															$colbtn = "col-md-12";
-														} else {
-															$colact = "col-md-2";
-															$colbtn = "col-md-4";
-														} ?>
-														<?php
-														if ($this->session->userdata("position_id") != 4) { ?>
-															<th class="<?= $colact; ?>">Action</th>
-														<?php } ?>
-														<th>Date</th>
-														<th>School</th>
-														<th>Class</th>
-														<th>User</th>
-														<th>NISN/NIK</th>
-														<th>Remarks</th>
-														<th>Amount</th>
-														<th>Type</th>
-													</tr>
-												</thead>
-												<tbody>
+													</div>
 													<?php
-													if (isset($_POST['from']) && $_POST['from'] != "") {
-														$this->db->where("SUBSTR(tabungan_datetime,1,10) >=", $this->input->post("from"));
+													if (isset($_GET["from"])&&$_GET["from"]!="") {
+														$from = $_GET["from"];
+													} else {
+														$from = date("Y-m-d");
 													}
-													if (isset($_POST['to']) && $_POST['to'] != "") {
-														$this->db->where("SUBSTR(tabungan_datetime,1,10) <=", $this->input->post("to"));
+													if (isset($_GET["to"])&&$_GET["to"]!="") {
+														$to = $_GET["to"];
+													} else {
+														$to = date("Y-m-d");
 													}
-													if (isset($_POST['type']) && $_POST['type'] != "") {
-														$this->db->where("tabungan_type", $this->input->post("type"));
-													}
-													if ($this->session->userdata("sekolah_id") > 0) {
-														$this->db->where("tabungan.sekolah_id", $this->session->userdata("sekolah_id"));
-													}
+													?>
 
-
-													if (isset($_POST['search']) && $_POST['kelas_id'] > 0) {
-														$this->db->where("kelas.kelas_id", $kelas_id);
-													}
-													if (isset($_POST['search']) && $_POST['user_id'] > 0) {
-														$this->db->where("user.user_id", $_POST['user_id']);
-													}
-
-													if ($this->session->userdata("position_id") == 4) {
-														$this->db->where("tabungan.user_nisn", $this->session->userdata("user_nisn"));
-													}
-
-													$usr = $this->db
-														->join("sekolah", "sekolah.sekolah_id=tabungan.sekolah_id", "left")
-														->join("user", "user.user_nisn=tabungan.user_nisn", "left")
-														->join("kelas", "kelas.kelas_id=tabungan.kelas_id", "left")->order_by("tabungan_datetime", "desc")
-														->get("tabungan");
-													// echo $this->db->last_query();
-													foreach ($usr->result() as $tabungan) {
-														if ($tabungan->user_nisn == "") {
-															$back = "background-color:#FEDCC5";
+													<div class="form-group">
+														<label for="from">From:</label>
+														<input id="from" name="from" type="date" value="<?= $from; ?>" />
+													</div>
+													<div class="form-group">
+														<label for="from">To:</label>
+														<input id="to" name="to" type="date" value="<?= $to; ?>" />
+													</div>
+													<div class="form-group hideclass">
+														<label for="kelas_id">Class:</label>
+														<?php
+														if (isset($_GET["kelas_id"])) {
+															$kelas_id = $this->input->get("kelas_id");
 														} else {
-															$back = "";
-														} ?>
-														<tr style="<?= $back; ?>">
-															<?php if ($this->session->userdata("position_id") != 4) { ?>
-																<td style="padding-left:0px; padding-right:0px;" align="center">
-																	<form target="_blank" action="<?= site_url("tabunganprint"); ?>" method="get" class="<?= $colbtn; ?>" style="padding:0px;">
-																		<button type="button" onClick="line('<?= $tabungan->tabungan_id; ?>')" class="btn btn-success btn-xs btn-block" name="print" value="OK"><span class="fa fa-print" style="color:white;"></span> </button>
-																		<input type="hidden" name="tabungan_id" value="<?= $tabungan->tabungan_id; ?>" />
-																	</form>
+															$kelas_id = 0;
+														}
+														if (isset($_GET["user_id"])) {
+															$user_id = $this->input->get("user_id");
+														} else {
+															$user_id = 0;
+														}
+														$this->db->join("kelas", "kelas.kelas_id=kelas_guru.kelas_id", "left");
+														if ($this->session->userdata("sekolah_id") > 0) {
+															$this->db->where("kelas.sekolah_id", $this->session->userdata("sekolah_id"));
+														}
 
-																	<?php if (!isset($_GET['laporan'])) { ?>
-																		<form method="post" class="col-md-4" style="padding:0px;">
-																			<button class="btn btn-warning  btn-xs btn-block" name="edit" value="OK"><span class="fa fa-edit" style="color:white;"></span> </button>
-																			<input type="hidden" name="tabungan_id" value="<?= $tabungan->tabungan_id; ?>" />
-																			<?php if ($tabungan->tabungan_type == "Kredit") { ?>
-																				<input type="hidden" name="type" value="Kredit" />
-																			<?php } else { ?>
-																				<input type="hidden" name="type" value="Debet" />
-																			<?php } ?>
-																		</form>
+														$gru = $this->db->group_by("kelas_guru.kelas_id")
+															->get("kelas_guru");
+														// echo $this->db->last_query();
+														// echo $this->session->userdata("position_id");
+														?>
+														<select onchange="listsiswasekolah();" name="kelas_id" id="kelas_id" class="form-control" onChange="cari_user(this.value)">
+															<option value="0" <?= ($kelas_id == 0) ? 'selected="selected"' : ""; ?>>Choose Class</option>
+															<?php
 
-																		<form method="post" class="col-md-4" style="padding:0px;">
-																			<button class="btn btn-danger delete btn-xs btn-block" name="delete" value="OK"><span class="fa fa-close" style="color:white;"></span> </button>
-																			<input type="hidden" name="tabungan_id" value="<?= $tabungan->tabungan_id; ?>" />
-																		</form>
-																	<?php } ?>
-																</td>
+															foreach ($gru->result() as $kelas) { ?>
+																<option value="<?= $kelas->kelas_id; ?>" <?= ($kelas_id == $kelas->kelas_id) ? 'selected="selected"' : ""; ?>><?= $kelas->kelas_name; ?></option>
 															<?php } ?>
-															<td><?= $tabungan->tabungan_datetime; ?></td>
-															<td><?= $tabungan->sekolah_name; ?></td>
-															<td><?= $tabungan->kelas_name; ?></td>
-															<td><?= $tabungan->user_name; ?></td>
-															<td><?= $tabungan->user_nisn; ?></td>
-															<td><?= $tabungan->tabungan_remarks; ?></td>
-															<td align="right"><?= number_format($tabungan->tabungan_amount, 0, ",", "."); ?></td>
-															<td><?= $tabungan->tabungan_type; ?></td>
+														</select>
+													</div>
+
+													<script>
+														function listsiswasekolah() {
+															let kelas_id = $("#kelas_id").val();
+															// alert("<?= base_url("api/listsiswakelas"); ?>?kelas_id="+kelas_id+"&user_id=<?= $user_id; ?>");
+															if (kelas_id > 0) {
+																$.get("<?= base_url("api/listsiswakelas"); ?>", {
+																		kelas_id: kelas_id,
+																		user_id: '<?= $user_id; ?>'
+																	})
+																	.done(function(data) {
+																		$("#user_id").html(data);
+																	});
+															} else {
+																$("#user_id").html('');
+															}
+														}
+
+														listsiswasekolah();
+													</script>
+
+
+													<div class="form-group hideclass">
+														<label for="user_id">Student:</label>
+														<select name="user_id" id="user_id" class="form-control">
+
+														</select>
+													</div>
+													<button name="search" type="submit" class="btn btn-success fa fa-search"> Search</button>
+													<!-- <button type="button" class="btn btn-info fa fa-print" onclick="print()"> Print</button>
+													<script>
+														function print() {
+															let type = $("#type").val();
+															let from = $("#from").val();
+															let to = $("#to").val();
+															let kelas_id = $("#kelas_id").val();
+															let user_id = $("#user_id").val();
+															var url = "<?= site_url("tabunganreport_print"); ?>?type=" + type + "&from=" + from + "&to=" + to + "&kelas_id=" + kelas_id + "&user_id=" + user_id;
+															window.open(url, '_blank');
+														}
+													</script> -->
+												</form>
+											</div>
+											<?php //} 
+											?>
+
+											<!-- Detail, Debet, Kredit -->
+											<?php if (
+												isset($_GET["type"]) &&
+												($_GET["type"] == "detail" || $_GET["type"] == "Debet" || $_GET["type"] == "Kredit")
+											) { ?>
+												<table id="dataTable" class="table table-condensed table-hover">
+													<thead>
+														<tr>
+															<?php if (isset($_GET['laporan'])) {
+																$colact = "col-md-1";
+																$colbtn = "col-md-12";
+															} else {
+																$colact = "col-md-2";
+																$colbtn = "col-md-4";
+															} ?>
+															<?php
+															if ($this->session->userdata("position_id") != 4) { ?>
+																<th class="<?= $colact; ?>">Action</th>
+															<?php } ?>
+															<th>Date</th>
+															<th>School</th>
+															<th>Class</th>
+															<th>User</th>
+															<th>NISN/NIK</th>
+															<th>Remarks</th>
+															<th>Amount</th>
+															<th>Type</th>
 														</tr>
-													<?php } ?>
-												</tbody>
-											</table>
+													</thead>
+													<tbody>
+														<?php
+														if (isset($_GET['from']) && $_GET['from'] != "") {
+															$from = $this->input->get("from");
+														} else {
+															$from = date("Y-m-d");
+														}
+														if (isset($_GET['to']) && $_GET['to'] != "") {
+															$to = $this->input->get("to");
+														} else {
+															$to = date("Y-m-d");
+														}
+
+														$this->db->where("SUBSTR(tabungan_datetime,1,10) >=", $from);
+														$this->db->where("SUBSTR(tabungan_datetime,1,10) <=", $to);
+														if (isset($_GET['type']) && ($_GET['type'] == "Debet" || $_GET['type'] == "Kredit")) {
+															$this->db->where("tabungan_type", $this->input->get("type"));
+														}
+														if ($this->session->userdata("sekolah_id") > 0) {
+															$this->db->where("tabungan.sekolah_id", $this->session->userdata("sekolah_id"));
+														}
+
+														if (isset($_GET['search']) && $_GET['kelas_id'] > 0) {
+															$this->db->where("kelas.kelas_id", $kelas_id);
+														}
+														if (isset($_GET['search']) && isset($_GET['user_id']) && $_GET['user_id'] > 0) {
+															$this->db->where("user.user_id", $_GET['user_id']);
+														}
+
+														if ($this->session->userdata("position_id") == 4) {
+															$this->db->where("tabungan.user_nisn", $this->session->userdata("user_nisn"));
+														}
+
+														$usr = $this->db
+															->join("sekolah", "sekolah.sekolah_id=tabungan.sekolah_id", "left")
+															->join("user", "user.user_nisn=tabungan.user_nisn", "left")
+															->join("kelas", "kelas.kelas_id=tabungan.kelas_id", "left")->join("tabungankode", "tabungankode.tabungankode_id=tabungan.tabungankode_id", "left")
+															->order_by("tabungan_datetime", "desc")
+															->get("tabungan");
+														// echo $this->db->last_query();
+														foreach ($usr->result() as $tabungan) {
+															if ($tabungan->user_nisn == "") {
+																$back = "background-color:#FEDCC5";
+															} else {
+																$back = "";
+															} ?>
+															<tr style="<?= $back; ?>">
+																<?php if ($this->session->userdata("position_id") != 4) { ?>
+																	<td style="padding-left:0px; padding-right:0px;" align="center">
+																		<form target="_blank" action="<?= site_url("tabunganprint"); ?>" method="get" class="<?= $colbtn; ?>" style="padding:0px;">
+																			<button type="button" onClick="line('<?= $tabungan->tabungan_id; ?>')" class="btn btn-success btn-xs btn-block" name="print" value="OK"><span class="fa fa-print" style="color:white;"></span> </button>
+																			<input type="hidden" name="tabungan_id" value="<?= $tabungan->tabungan_id; ?>" />
+																		</form>
+
+																		<?php if (!isset($_GET['laporan'])) { ?>
+																			<form method="post" class="col-md-4" style="padding:0px;">
+																				<button class="btn btn-warning  btn-xs btn-block" name="edit" value="OK"><span class="fa fa-edit" style="color:white;"></span> </button>
+																				<input type="hidden" name="tabungan_id" value="<?= $tabungan->tabungan_id; ?>" />
+																				<?php if ($tabungan->tabungan_type == "Kredit") { ?>
+																					<input type="hidden" name="type" value="Kredit" />
+																				<?php } else { ?>
+																					<input type="hidden" name="type" value="Debet" />
+																				<?php } ?>
+																			</form>
+
+																			<form method="post" class="col-md-4" style="padding:0px;">
+																				<button class="btn btn-danger delete btn-xs btn-block" name="delete" value="OK"><span class="fa fa-close" style="color:white;"></span> </button>
+																				<input type="hidden" name="tabungan_id" value="<?= $tabungan->tabungan_id; ?>" />
+																			</form>
+																		<?php } ?>
+																	</td>
+																<?php } ?>
+																<td><?= $tabungan->tabungan_datetime; ?></td>
+																<td><?= $tabungan->sekolah_name; ?></td>
+																<td><?= $tabungan->kelas_name; ?></td>
+																<td><?= $tabungan->user_name; ?></td>
+																<td><?= $tabungan->user_nisn; ?></td>
+																<td><?= $tabungan->tabungan_remarks; ?></td>
+																<td align="right"><?= number_format($tabungan->tabungan_amount, 0, ",", "."); ?></td>
+																<td><?= $tabungan->tabungankode_kode; ?></td>
+															</tr>
+														<?php } ?>
+													</tbody>
+												</table>
+											<?php } ?>
+
+											<!-- Current Class -->
+											<?php if (
+												isset($_GET["type"]) &&
+												($_GET["type"] == "current")
+											) { ?>
+												<table id="dataTable" class="table table-condensed table-hover">
+													<thead>
+														<tr>
+															<th>School</th>
+															<th>Class</th>
+															<th>User</th>
+															<th>NISN/NIK</th>
+															<th>Balance</th>
+														</tr>
+													</thead>
+													<tbody>
+														<?php
+														if (isset($_GET['from']) && $_GET['from'] != "") {
+															$from = $this->input->get("from");
+														} else {
+															$from = date("Y-m-d");
+														}
+														if (isset($_GET['to']) && $_GET['to'] != "") {
+															$to = $this->input->get("to");
+														} else {
+															$to = date("Y-m-d");
+														}
+
+														$this->db->where("SUBSTR(tabungan_datetime,1,10) >=", $from);
+														$this->db->where("SUBSTR(tabungan_datetime,1,10) <=", $to);
+														if (isset($_GET['type']) && ($_GET['type'] == "Debet" || $_GET['type'] == "Kredit")) {
+															$this->db->where("tabungan_type", $this->input->get("type"));
+														}
+														if ($this->session->userdata("sekolah_id") > 0) {
+															$this->db->where("tabungan.sekolah_id", $this->session->userdata("sekolah_id"));
+														}
+
+														if (isset($_GET['search']) && $_GET['kelas_id'] > 0) {
+															$this->db->where("kelas.kelas_id", $kelas_id);
+														}
+														if (isset($_GET['search']) && isset($_GET['user_id']) && $_GET['user_id'] > 0) {
+															$this->db->where("user.user_id", $_GET['user_id']);
+														}
+
+														if ($this->session->userdata("position_id") == 4) {
+															$this->db->where("tabungan.user_nisn", $this->session->userdata("user_nisn"));
+														}
+
+														$usr = $this->db
+															->select("user.user_nisn, user.user_name, kelas.kelas_name, sekolah.sekolah_name,
+              (SUM(CASE WHEN tabungan.tabungan_type = 'debet' THEN tabungan.tabungan_amount ELSE 0 END) -
+              SUM(CASE WHEN tabungan.tabungan_type = 'kredit' THEN tabungan.tabungan_amount ELSE 0 END)) AS saldo")
+															->from("tabungan")
+															->join("sekolah", "sekolah.sekolah_id = tabungan.sekolah_id", "left")
+															->join("user", "user.user_nisn = tabungan.user_nisn", "left")
+															->join("kelas", "kelas.kelas_id = tabungan.kelas_id", "left")
+															->join("tabungankode", "tabungankode.tabungankode_id = tabungan.tabungankode_id", "left")
+															->group_by("user.user_nisn, user.user_name, kelas.kelas_name, sekolah.sekolah_name") // Mengelompokkan berdasarkan NISN dan nama siswa
+															->order_by("tabungan.tabungan_datetime", "desc")
+															->get();
+														// echo $this->db->last_query();
+														foreach ($usr->result() as $tabungan) {
+															if ($tabungan->user_nisn == "") {
+																$back = "background-color:#FEDCC5";
+															} else {
+																$back = "";
+															} ?>
+															<tr style="<?= $back; ?>">
+																<td><?= $tabungan->sekolah_name; ?></td>
+																<td><?= $tabungan->kelas_name; ?></td>
+																<td><?= $tabungan->user_name; ?></td>
+																<td><?= $tabungan->user_nisn; ?></td>
+																<td align="right"><?= number_format($tabungan->saldo, 0, ",", "."); ?></td>
+															</tr>
+														<?php } ?>
+													</tbody>
+												</table>
+											<?php } ?>
+
+											<!-- All -->
+											<?php if (
+												isset($_GET["type"]) &&
+												($_GET["type"] == "all")
+											) { ?>
+												<table id="dataTable" class="table table-condensed table-hover">
+													<thead>
+														<tr>
+															<th>School</th>
+															<th>Class</th>
+															<th>Balance</th>
+														</tr>
+													</thead>
+													<tbody>
+														<?php
+														if (isset($_GET['from']) && $_GET['from'] != "") {
+															$from = $this->input->get("from");
+														} else {
+															$from = date("Y-m-d");
+														}
+														if (isset($_GET['to']) && $_GET['to'] != "") {
+															$to = $this->input->get("to");
+														} else {
+															$to = date("Y-m-d");
+														}
+
+														$this->db->where("SUBSTR(tabungan_datetime,1,10) >=", $from);
+														$this->db->where("SUBSTR(tabungan_datetime,1,10) <=", $to);
+														if (isset($_GET['type']) && ($_GET['type'] == "Debet" || $_GET['type'] == "Kredit")) {
+															$this->db->where("tabungan_type", $this->input->get("type"));
+														}
+														if ($this->session->userdata("sekolah_id") > 0) {
+															$this->db->where("tabungan.sekolah_id", $this->session->userdata("sekolah_id"));
+														}
+
+														if (isset($_GET['search']) && $_GET['kelas_id'] > 0) {
+															$this->db->where("kelas.kelas_id", $kelas_id);
+														}
+														if (isset($_GET['search']) && isset($_GET['user_id']) && $_GET['user_id'] > 0) {
+															$this->db->where("user.user_id", $_GET['user_id']);
+														}
+
+														if ($this->session->userdata("position_id") == 4) {
+															$this->db->where("tabungan.user_nisn", $this->session->userdata("user_nisn"));
+														}
+
+														// Query untuk mendapatkan saldo per kelas
+														$usr = $this->db
+															->select("kelas.kelas_name,sekolah.sekolah_name, 
+		  (SUM(CASE WHEN tabungan.tabungan_type = 'debet' THEN tabungan.tabungan_amount ELSE 0 END) -
+		  SUM(CASE WHEN tabungan.tabungan_type = 'kredit' THEN tabungan.tabungan_amount ELSE 0 END)) AS saldo")
+															->from("tabungan")
+															->join("sekolah", "sekolah.sekolah_id = tabungan.sekolah_id", "left")
+															->join("kelas", "kelas.kelas_id = tabungan.kelas_id", "left")
+															->where("kelas.kelas_name !=", "") // Mengabaikan kelas tanpa nama
+															->group_by("kelas.kelas_name, sekolah.sekolah_name") // Mengelompokkan berdasarkan kelas
+															->order_by("tabungan.tabungan_datetime", "desc")
+															->get();
+
+
+
+														// echo $this->db->last_query();
+														foreach ($usr->result() as $tabungan) {
+														?>
+															<tr style="">
+																<td><?= $tabungan->sekolah_name; ?></td>
+																<td><?= $tabungan->kelas_name; ?></td>
+																<td align="right"><?= number_format($tabungan->saldo, 0, ",", "."); ?></td>
+															</tr>
+														<?php } ?>
+													</tbody>
+												</table>
+											<?php } ?>
 
 										</div>
 									</div>

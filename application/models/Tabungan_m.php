@@ -128,14 +128,24 @@ class tabungan_M extends CI_Model
 						// uraikan
 						for ($x = 2; $x <= $row; $x++) {
 							if (isset($arr_data[$x]["H"])) {
-								if ($arr_data[$x]["H"] == "T") {
-									$type = "Kredit";
-								} else {
+								if ($arr_data[$x]["H"] == "T" || $arr_data[$x]["H"] == "") {
 									$type = "Debet";
-								}
+									$typ = "T";
+								} else {
+									$type = "Kredit";
+									$typ = $arr_data[$x]["H"];
+								}								
 							} else {
 								// Nilai default jika indeks "H" tidak ada
 								$type = "Debet";
+								$typ = "T";
+							}
+
+							//tabungankode_id
+							$tabungankode_id = 0;
+							$tabungankode = $this->db->where("tabungankode_kode",$typ)->get("tabungankode");
+							foreach($tabungankode->result() as $tabungankode){
+								$tabungankode_id = $tabungankode->tabungankode_id;
 							}
 
 							$dateValue = $arr_data[$x]["E"];
@@ -164,6 +174,7 @@ class tabungan_M extends CI_Model
 									$input["sekolah_id"] = $this->session->userdata("sekolah_id");
 									$input["tabungan_tahun"] = $user->user_tahunajaran;
 									$input["kelas_id"] = $user->kelas_id;
+									$input["tabungankode_id"] = $tabungankode_id;
 									$this->db->insert("tabungan", $input);
 									
 									$user_id = $this->db->insert_id();

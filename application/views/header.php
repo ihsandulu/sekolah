@@ -230,6 +230,17 @@
 
                         <?php if ($this->session->userdata("position_id") == "1" || $this->session->userdata("position_id") == "2") { ?>
                             <li class="">
+                                <a href="<?= site_url("tabungankode"); ?>">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Account Code
+                                </a>
+
+                                <b class="arrow"></b>
+                            </li>
+                        <?php } ?>
+
+                        <?php if ($this->session->userdata("position_id") == "1" || $this->session->userdata("position_id") == "2") { ?>
+                            <li class="">
                                 <a href="<?= site_url("kelas"); ?>">
                                     <i class="menu-icon fa fa-caret-right"></i>
                                     Class
@@ -431,15 +442,15 @@
                             <b class="arrow"></b>
                         </li>
                     <?php } ?>
-                        <?php if ($this->session->userdata("position_id") != 5) { ?>
-                            <li class="">
-                                <a href="<?= site_url("pelanggaran?laporan=ok"); ?>">
-                                    <i class="menu-icon fa fa-caret-right"></i>
-                                    Violation
-                                </a>
-                                <b class="arrow"></b>
-                            </li>
-                        <?php } ?>
+                    <?php if ($this->session->userdata("position_id") != 5) { ?>
+                        <li class="">
+                            <a href="<?= site_url("pelanggaran?laporan=ok"); ?>">
+                                <i class="menu-icon fa fa-caret-right"></i>
+                                Violation
+                            </a>
+                            <b class="arrow"></b>
+                        </li>
+                    <?php } ?>
                     <!-- <li class="">
                         <a href="<?= site_url("rnilai"); ?>">
                             <i class="menu-icon fa fa-caret-right"></i>

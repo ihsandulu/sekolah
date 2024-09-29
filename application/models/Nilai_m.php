@@ -95,7 +95,7 @@ class Nilai_M extends CI_Model
         //insert
         if ($this->input->post("create") == "OK") {
             foreach ($this->input->post() as $e => $f) {
-                if ($e != 'create') {
+                if ($e != 'create' && $e != 'kelas_name' && $e != 'matpel_name' && $e != 'user_name' && $e != 'sumatif_name') {
                     $input[$e] = $this->input->post($e);
                 }
             }
@@ -104,10 +104,53 @@ class Nilai_M extends CI_Model
                 ->where("sumatif_id", $input["sumatif_id"])
                 ->where("matpel_id", $input["matpel_id"])
                 ->get("nilai");
-            if ($double->num_rows() == 0) {
+            if ($double->num_rows() == 0) {                
+                $input["nilai_year"] = date("Y");
                 $this->db->insert("nilai", $input);
                 // echo $this->db->last_query();
-                $data["message"] = "Insert Data Success";
+                $email = $this->session->userdata("sekolah_emailwa");
+                $password = $this->session->userdata("sekolah_passwordwa");
+                $server = $this->session->userdata("sekolah_serverwa");
+                $uri = "https://qithy.my.id/api/token?email=" . $email . "&password=" . $password . "";
+                $user = json_decode(
+                    file_get_contents($uri)
+                );
+                $token = $user->token;
+
+                $siswa = $this->db->from("telpon")->where("user_id", $input["user_id"])->get();
+                foreach ($siswa->result() as $siswa) {
+
+                    $kelas_name = $this->input->post("kelas_name");
+                    $user_name = $this->input->post("user_name");
+                    $matpel_name = $this->input->post("matpel_name");
+                    $sumatif_name = $this->input->post("sumatif_name");
+
+                    // Pesan yang akan dikirim
+                    $message = "Siswa " . $user_name . " telah mengikuti " . $sumatif_name . " Mapel " . $matpel_name . " dengan nilai " . $input["nilai_score"];
+
+                    // URL untuk mengirim pesan
+                    $urimessage = "https://qithy.my.id:8000/send-message?email=" . $email . "&token=" . $token . "&id=" . $server . "&message=" . urlencode($message) . "&number=" . $siswa->telpon_number;
+
+                    // Opsi untuk file_get_contents
+                    $options = [
+                        "http" => [
+                            "header" => "User-Agent: PHP\r\n", // Menambahkan User-Agent ke header
+                            "timeout" => 30                     // Timeout 30 detik
+                        ]
+                    ];
+
+                    $context = stream_context_create($options);
+
+                    $uripesan = file_get_contents($urimessage, false, $context);
+
+                    if ($uripesan === false) {
+                        $wapesan = "Gagal mengirim pesan.";
+                    } else {
+                        $wapesan = "Pesan berhasil dikirim.";
+                    }
+
+                    $data["message"] = "Insert Data Success. " . $wapesan;
+                }
             } else {
                 $data["message"] = "Nilai sudah ada!";
             }
@@ -116,7 +159,7 @@ class Nilai_M extends CI_Model
         //update
         if ($this->input->post("change") == "OK") {
             foreach ($this->input->post() as $e => $f) {
-                if ($e != 'change' && $e != 'nilai_picture') {
+                if ($e != 'change' && $e != 'nilai_picture' && $e != 'kelas_name' && $e != 'matpel_name' && $e != 'user_name' && $e != 'sumatif_name') {
                     $input[$e] = $this->input->post($e);
                 }
             }

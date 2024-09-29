@@ -29,11 +29,13 @@
             $.get("<?= site_url("api/inputmatpelguru"); ?>", {
                     sekolah_id: '<?= $sekolah_id; ?>',
                     matpel_id: $("#matpel_id").val(),
-                    user_id: '<?= $user_id; ?>'
+                    user_id: '<?= $user_id; ?>',
+                    matpelguru_sumatif: $("#matpelguru_sumatif").val()
                 })
                 .done(function(data) {
                     isi_matpel_id_guru();
                     isi_matpelguru();
+                    $("#matpelguru_sumatif").val("");
                 });
         }
 
@@ -116,6 +118,13 @@
                                             </div>
                                             <div class="col-md-2" style="height:350px;" align="center">
                                                 <div style="position:relative; left:50%; top:50%; transform:translate(-50%,-50%);">
+                                                    <div class="col-md-12 ">
+                                                        <label>Sumatif Count : </label>
+                                                        <input type="number" id="matpelguru_sumatif" style="width:50px;"/>
+                                                    </div>
+                                                    <br />
+                                                    <br />
+                                                    <br />
                                                     <div class="col-md-12 ">
                                                         <button type="button" onClick="inputmatpelguru()" class="btn btn-success fa fa-arrow-right"></button>
                                                     </div>

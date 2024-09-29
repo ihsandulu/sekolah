@@ -67,7 +67,8 @@ class Catatan_M extends CI_Model
             $double = $this->db
                 ->where("user_id", $input["user_id"])
                 ->get("catatan");
-            if ($double->num_rows() == 0) {
+            if ($double->num_rows() == 0) {         
+                $input["catatan_year"] = date("Y");
                 $this->db->insert("catatan", $input);
                 // echo $this->db->last_query();
                 $data["message"] = "Insert Data Success";

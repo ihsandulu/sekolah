@@ -121,6 +121,15 @@
                     </thead>
                     <tbody>
                         <?php
+                        $matapelajaran = $this->db->from("kelas_guru")
+                            ->where("kelas_id", $kelas_id)
+                            ->join("matpelguru", "matpelguru.user_id=kelas_guru.user_id")
+                            ->get();
+                        $matperarray = array();
+                        foreach ($matapelajaran->result() as $matapelajaran) {
+                            $matperarray[$matapelajaran->matpel_id] = $matapelajaran->matpelguru_sumatif;
+                        }
+
                         $nilai = $this->db
                             ->where("sekolah_id", $this->session->userdata("sekolah_id"))
                             ->where("user_id", $this->input->get("user_id"))
@@ -148,7 +157,13 @@
                                 ->order_by("matpel_name", "ASC")
                                 ->get("matpel");
                             foreach ($matpel->result() as $rowm) {
-                                $no = $sumatifno; ?>
+                                // $no = $sumatifno; 
+                                if (isset($matperarray[$rowm->matpel_id])) {
+                                    $no = $matperarray[$rowm->matpel_id];
+                                } else {
+                                    $no = $sumatifno;
+                                }
+                            ?>
                                 <tr>
                                     <td><?= $rowm->matpel_name; ?></td>
                                     <?php foreach ($sumatif->result() as $rows) { ?>
@@ -162,11 +177,12 @@
                                             } ?>
                                         </td>
                                     <?php } ?>
-                                    <td class="text-center"><?= $no; ?></td>
+                                    <td class="text-center">
+                                        <?= $no; ?>
+                                    </td>
                                 </tr>
                             <?php } ?>
                         <?php } ?>
-
                     </tbody>
                 </table>
             </div>

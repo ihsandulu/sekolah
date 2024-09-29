@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<?php if(isset($_POST['from'])&&$_POST['from']!=""){$dari="From ".date("d-m-Y",strtotime($_POST['from']));}else{$dari="";}?>
-		<?php if(isset($_POST['to'])&&$_POST['to']!=""){$ke="To ".date("d-m-Y",strtotime($_POST['to']));}else{$ke="";}?>
+		<?php if(isset($_GET['from'])&&$_GET['from']!=""){$dari="From ".date("d-m-Y",strtotime($_GET['from']));}else{$dari="";}?>
+		<?php if(isset($_GET['to'])&&$_GET['to']!=""){$ke="To ".date("d-m-Y",strtotime($_GET['to']));}else{$ke="";}?>
 		<title>Print Account Report : <?=$dari;?> <?=$ke;?></title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,7 +16,7 @@
 	<body>
         <div class="container">
             <div class="row">
-				<div style="font-size:18px; font-weight:bold;"><?=$this->input->post("type");?> Account Report : <?=$dari;?> <?=$ke;?></div>
+				<div style="font-size:18px; font-weight:bold;"><?=$this->input->get("type");?> Account Report : <?=$dari;?> <?=$ke;?></div>
                <table id="dataTable" class="table table-condensed table-hover" border="1">
 				<thead>
 					<tr>
@@ -31,27 +31,34 @@
 					</tr>
 				</thead>
 				<tbody> 
-					<?php  
-					if(isset($_POST['from'])&&$_POST['from']!=""){
-						$this->db->where("SUBSTR(tabungan_datetime,1,10) >=",$this->input->post("from"));
-					} 
-					if(isset($_POST['to'])&&$_POST['to']!=""){
-						$this->db->where("SUBSTR(tabungan_datetime,1,10) <=",$this->input->post("to"));
+					<?php 
+					if (isset($_POST['from']) && $_POST['from'] != "") {
+						$from = $this->input->post("from");
+					} else {
+						$from = date("Y-m-d");
 					}
-					if(isset($_POST['type'])&&$_POST['type']!=""){
-						$this->db->where("tabungan_type",$this->input->post("type"));
+					if (isset($_POST['to']) && $_POST['to'] != "") {
+						$to = $this->input->post("to");
+					} else {
+						$to = date("Y-m-d");
+					}
+
+					$this->db->where("SUBSTR(tabungan_datetime,1,10) >=", $from);
+					$this->db->where("SUBSTR(tabungan_datetime,1,10) <=", $to);
+					if(isset($_GET['type'])&&$_GET['type']!=""){
+						$this->db->where("tabungan_type",$this->input->get("type"));
 					}
 					if($this->session->userdata("sekolah_id")>0){
 						$this->db->where("tabungan.sekolah_id",$this->session->userdata("sekolah_id"));
 					}
 						
-					$kelas_id=$_POST['kelas_id'];
-					if (isset($_POST['kelas_id']) && $_POST['kelas_id'] > 0) {
+					$kelas_id=$_GET['kelas_id'];
+					if (isset($_GET['kelas_id']) && $_GET['kelas_id'] > 0) {
 						$this->db->where("kelas.kelas_id", $kelas_id);
 					}
-					$user_id=$_POST['user_id'];
-					if (isset($_POST['user_id']) && $_POST['user_id'] > 0) {
-						$this->db->where("user.user_id", $_POST['user_id']);
+					$user_id=$_GET['user_id'];
+					if (isset($_GET['user_id']) && $_GET['user_id'] > 0) {
+						$this->db->where("user.user_id", $_GET['user_id']);
 					}
 					
 					if ($this->session->userdata("position_id") == 4) {
@@ -61,7 +68,8 @@
 					$usr=$this->db
 					->join("sekolah","sekolah.sekolah_id=tabungan.sekolah_id","left")
 					->join("kelas","kelas.kelas_id=tabungan.kelas_id","left")
-					->join("user","user.user_nisn=tabungan.user_nisn","left")                                                
+					->join("user","user.user_nisn=tabungan.user_nisn","left")  
+					->join("tabungankode","tabungankode.tabungankode_id=tabungan.tabungankode_id","left")                                                
 					->order_by("tabungan_datetime","desc")
 					->get("tabungan");
 					//echo $this->db->last_query();
@@ -79,7 +87,7 @@
 						<td><?=$tabungan->user_nisn;?></td>
 					  <td><?=$tabungan->tabungan_remarks;?></td>	
 					  <td align="right"><?=number_format($tabungan->tabungan_amount,0,",",".");?></td>
-					  <td><?=$tabungan->tabungan_type;?></td>
+					  <td><?=$tabungan->tabungankode_type;?></td>
 					</tr>
 					<?php }
 					$total=$debet-$kredit;

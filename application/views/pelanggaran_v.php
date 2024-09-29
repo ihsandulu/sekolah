@@ -29,7 +29,7 @@
 
                     </h1>
                     <?php if (!isset($_POST['new']) && !isset($_POST['edit'])) { ?>
-                        <?php if (isset($_GET["laporan"]) && $_GET["laporan"] == "OK") { ?>
+                        <?php if (!isset($_GET["laporan"])) { ?>
 
                             <form method="post" class="col-md-2" style="margin-top:-30px; float:right;">
 
@@ -60,6 +60,12 @@
                                         </div>
                                         <form class="form-horizontal" method="post" enctype="multipart/form-data">
 
+                                        <div class="form-group">
+                                                <label class="control-label col-sm-2" for="pelanggaran_date">Date:</label>
+                                                <div class="col-sm-10">
+                                                    <input type="date" class="form-control" id="pelanggaran_date" name="pelanggaran_date" value="<?= $pelanggaran_date; ?>">
+                                                </div>
+                                            </div>
                                             <div class="form-group">
                                                 <label class="control-label col-sm-2" for="user_nisn">NISN:</label>
                                                 <div class="col-sm-10">
@@ -154,6 +160,97 @@
                                             <strong><?= $message; ?></strong>
                                         </div>
                                     <?php } ?>
+                                    <div class="page-header  mb-5">
+                                        <div>
+
+                                            <form class="form-inline ">
+                                                <?php
+                                                if (isset($_GET["from"]) && $_GET["from"] != "") {
+                                                    $from = $_GET["from"];
+                                                } else {
+                                                    $from = date("Y-m-d");
+                                                }
+                                                if (isset($_GET["to"]) && $_GET["to"] != "") {
+                                                    $to = $_GET["to"];
+                                                } else {
+                                                    $to = date("Y-m-d");
+                                                }
+                                                ?>
+                                                <div class="form-group">
+                                                    <label for="from">From:</label>
+                                                    <input type="date" name="from" id="from" class="form-control" value="<?= $from; ?>">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="to">To:</label>
+                                                    <input type="date" name="to" id="to" class="form-control" value="<?= $to; ?>">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="kelas_id">Class:</label>
+                                                    <?php
+                                                    if (isset($_GET["kelas_id"])) {
+                                                        $kelas_id = $this->input->get("kelas_id");
+                                                    } else {
+                                                        $kelas_id = 0;
+                                                    }
+                                                    if (isset($_GET["user_id"])) {
+                                                        $user_id = $this->input->get("user_id");
+                                                    } else {
+                                                        $user_id = 0;
+                                                    }
+                                                    $this->db->join("kelas", "kelas.kelas_id=kelas_guru.kelas_id", "left");
+                                                    if ($this->session->userdata("sekolah_id") > 0) {
+                                                        $this->db->where("kelas.sekolah_id", $this->session->userdata("sekolah_id"));
+                                                    }
+                                                    if ($this->session->userdata("position_id") != 1 && $this->session->userdata("position_id") != 2) {
+                                                        $this->db->where("kelas_guru.user_id", $this->session->userdata("user_id"));
+                                                    }
+                                                    $gru = $this->db->group_by("kelas_guru.kelas_id")
+                                                        ->get("kelas_guru");
+                                                    // echo $this->db->last_query();
+                                                    // echo $this->session->userdata("position_id");
+                                                    ?>
+                                                    <select onchange="listsiswasekolah();" name="kelas_id" id="kelas_id" class="form-control" onChange="cari_user(this.value)">
+                                                        <option value="0" <?= ($kelas_id == 0) ? 'selected="selected"' : ""; ?>>Choose Class</option>
+                                                        <?php
+
+                                                        foreach ($gru->result() as $kelas) { ?>
+                                                            <option value="<?= $kelas->kelas_id; ?>" <?= ($kelas_id == $kelas->kelas_id) ? 'selected="selected"' : ""; ?>><?= $kelas->kelas_name; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+
+                                                <script>
+                                                    function listsiswasekolah() {
+                                                        let kelas_id = $("#kelas_id").val();
+                                                        // alert("<?= base_url("api/listsiswakelasnisn"); ?>?kelas_id="+kelas_id+"&user_nisn=<?= $user_nisn; ?>");
+                                                        if (kelas_id > 0) {
+                                                            $.get("<?= base_url("api/listsiswakelasnisn"); ?>", {
+                                                                    kelas_id: kelas_id,
+                                                                    user_nisn: '<?= $user_nisn; ?>'
+                                                                })
+                                                                .done(function(data) {
+                                                                    $("#user_nisn").html(data);
+                                                                });
+                                                        } else {
+                                                            $("#user_nisn").html('');
+                                                        }
+                                                    }
+
+                                                    listsiswasekolah();
+                                                </script>
+
+
+                                                <div class="form-group">
+                                                    <label for="user_nisn">Student:</label>
+                                                    <select name="user_nisn" id="user_nisn" class="form-control">
+
+                                                    </select>
+                                                </div>
+
+                                                <button type="submit" class="btn btn-default">Submit</button>
+                                            </form>
+                                        </div>
+                                    </div>
                                     <div class="box">
                                         <div id="collapse4" class="body table-responsive">
                                             <table id="dataTable" class="table table-condensed table-hover">
@@ -162,6 +259,7 @@
                                                         <?php if (isset($_GET["laporan"]) && $_GET["laporan"] == "OK") { ?>
                                                             <th class="col-md-1">Action</th>
                                                         <?php } ?>
+                                                        <th>Date</th>
                                                         <th>School</th>
                                                         <th>Class</th>
                                                         <th>NISN</th>
@@ -175,13 +273,27 @@
                                                     if ($this->session->userdata("sekolah_id") > 0) {
                                                         $this->db->where("pelanggaran.sekolah_id", $this->session->userdata("sekolah_id"));
                                                     }
+                                                    
+                                                    if (isset($_GET["from"]) && $_GET["from"] != "") {
+                                                        $this->db->where("pelanggaran.pelanggaran_date >=", $from);
+                                                    }
+                                                    if (isset($_GET["to"]) && $_GET["to"] != "") {
+                                                        $this->db->where("pelanggaran.pelanggaran_date <=", $to);
+                                                    }
+                                                    if (isset($_GET['kelas_id']) && $_GET['kelas_id'] > 0) {
+                                                        $this->db->where("pelanggaran.kelas_id", $_GET['kelas_id']);
+                                                    }
+                                                    if (isset($_GET['user_nisn']) && $_GET['user_nisn'] > 0) {
+                                                        $this->db->where("pelanggaran.user_nisn", $_GET['user_nisn']);
+                                                    }
                                                     $usr = $this->db
                                                         ->join("user", "user.user_nisn=pelanggaran.user_nisn", "left")
                                                         ->join("kelas", "kelas.kelas_id=user.kelas_id", "left")
                                                         ->join("sekolah", "sekolah.sekolah_id=pelanggaran.sekolah_id", "left")
                                                         ->join("mpelanggaran", "mpelanggaran.mpelanggaran_id=pelanggaran.mpelanggaran_id", "left")
+                                                        ->where("pelanggaran.pelanggaran_year", date("Y"))
                                                         ->get("pelanggaran");
-                                                    //echo $this->db->last_query();
+                                                    // echo $this->db->last_query();
                                                     foreach ($usr->result() as $pelanggaran) { ?>
                                                         <tr>
                                                             <?php if (isset($_GET["laporan"]) && $_GET["laporan"] == "OK") { ?>
@@ -197,6 +309,7 @@
                                                                     </form>
                                                                 </td>
                                                             <?php } ?>
+                                                            <td><?= $pelanggaran->pelanggaran_date; ?></td>
                                                             <td><?= $pelanggaran->sekolah_name; ?></td>
                                                             <td><?= $pelanggaran->kelas_name; ?></td>
                                                             <td><?= $pelanggaran->user_nisn; ?></td>
