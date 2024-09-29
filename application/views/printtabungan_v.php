@@ -71,16 +71,30 @@
             $sekolah = $this->db->from("sekolah")
                 ->where("sekolah_id", $this->session->userdata("sekolah_id"))
                 ->get()->row();
+
+                if(isset($_GET["kosongan"])){
+                    $this->db->limit(1);
+                }
+                if(isset($_GET["user_id"])){
+                    $this->db->where("user_id",$_GET["user_id"]);
+                }
             $userd = $this->db->from("user")
                 ->join("kelas", "kelas.kelas_id=user.kelas_id", "left")
                 ->where("user.sekolah_id", $this->session->userdata("sekolah_id"))
                 ->where("position_id", "4")
                 ->order_by("user_name", "ASC")
                 ->get();
+                // echo $this->db->last_query();
             foreach ($userd->result() as $row) {
-                $kelas_name = $row->kelas_name;
-                $user_name = $row->user_name;
-                $user_nisn = $row->user_nisn;
+                if(isset($_GET["kosongan"])){
+                    $kelas_name = "";
+                    $user_name = "";
+                    $user_nisn = "";
+                }else{
+                    $kelas_name = $row->kelas_name;
+                    $user_name = $row->user_name;
+                    $user_nisn = $row->user_nisn;
+                }
             ?>
                 <div class="kartu col-xs-12">
                     <div class="col-xs-12" id="header">

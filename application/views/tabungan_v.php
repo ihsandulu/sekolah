@@ -213,7 +213,7 @@
 												tutupimport();
 
 												function printtemplate() {
-													window.open("<?= base_url('printtabungan'); ?>", '_blank');
+													window.open("<?= base_url('printtabungan?kosongan=OK'); ?>", '_blank');
 												}
 											</script>
 											<br />
@@ -262,12 +262,12 @@
 														</script>
 													</div>
 													<?php
-													if (isset($_GET["from"])&&$_GET["from"]!="") {
+													if (isset($_GET["from"]) && $_GET["from"] != "") {
 														$from = $_GET["from"];
 													} else {
 														$from = date("Y-m-d");
 													}
-													if (isset($_GET["to"])&&$_GET["to"]!="") {
+													if (isset($_GET["to"]) && $_GET["to"] != "") {
 														$to = $_GET["to"];
 													} else {
 														$to = date("Y-m-d");
@@ -372,8 +372,8 @@
 																$colact = "col-md-1";
 																$colbtn = "col-md-12";
 															} else {
-																$colact = "col-md-2";
-																$colbtn = "col-md-4";
+																$colact = "col-md-3";
+																$colbtn = "col-md-3";
 															} ?>
 															<?php
 															if ($this->session->userdata("position_id") != 4) { ?>
@@ -438,13 +438,17 @@
 															<tr style="<?= $back; ?>">
 																<?php if ($this->session->userdata("position_id") != 4) { ?>
 																	<td style="padding-left:0px; padding-right:0px;" align="center">
-																		<form target="_blank" action="<?= site_url("tabunganprint"); ?>" method="get" class="<?= $colbtn; ?>" style="padding:0px;">
+																		<form title="Print Template" target="_blank" action="<?= base_url('printtabungan'); ?>" method="get" class="<?= $colbtn; ?>" style="padding:0px;">
+																			<button type="submit"  class="btn btn-info btn-xs btn-block" name="print" value="OK"><span class="fa fa-print" style="color:white;"></span> </button>
+																			<input type="hidden" name="user_id" value="<?= $tabungan->user_id; ?>" />
+																		</form>
+																		<form title="Print Tabungan" target="_blank" action="<?= site_url("tabunganprint"); ?>" method="get" class="<?= $colbtn; ?>" style="padding:0px;">
 																			<button type="button" onClick="line('<?= $tabungan->tabungan_id; ?>')" class="btn btn-success btn-xs btn-block" name="print" value="OK"><span class="fa fa-print" style="color:white;"></span> </button>
 																			<input type="hidden" name="tabungan_id" value="<?= $tabungan->tabungan_id; ?>" />
 																		</form>
 
 																		<?php if (!isset($_GET['laporan'])) { ?>
-																			<form method="post" class="col-md-4" style="padding:0px;">
+																			<form method="post" class="<?= $colbtn; ?>" style="padding:0px;">
 																				<button class="btn btn-warning  btn-xs btn-block" name="edit" value="OK"><span class="fa fa-edit" style="color:white;"></span> </button>
 																				<input type="hidden" name="tabungan_id" value="<?= $tabungan->tabungan_id; ?>" />
 																				<?php if ($tabungan->tabungan_type == "Kredit") { ?>
@@ -454,7 +458,7 @@
 																				<?php } ?>
 																			</form>
 
-																			<form method="post" class="col-md-4" style="padding:0px;">
+																			<form method="post" class="<?= $colbtn; ?>" style="padding:0px;">
 																				<button class="btn btn-danger delete btn-xs btn-block" name="delete" value="OK"><span class="fa fa-close" style="color:white;"></span> </button>
 																				<input type="hidden" name="tabungan_id" value="<?= $tabungan->tabungan_id; ?>" />
 																			</form>
