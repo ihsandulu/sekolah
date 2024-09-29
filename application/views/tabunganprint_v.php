@@ -31,7 +31,7 @@
 	</style>
 </head>
 
-<body style="padding-left:5px; padding-top:250px;">
+<body style="padding-left:5px; padding-top:100px;">
 	<?php
 	$line = $this->input->get("line");
 	$where["tabungan_id"] = $this->input->get("tabungan_id");
