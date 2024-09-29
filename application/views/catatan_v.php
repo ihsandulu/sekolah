@@ -128,6 +128,78 @@
                                             <strong><?= $message; ?></strong>
                                         </div>
                                     <?php } ?>
+                                    
+                                    <div class="page-header  mb-5">
+                                        <div>
+
+                                            <form class="form-inline ">
+                                                <div class="form-group">
+                                                    <label for="kelas_id">Class:</label>
+                                                    <?php
+                                                    if (isset($_GET["kelas_id"])) {
+                                                        $kelas_id = $this->input->get("kelas_id");
+                                                    } else {
+                                                        $kelas_id = 0;
+                                                    }
+                                                    if (isset($_GET["user_id"])) {
+                                                        $user_id = $this->input->get("user_id");
+                                                    } else {
+                                                        $user_id = 0;
+                                                    }
+                                                    $this->db->join("kelas", "kelas.kelas_id=kelas_guru.kelas_id", "left");
+                                                    if ($this->session->userdata("sekolah_id") > 0) {
+                                                        $this->db->where("kelas.sekolah_id", $this->session->userdata("sekolah_id"));
+                                                    }
+                                                    if ($this->session->userdata("position_id") != 1 && $this->session->userdata("position_id") != 2) {
+                                                        $this->db->where("kelas_guru.user_id", $this->session->userdata("user_id"));
+                                                    }
+                                                    $gru = $this->db->group_by("kelas_guru.kelas_id")
+                                                        ->get("kelas_guru");
+                                                    // echo $this->db->last_query();
+                                                    // echo $this->session->userdata("position_id");
+                                                    ?>
+                                                    <select onchange="listsiswasekolah();" name="kelas_id" id="kelas_id" class="form-control" >
+                                                        <option value="0" <?= ($kelas_id == 0) ? 'selected="selected"' : ""; ?>>Choose Class</option>
+                                                        <?php
+
+                                                        foreach ($gru->result() as $kelas) { ?>
+                                                            <option value="<?= $kelas->kelas_id; ?>" <?= ($kelas_id == $kelas->kelas_id) ? 'selected="selected"' : ""; ?>><?= $kelas->kelas_name; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+
+                                                <script>
+                                                    function listsiswasekolah() {
+                                                        let kelas_id = $("#kelas_id").val();
+                                                        // alert("<?= base_url("api/listsiswakelas"); ?>?kelas_id="+kelas_id+"&user_id=<?= $user_id; ?>");
+                                                        if (kelas_id > 0) {
+                                                            $.get("<?= base_url("api/listsiswakelas"); ?>", {
+                                                                    kelas_id: kelas_id,
+                                                                    user_id: '<?= $user_id; ?>'
+                                                                })
+                                                                .done(function(data) {
+                                                                    $("#user_id").html(data);
+                                                                });
+                                                        } else {
+                                                            $("#user_id").html('');
+                                                        }
+                                                    }
+
+                                                    listsiswasekolah();
+                                                </script>
+
+
+                                                <div class="form-group">
+                                                    <label for="user_id">Student:</label>
+                                                    <select name="user_id" id="user_id" class="form-control">
+
+                                                    </select>
+                                                </div>
+
+                                                <button type="submit" class="btn btn-default">Submit</button>
+                                            </form>
+                                        </div>
+                                    </div>
                                     <div class="box">
                                         <div id="collapse4" class="body table-responsive">
                                             <table id="dataTable" class="table table-condensed table-hover">
@@ -146,6 +218,14 @@
                                                     <?php
                                                     if ($this->session->userdata("sekolah_id") > 0) {
                                                         $this->db->where("catatan.sekolah_id", $this->session->userdata("sekolah_id"));
+                                                    }  
+                                                    if (isset($_GET['kelas_id']) && $_GET['kelas_id'] > 0) {
+                                                        $this->db->where("catatan.kelas_id", $_GET['kelas_id']);
+                                                    }else{
+                                                        $this->db->where("catatan.kelas_id", "0");
+                                                    }
+                                                    if (isset($_GET['user_id']) && $_GET['user_id'] > 0) {
+                                                        $this->db->where("catatan.user_id", $_GET['user_id']);
                                                     }
                                                     $usr = $this->db
                                                         ->join("sekolah", "sekolah.sekolah_id=catatan.sekolah_id", "left")

@@ -58,7 +58,7 @@
                                             <div class="form-group">
                                                 <label class="control-label col-sm-2" for="kelas_name">Class:</label>
                                                 <div class="col-sm-10">
-                                                    <input type="text" class="form-control" id="kelas_name" name="kelas_name" placeholder="Enter Class" value="<?= $kelas_name; ?>">
+                                                    <input autofocus type="text" class="form-control" id="kelas_name" name="kelas_name" placeholder="Enter Class" value="<?= $kelas_name; ?>">
                                                 </div>
                                             </div>
                                             <div class="form-group">

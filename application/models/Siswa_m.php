@@ -91,7 +91,7 @@ class Siswa_M extends CI_Model
 						//cek data
 						$userrows = $this->db->where("user_nisn", $arr_data[$x]["B"])->get("user");
 						if ($userrows->num_rows() > 0) {
-							foreach($userrows->result() as $urow){
+							foreach ($userrows->result() as $urow) {
 								$where["sekolah_id"] = $arr_data[$x]["A"];
 								$where["user_nisn"] = $arr_data[$x]["B"];
 								$input["user_name"] = $arr_data[$x]["C"];
@@ -101,7 +101,6 @@ class Siswa_M extends CI_Model
 								$this->db->update("user", $input, $where);
 								$user_id = $urow->user_id;
 							}
-							
 						} else {
 							$input["sekolah_id"] = $arr_data[$x]["A"];
 							$input["user_nisn"] = $arr_data[$x]["B"];
@@ -121,7 +120,11 @@ class Siswa_M extends CI_Model
 							$this->db->delete("telpon", $inputtelw);
 
 							$sukses++;
-							$pisah = explode(",", $arr_data[$x]["G"]);
+							if (isset($arr_data[$x]["G"])) {
+								$pisah = explode(",", $arr_data[$x]["G"]);
+							} else {
+								$pisah = array();
+							}
 
 							if (!empty($pisah)) {
 								foreach ($pisah as $pisa) {
@@ -144,7 +147,7 @@ class Siswa_M extends CI_Model
 									}
 								}
 							} else {
-								log_message('error', 'Tidak ada nomor telepon yang ditemukan di data: ' . $arr_data[$x]["G"]);
+								log_message('error', 'Tidak ada nomor telepon yang ditemukan di data: ' . $arr_data[$x]["C"]);
 							}
 						} else {
 							$gagal++;

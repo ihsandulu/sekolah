@@ -20,9 +20,10 @@ function truncateString($string, $length = 11) {
     .barc {
         height: <?= $barcode_height; ?>px;
         width: <?= $barcode_width; ?>px;
-        margin: 10px;
+        margin: 1px;
         padding: 5px;
         border: black solid 1px;
+        float:left;
     }
 
     .nama {
