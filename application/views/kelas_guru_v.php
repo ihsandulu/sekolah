@@ -109,7 +109,7 @@
                                                     foreach ($kel->result() as $kelas) {
                                                         $kelasguru = $this->db
                                                             ->where("user_id", $user_id)
-                                                            ->where("kelas_id", $kelas->kelas_id)
+                                                            // ->where("kelas_id", $kelas->kelas_id)
                                                             ->where("sekolah_id", $this->session->userdata("sekolah_id"))
                                                             ->get("kelas_guru")->num_rows();
                                                         if ($kelasguru == 0) {
