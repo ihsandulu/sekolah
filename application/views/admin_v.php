@@ -165,6 +165,9 @@
                           if ($this->session->userdata("sekolah_id") > 0) {
                             $this->db->where("user.sekolah_id", $this->session->userdata("sekolah_id"));
                           }
+                          if (isset($_GET["id"])) {
+                            $this->db->where("user.user_id", $_GET["id"]);
+                          }
                           $usr = $this->db
                             ->join("sekolah", "sekolah.sekolah_id=user.sekolah_id", "left")
                             ->join("position", "position.position_id=user.position_id", "left")

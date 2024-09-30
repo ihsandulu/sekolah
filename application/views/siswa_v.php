@@ -221,6 +221,9 @@
                           if ($this->session->userdata("sekolah_id") > 0) {
                             $this->db->where("user.sekolah_id", $this->session->userdata("sekolah_id"));
                           }
+                          if (isset($_GET["id"])) {
+                            $this->db->where("user.user_id", $_GET["id"]);
+                          }
                           $usr = $this->db
                             ->select("user.*, sekolah.*, kelas.*, position.*, GROUP_CONCAT(telpon.telpon_number SEPARATOR ',') as nomor_telepon")
                             ->join("telpon", "telpon.user_id=user.user_id", "left")

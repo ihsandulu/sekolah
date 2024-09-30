@@ -79,7 +79,21 @@
 
                     <ul class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close" role="menu" aria-labelledby="userdetail">
                         <li role="presentation">
-                            <a role="menuitem" href="<?= site_url("profile?id=" . $this->session->userdata("user_id")); ?>">
+                            <?php 
+                            if($this->session->userdata("position_id")==3){
+                                $urlprofile="guru";
+                            }
+                            if($this->session->userdata("position_id")==4){
+                                $urlprofile="siswa";
+                            }
+                            if($this->session->userdata("position_id")==2){
+                                $urlprofile="admin";
+                            }
+                            if($this->session->userdata("position_id")==5){
+                                $urlprofile="petugastabungan";
+                            }
+                            ?>
+                            <a role="menuitem" href="<?= site_url($urlprofile."?id=" . $this->session->userdata("user_id")); ?>">
                                 <i class="ace-icon fa fa-user"></i>
                                 Profile
                             </a>
