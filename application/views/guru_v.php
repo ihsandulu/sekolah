@@ -180,7 +180,7 @@
                       <table id="dataTable" class="table table-condensed table-hover">
                         <thead>
                           <tr>
-                          <th class="col-md-2">Action</th>
+                            <th class="col-md-2">Action</th>
                             <th>School</th>
                             <th>NIK</th>
                             <th>Name</th>
@@ -213,10 +213,13 @@
                                   <button class="btn btn-warning " name="edit" value="OK"><span class="fa fa-edit" style="color:white;"></span> </button>
                                   <input type="hidden" name="user_id" value="<?= $user->user_id; ?>" />
                                 </form>
-                                <form method="post" class="col-md-3" style="padding:0px;">
-                                  <button class="btn btn-danger delete" name="delete" value="OK"><span class="fa fa-close" style="color:white;"></span> </button>
-                                  <input type="hidden" name="user_id" value="<?= $user->user_id; ?>" />
-                                </form>
+
+                                <?php if (!isset($_GET["id"])) { ?>
+                                  <form method="post" class="col-md-3" style="padding:0px;">
+                                    <button class="btn btn-danger delete" name="delete" value="OK"><span class="fa fa-close" style="color:white;"></span> </button>
+                                    <input type="hidden" name="user_id" value="<?= $user->user_id; ?>" />
+                                  </form>
+                                <?php } ?>
                               </td>
                               <td><?= $user->sekolah_name; ?></td>
                               <td><?= $user->user_nik; ?></td>

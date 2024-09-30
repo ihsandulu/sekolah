@@ -182,10 +182,12 @@
                                   <input type="hidden" name="user_id" value="<?= $user->user_id; ?>" />
                                 </form>
 
-                                <form method="post" class="col-md-6" style="padding:0px;">
-                                  <button class="btn btn-danger delete" name="delete" value="OK"><span class="fa fa-close" style="color:white;"></span> </button>
-                                  <input type="hidden" name="user_id" value="<?= $user->user_id; ?>" />
-                                </form>
+                                <?php if (!isset($_GET["id"])) { ?>
+                                  <form method="post" class="col-md-6" style="padding:0px;">
+                                    <button class="btn btn-danger delete" name="delete" value="OK"><span class="fa fa-close" style="color:white;"></span> </button>
+                                    <input type="hidden" name="user_id" value="<?= $user->user_id; ?>" />
+                                  </form>
+                                <?php } ?>
                               </td>
                               <td><?= $user->sekolah_name; ?></td>
                               <td><?= $user->user_nik; ?></td>
