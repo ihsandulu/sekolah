@@ -99,6 +99,7 @@
                                             ->join("kelas_guru", "kelas_guru.kelas_id=kelas_sekolah.kelas_id", "left")
                                             ->where("kelas_sekolah.sekolah_id", $this->session->userdata("sekolah_id"))
                                             ->where("kelas_guru.sekolah_id", NULL)
+                                            ->where("user_id", $user_id)
                                             ->get("kelas_sekolah");
                                         $a = $this->db->last_query();
                                         // echo $a; ?>
