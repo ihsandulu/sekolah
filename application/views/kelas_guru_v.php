@@ -95,11 +95,9 @@
                                         <?php
                                         $kel = $this->db
                                         ->select("kelas_sekolah.kelas_id as kelas_id, kelas_sekolah.sekolah_id as sekolah_id, kelas.*")
-                                            ->join("kelas", "kelas.kelas_id=kelas_sekolah.kelas_id", "left")
-                                            ->join("kelas_guru", "kelas_guru.kelas_id=kelas_sekolah.kelas_id", "left")
-                                            ->where("kelas_sekolah.sekolah_id", $this->session->userdata("sekolah_id"))
-                                            // ->where("kelas_guru.sekolah_id", NULL)
-                                            ->where("kelas_guru.user_id !=", $user_id)
+                                        ->join("kelas", "kelas.kelas_id=kelas_sekolah.kelas_id", "left")
+                                        ->where("kelas_sekolah.sekolah_id", $sekolah_id)
+                                        ->order_by("kelas.kelas_name","ASC")
                                             ->get("kelas_sekolah");
                                         $a = $this->db->last_query();
                                         // echo $a; ?>
@@ -110,7 +108,7 @@
                                                     foreach ($kel->result() as $kelas) {
                                                         $kelasguru = $this->db
                                                             ->where("user_id", $user_id)
-                                                            // ->where("kelas_id", $kelas->kelas_id)
+                                                            ->where("kelas_id", $kelas->kelas_id)
                                                             ->where("sekolah_id", $this->session->userdata("sekolah_id"))
                                                             ->get("kelas_guru")->num_rows();
                                                         if ($kelasguru == 0) {
@@ -140,6 +138,7 @@
                                                     <?php $kela = $this->db
                                                         ->join("kelas", "kelas.kelas_id=kelas_guru.kelas_id", "left")
                                                         ->where("kelas_guru.user_id", $this->input->get("user_id"))
+                                                        ->order_by("kelas.kelas_name","ASC")
                                                         ->get("kelas_guru");
                                                     $a = $this->db->last_query();
                                                     foreach ($kela->result() as $kelasguru) {

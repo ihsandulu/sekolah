@@ -434,6 +434,7 @@ class api extends CI_Controller
 		$kel = $this->db
 			->join("kelas", "kelas.kelas_id=kelas_sekolah.kelas_id", "left")
 			->where("kelas_sekolah.sekolah_id", $sekolah_id)
+			->order_by("kelas.kelas_name","ASC")
 			->get("kelas_sekolah");
 		echo $this->db->last_query();
 		foreach ($kel->result() as $kelas) {
@@ -457,6 +458,7 @@ class api extends CI_Controller
 			->join("kelas", "kelas.kelas_id=kelas_guru.kelas_id", "left")
 			->where("kelas_guru.sekolah_id", $sekolah_id)
 			->where("kelas_guru.user_id", $user_id)
+			->order_by("kelas.kelas_name","ASC")
 			->get("kelas_guru");
 		foreach ($kela->result() as $kelasguru) {
 			?>
