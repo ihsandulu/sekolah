@@ -100,7 +100,7 @@
                                         ->order_by("kelas.kelas_name","ASC")
                                             ->get("kelas_sekolah");
                                         $a = $this->db->last_query();
-                                        // echo $a; ?>
+                                        echo $a; ?>
                                         <div class="panel-body">
                                             <div class="col-md-5">
                                                 <select id="kelas_sekolah_id" name="kelas_sekolah_id" multiple class="form-control" style="height:350px;">
