@@ -6,7 +6,9 @@ class barcode extends CI_Controller {
 
 	public function index()
 	{
-		echo "Halo";
+		$this->load->model('kelas_guru_m');
+		$data=$this->kelas_guru_m->data();
+		$this->parser->parse('kelas_guru_v',$data);
 		
 	}
 }
