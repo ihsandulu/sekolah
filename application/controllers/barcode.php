@@ -3,7 +3,7 @@
 /*
  *  Author	David S. Tufts
  *  Company	davidscotttufts.com
- *	  
+ *	  test
  *  Date:	05/25/2003
  *  Usage:	<img src="/barcode.php?text=testing" alt="testing" />
  */
