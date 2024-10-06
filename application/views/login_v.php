@@ -127,7 +127,7 @@
 		}
 
 		body {
-			background-image: url("assets/images/backgroundrumus.png");
+			background-image: url("assets/images/backgroundrumusnya.png");
     background-size: cover; /* Mengisi seluruh area body */
     background-repeat: no-repeat;
     background-position: center;
