@@ -63,6 +63,9 @@ if (current_url() != site_url("login")) {
 <script src="https://cdn.datatables.net/buttons/2.3.2/js/buttons.html5.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.3.2/js/buttons.print.min.js"></script>
 
+
+
+
 <!-- ace styles -->
 <link rel="stylesheet" href="<?= base_url("assets/css/ace.min.css"); ?>" class="ace-main-stylesheet" id="main-ace-style" />
 

@@ -127,9 +127,11 @@
 		}
 
 		body {
-			background-image: url("assets/images/backgroundsekolah.png");
-			width: 100%;
-			height: 100%;
+			background-image: url("assets/images/backgroundrumus.png");
+    background-size: cover; /* Mengisi seluruh area body */
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
 			font-family: 'Open Sans', sans-serif;
 			/* background: #092756;
 	background: -moz-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%),-moz-linear-gradient(top,  rgba(57,173,219,.25) 0%, rgba(42,60,87,.4) 100%), -moz-linear-gradient(-45deg,  #670d10 0%, #092756 100%);
@@ -147,7 +149,7 @@
 			left: 50%;
 			transform: translate(-50%, -50%);
 			margin: 0px 0 0 0px;
-			width:400px;
+			width: 400px;
 			/* height:400px; */
 			padding: 20px;
 			text-align: center;

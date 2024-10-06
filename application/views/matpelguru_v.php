@@ -96,11 +96,11 @@
                                         </div>
                                         <div class="panel-body">
                                             <div class="col-md-5">
-                                            <?php $gru = $this->db
-                                                        ->where("matpel.sekolah_id", $sekolah_id)
-                                                        ->get("matpel");
-                                                    // echo $this->db->last_query();
-                                                    ?>
+                                                <?php $gru = $this->db
+                                                    ->where("matpel.sekolah_id", $sekolah_id)
+                                                    ->get("matpel");
+                                                // echo $this->db->last_query();
+                                                ?>
                                                 <select id="matpel_id" name="matpel_id" multiple class="form-control" style="height:350px;">
                                                     <?php
                                                     foreach ($gru->result() as $matpel) {
@@ -120,7 +120,7 @@
                                                 <div style="position:relative; left:50%; top:50%; transform:translate(-50%,-50%);">
                                                     <div class="col-md-12 ">
                                                         <label>Sumatif Count : </label>
-                                                        <input type="number" id="matpelguru_sumatif" style="width:50px;"/>
+                                                        <input type="number" id="matpelguru_sumatif" style="width:50px;" />
                                                     </div>
                                                     <br />
                                                     <br />
@@ -138,18 +138,19 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-5">
-                                                <?php $sisa = $this->db
+                                                <select id="matpelguru_id" name="matpelguru_id" multiple class="form-control" style="height:350px;">
+                                                    <?php
+                                                    $sekolah_id = $this->session->userdata("sekolah_id");
+                                                    $user_id = $this->input->get("user_id");
+                                                    $sisa = $this->db
                                                         ->join("matpel", "matpel.matpel_id=matpelguru.matpel_id", "left")
                                                         ->where("matpelguru.sekolah_id", $sekolah_id)
                                                         ->where("matpelguru.user_id", $user_id)
                                                         ->get("matpelguru");
-                                                    // echo $this->db->last_query();
-                                                    ?>
-                                                <select id="matpelguru_id" name="matpelguru_id" multiple class="form-control" style="height:350px;">
-                                                    <?php
+                                                    //$a = $this->db->last_query();
                                                     foreach ($sisa->result() as $gurumatpelguru) {
                                                     ?>
-                                                        <option value="<?= $gurumatpelguru->matpelguru_id; ?>"><?= $gurumatpelguru->matpel_name; ?></option>
+                                                        <option value="<?= $gurumatpelguru->matpelguru_id; ?>"><?= $gurumatpelguru->matpel_name; ?> (<?= $gurumatpelguru->matpelguru_sumatif; ?> Sumatif)</option>
                                                     <?php } ?>
                                                 </select>
                                             </div>

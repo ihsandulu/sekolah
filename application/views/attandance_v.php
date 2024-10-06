@@ -64,7 +64,7 @@
                                             <div class="form-group">
                                                 <label class="control-label col-sm-2" for="kelas_id">Class:</label>
                                                 <div class="col-sm-10">
-                                                    <select class="form-control" id="kelas_id" name="kelas_id">
+                                                    <select class="form-control select2" id="kelas_id" name="kelas_id">
                                                         <option value="" <?= ($kelas_id == "") ? "selected" : ""; ?>>Choose Class</option>
                                                         <?php
                                                         $kelas = $this->db->from("kelas_sekolah")
@@ -81,7 +81,7 @@
                                             <div class="form-group">
                                                 <label class="control-label col-sm-2" for="user_id">Student:</label>
                                                 <div class="col-sm-10">
-                                                    <select onchange="isinisn()" class="form-control" id="user_id" name="user_id">
+                                                    <select onchange="isinisn()" class="form-control select2" id="user_id" name="user_id">
 
                                                     </select>
                                                     <input id="absen_nisn" name="absen_nisn" type="hidden" />

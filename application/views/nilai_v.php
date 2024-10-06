@@ -76,7 +76,7 @@
                                             <div class="form-group">
                                                 <label class="control-label col-sm-2" for="kelas_id">Class:</label>
                                                 <div class="col-sm-10">
-                                                    <select onchange="kelasname()" class="form-control" id="kelas_id" name="kelas_id">
+                                                    <select onchange="kelasname()" class="form-control select2" id="kelas_id" name="kelas_id">
                                                         <option value="" <?= ($kelas_id == "") ? "selected" : ""; ?>>Choose Class</option>
                                                         <?php
                                                         $kelas = $this->db->from("kelas_guru")
@@ -101,7 +101,7 @@
                                             <div class="form-group">
                                                 <label class="control-label col-sm-2" for="user_id">Student:</label>
                                                 <div class="col-sm-10">
-                                                    <select onchange="username()" class="form-control" id="user_id" name="user_id">
+                                                    <select onchange="username()" class="form-control select2" id="user_id" name="user_id">
 
                                                     </select>
                                                     <input type="hidden" id="user_name" name="user_name" />
@@ -116,7 +116,7 @@
                                             <div class="form-group">
                                                 <label class="control-label col-sm-2" for="matpel_id">Subject:</label>
                                                 <div class="col-sm-10">
-                                                    <select onchange="matpelname()" class="form-control" id="matpel_id" name="matpel_id">
+                                                    <select onchange="matpelname()" class="form-control select2" id="matpel_id" name="matpel_id">
 
                                                     </select>
                                                     <input type="hidden" id="matpel_name" name="matpel_name" />

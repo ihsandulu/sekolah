@@ -77,11 +77,13 @@
 										if($this->session->userdata("sekolah_id")>0){
 											$this->db->where("sekolah_id",$this->session->userdata("sekolah_id"));
 										}
-										$sekolah = $this->db->get("sekolah")->num_rows();
-										echo $sekolah;
+										$teachers = $this->db
+                                        ->where("position_id","3")
+                                        ->get("user")->num_rows();
+										echo $teachers;
 										?>
 										</span>
-                                        <div class="infobox-content">Schools</div>
+                                        <div class="infobox-content">Teachers</div>
                                     </div>
                                 </div>								
                                 <div class="infobox infobox-green">
@@ -94,11 +96,12 @@
 										if($this->session->userdata("sekolah_id")>0){
 											$this->db->where("sekolah_id",$this->session->userdata("sekolah_id"));
 										}
-										$grup = $this->db->get("grup")->num_rows();
-										echo $grup;
+										$student = $this->db
+                                        ->where("position_id","4")->get("user")->num_rows();
+										echo $student;
 										?>
 										</span>
-                                        <div class="infobox-content">Groups</div>
+                                        <div class="infobox-content">Student</div>
                                     </div>
                                 </div>
                                 <div class="infobox infobox-red">
@@ -111,37 +114,11 @@
 										if($this->session->userdata("sekolah_id")>0){
 											$this->db->where("sekolah_id",$this->session->userdata("sekolah_id"));
 										}
-										$materi = $this->db->get("materi")->num_rows();
-										echo $materi;
+										$matpel = $this->db->get("matpel")->num_rows();
+										echo $matpel;
 										?>
 										</span>
                                         <div class="infobox-content">Lessons</div>
-                                    </div>
-                                </div>
-                                <div class="infobox infobox-orange2">
-                                    <div class="infobox-icon">
-                                        <i class="ace-icon fa fa-flask"></i>
-                                    </div>
-                                    <div class="infobox-data">
-                                        <span class="infobox-data-number">
-										<?php
-										if($this->session->userdata("sekolah_id")>0){
-											$this->db->where("sekolah_id",$this->session->userdata("sekolah_id"));
-										}
-										$test = $this->db
-										->group_by("materi_id")
-										->get("test")->num_rows();
-										echo $test;
-										?>
-										</span>
-                                        <div class="infobox-content">Tests</div>
-                                    </div>
-                                    <div class="badge badge-success">
-										<?php
-										if($materi==0){$materi=1;}
-										$persentest=$test/$materi*100;
-										echo round($persentest)." %";
-										?> from lesson
                                     </div>
                                 </div>
                                 <div class="space-6"></div>
@@ -157,14 +134,14 @@
 											->get("user")
 											->num_rows();
 											$absen=$this->db
-											->where("absensi_date",date("Y-m-d"))
+											->where("absen_date",date("Y-m-d"))
 											->where("sekolah_id",$this->session->userdata("sekolah_id"))
-											->get("absensi")
+											->get("absen")
 											->num_rows();
 											
 											if($jml==0){$jml=1;}
 											//echo $this->db->last_query();
-											echo $absen/$jml*100;
+											echo number_format($absen/$jml*100,1,",",".");
 											?>
 											</span>%
                                         </div>

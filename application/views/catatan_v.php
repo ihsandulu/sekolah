@@ -75,7 +75,7 @@
                                             <div class="form-group">
                                                 <label class="control-label col-sm-2" for="user_id">Student:</label>
                                                 <div class="col-sm-10">
-                                                    <select class="form-control" id="user_id" name="user_id">
+                                                    <select class="form-control select2" id="user_id" name="user_id">
 
                                                     </select>
                                                 </div>
@@ -158,7 +158,7 @@
                                                     // echo $this->db->last_query();
                                                     // echo $this->session->userdata("position_id");
                                                     ?>
-                                                    <select onchange="listsiswasekolah();" name="kelas_id" id="kelas_id" class="form-control" >
+                                                    <select onchange="listsiswasekolah();" name="kelas_id" id="kelas_id" class="form-control select2" >
                                                         <option value="0" <?= ($kelas_id == 0) ? 'selected="selected"' : ""; ?>>Choose Class</option>
                                                         <?php
 
