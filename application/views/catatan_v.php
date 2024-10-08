@@ -61,11 +61,23 @@
                                                     <select class="form-control" id="kelas_id" name="kelas_id">
                                                         <option value="" <?= ($kelas_id == "") ? "selected" : ""; ?>>Choose Class</option>
                                                         <?php
-                                                        $kelas = $this->db->from("kelas_sekolah")
-                                                            ->join("kelas", "kelas.kelas_id=kelas_sekolah.kelas_id", "left")
-                                                            ->where("kelas_sekolah.sekolah_id", $this->session->userdata("sekolah_id"))
-                                                            ->order_by("kelas_name")
-                                                            ->get();
+                                                        if (isset($_GET["user_id"])) {
+                                                            $user_id = $this->input->get("user_id");
+                                                        } else {
+                                                            $user_id = 0;
+                                                        }
+                                                        $this->db->join("kelas", "kelas.kelas_id=kelas_guru.kelas_id", "left");
+                                                        if ($this->session->userdata("sekolah_id") > 0) {
+                                                            $this->db->where("kelas.sekolah_id", $this->session->userdata("sekolah_id"));
+                                                        }
+                                                        if ($this->session->userdata("position_id") != 1 && $this->session->userdata("position_id") != 2) {
+                                                            $this->db->where("kelas_guru.user_id", $this->session->userdata("user_id"));
+                                                        }
+                                                        $kelas = $this->db->group_by("kelas_guru.kelas_id")
+                                                        
+                                                        ->order_by("kelas_name")
+                                                            ->get("kelas_guru");
+                                                        
                                                         foreach ($kelas->result() as $row) { ?>
                                                             <option value="<?= $row->kelas_id; ?>" <?= ($kelas_id == $row->kelas_id) ? "selected" : ""; ?>><?= $row->kelas_name; ?></option>
                                                         <?php } ?>

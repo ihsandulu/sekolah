@@ -340,7 +340,7 @@
                                                             $this->db->where("nilai.user_id", $this->session->userdata("user_id"));
                                                         }
                                                         if (isset($_GET['kelas_id']) && $_GET['kelas_id'] > 0) {
-                                                            $this->db->where("kelas.kelas_id", $_GET['user_id']);
+                                                            $this->db->where("kelas.kelas_id", $_GET['kelas_id']);
                                                         }
                                                         if (isset($_GET['user_id']) && $_GET['user_id'] > 0) {
                                                             $this->db->where("user.user_id", $_GET['user_id']);
