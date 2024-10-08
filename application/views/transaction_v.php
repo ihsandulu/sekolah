@@ -251,7 +251,7 @@
 									<?php } ?>
 									<div class="box">
 										<div id="collapse4" class="body table-responsive">
-											<?php //if(isset($_GET['laporan'])){
+											<?php if($this->session->userdata("position_id")!=4){
 											?>
 											<div class="col-md-12" style="border:#FDDABB dashed 1px; margin-bottom:30px; padding:10px;">
 												<form id="sp" method="get" target="_blank" class="form-inline" action="<?= site_url("transactionreport_print"); ?>">
@@ -338,7 +338,7 @@
 													</script>
 												</form>
 											</div>
-											<?php //}
+											<?php }
 											?>
 											<?php
 											if (isset($_GET['nisn']) && $_GET['nisn'] != "") {

@@ -281,7 +281,9 @@
     <script>
         $("document").ready(function() {
             window.print();
-            window.close();
+            setTimeout(function(){
+                window.close();
+            },5000);
         });
     </script>
 

@@ -434,7 +434,7 @@
                     <?php } ?>
                     <?php if ($this->session->userdata("position_id") != 3) { ?>
                         <li class="">
-                            <a href="<?= site_url("tabungan?laporan=ok"); ?>">
+                            <a href="<?= site_url("tabungan?laporan=ok&type=current"); ?>">
                                 <i class="menu-icon fa fa-caret-right"></i>
                                 Account
                             </a>

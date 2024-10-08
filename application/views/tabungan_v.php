@@ -184,41 +184,44 @@
 									<div class="box">
 
 										<div id="collapse4" class="body table-responsive">
-											<form id="importn" method="post" class="col-md-12 form well" enctype="multipart/form-data">
-												<div class="form-group">
-													<label>Import Excel : </label>
-													<input class="form-control" name="filesiswa" type="file" />
-												</div>
-												<div class="form-group">
-													<input id="drop" class="" name="drop" type="checkbox" value="1" />
-													<label for="drop"> Delete All Transaction</label>
-												</div>
-												<div class="form-group">
-													<button class="btn btn-primary" type="submit" name="import">Import</button>
-													<button class="btn btn-danger" type="button" onclick="tutupimport()">Close</button>
-												</div>
-											</form>
-											<button id="btnimport" class="btn btn-primary" type="button" onclick="bukaimport()">Import From Another Application</button>
-											<button id="btntemplate" class="btn btn-success" type="button" onclick="printtemplate()"><i class="fa fa-print"></i> Print Template</button>
-											<script>
-												function tutupimport() {
-													$("#importn").hide();
-													$("#btnimport").show();
-												}
 
-												function bukaimport() {
-													$("#importn").show();
-													$("#btnimport").hide();
-												}
-												tutupimport();
+											<?php if ($this->session->userdata("position_id") != 4) { ?>
+												<form id="importn" method="post" class="col-md-12 form well" enctype="multipart/form-data">
+													<div class="form-group">
+														<label>Import Excel : </label>
+														<input class="form-control" name="filesiswa" type="file" />
+													</div>
+													<div class="form-group">
+														<input id="drop" class="" name="drop" type="checkbox" value="1" />
+														<label for="drop"> Delete All Transaction</label>
+													</div>
+													<div class="form-group">
+														<button class="btn btn-primary" type="submit" name="import">Import</button>
+														<button class="btn btn-danger" type="button" onclick="tutupimport()">Close</button>
+													</div>
+												</form>
+												<button id="btnimport" class="btn btn-primary" type="button" onclick="bukaimport()">Import From Another Application</button>
+												<button id="btntemplate" class="btn btn-success" type="button" onclick="printtemplate()"><i class="fa fa-print"></i> Print Template</button>
+												<script>
+													function tutupimport() {
+														$("#importn").hide();
+														$("#btnimport").show();
+													}
 
-												function printtemplate() {
-													window.open("<?= base_url('printtabungan?kosongan=OK'); ?>", '_blank');
-												}
-											</script>
-											<br />
-											<br />
-											<?php //if (isset($_GET['laporan'])) { 
+													function bukaimport() {
+														$("#importn").show();
+														$("#btnimport").hide();
+													}
+													tutupimport();
+
+													function printtemplate() {
+														window.open("<?= base_url('printtabungan?kosongan=OK'); ?>", '_blank');
+													}
+												</script>
+												<br />
+												<br />
+											<?php } ?>
+											<?php //if ($this->session->userdata("position_id") != 4) { 
 											?>
 											<div class="col-md-12" style="border:#FDDABB dashed 1px; margin-bottom:30px; padding:10px;">
 												<?php
@@ -232,11 +235,15 @@
 													<div class="form-group">
 														<label for="type">Type:</label>
 														<select id="type" name="type" onChange="lihatkelas()">
-															<option value="detail" <?= ($this->input->get("type") == "detail") ? "selected" : ""; ?>>Detail</option>
-															<option value="all" <?= ($this->input->get("type") == "all") ? "selected" : ""; ?>>All Class</option>
-															<option value="current" <?= ($this->input->get("type") == "current") ? "selected" : ""; ?>>Current Class</option>
-															<option value="Debet" <?= ($this->input->get("type") == "Debet") ? "selected" : ""; ?>>Debet</option>
-															<option value="Kredit" <?= ($this->input->get("type") == "Kredit") ? "selected" : ""; ?>>Kredit</option>
+															<?php if ($this->session->userdata("position_id") == 4) { ?>
+																<option value="current" <?= ($this->input->get("type") == "current") ? "selected" : ""; ?>>Current Class</option>
+															<?php } else { ?>
+																<option value="detail" <?= ($this->input->get("type") == "detail") ? "selected" : ""; ?>>Detail</option>
+																<option value="all" <?= ($this->input->get("type") == "all") ? "selected" : ""; ?>>All Class</option>
+																<option value="current" <?= ($this->input->get("type") == "current") ? "selected" : ""; ?>>Current Class</option>
+																<option value="Debet" <?= ($this->input->get("type") == "Debet") ? "selected" : ""; ?>>Debet</option>
+																<option value="Kredit" <?= ($this->input->get("type") == "Kredit") ? "selected" : ""; ?>>Kredit</option>
+															<?php } ?>
 														</select>
 														<script>
 															function lihatkelas() {
@@ -282,66 +289,68 @@
 														<label for="from">To:</label>
 														<input id="to" name="to" type="date" value="<?= $to; ?>" />
 													</div>
-													<div class="form-group hideclass">
-														<label for="kelas_id">Class:</label>
-														<?php
-														if (isset($_GET["kelas_id"])) {
-															$kelas_id = $this->input->get("kelas_id");
-														} else {
-															$kelas_id = 0;
-														}
-														if (isset($_GET["user_id"])) {
-															$user_id = $this->input->get("user_id");
-														} else {
-															$user_id = 0;
-														}
-														$this->db->join("kelas", "kelas.kelas_id=kelas_guru.kelas_id", "left");
-														if ($this->session->userdata("sekolah_id") > 0) {
-															$this->db->where("kelas.sekolah_id", $this->session->userdata("sekolah_id"));
-														}
-
-														$gru = $this->db->group_by("kelas_guru.kelas_id")
-															->get("kelas_guru");
-														// echo $this->db->last_query();
-														// echo $this->session->userdata("position_id");
-														?>
-														<select onchange="listsiswasekolah();" name="kelas_id" id="kelas_id" class="form-control" onChange="cari_user(this.value)">
-															<option value="0" <?= ($kelas_id == 0) ? 'selected="selected"' : ""; ?>>Choose Class</option>
+													<?php if ($this->session->userdata("position_id") != 4) { ?>
+														<div class="form-group hideclass">
+															<label for="kelas_id">Class:</label>
 															<?php
-
-															foreach ($gru->result() as $kelas) { ?>
-																<option value="<?= $kelas->kelas_id; ?>" <?= ($kelas_id == $kelas->kelas_id) ? 'selected="selected"' : ""; ?>><?= $kelas->kelas_name; ?></option>
-															<?php } ?>
-														</select>
-													</div>
-
-													<script>
-														function listsiswasekolah() {
-															let kelas_id = $("#kelas_id").val();
-															// alert("<?= base_url("api/listsiswakelas"); ?>?kelas_id="+kelas_id+"&user_id=<?= $user_id; ?>");
-															if (kelas_id > 0) {
-																$.get("<?= base_url("api/listsiswakelas"); ?>", {
-																		kelas_id: kelas_id,
-																		user_id: '<?= $user_id; ?>'
-																	})
-																	.done(function(data) {
-																		$("#user_id").html(data);
-																	});
+															if (isset($_GET["kelas_id"])) {
+																$kelas_id = $this->input->get("kelas_id");
 															} else {
-																$("#user_id").html('');
+																$kelas_id = 0;
 															}
-														}
+															if (isset($_GET["user_id"])) {
+																$user_id = $this->input->get("user_id");
+															} else {
+																$user_id = 0;
+															}
+															$this->db->join("kelas", "kelas.kelas_id=kelas_guru.kelas_id", "left");
+															if ($this->session->userdata("sekolah_id") > 0) {
+																$this->db->where("kelas.sekolah_id", $this->session->userdata("sekolah_id"));
+															}
 
-														listsiswasekolah();
-													</script>
+															$gru = $this->db->group_by("kelas_guru.kelas_id")
+																->get("kelas_guru");
+															// echo $this->db->last_query();
+															// echo $this->session->userdata("position_id");
+															?>
+															<select onchange="listsiswasekolah();" name="kelas_id" id="kelas_id" class="form-control" onChange="cari_user(this.value)">
+																<option value="0" <?= ($kelas_id == 0) ? 'selected="selected"' : ""; ?>>Choose Class</option>
+																<?php
+
+																foreach ($gru->result() as $kelas) { ?>
+																	<option value="<?= $kelas->kelas_id; ?>" <?= ($kelas_id == $kelas->kelas_id) ? 'selected="selected"' : ""; ?>><?= $kelas->kelas_name; ?></option>
+																<?php } ?>
+															</select>
+														</div>
+
+														<script>
+															function listsiswasekolah() {
+																let kelas_id = $("#kelas_id").val();
+																// alert("<?= base_url("api/listsiswakelas"); ?>?kelas_id="+kelas_id+"&user_id=<?= $user_id; ?>");
+																if (kelas_id > 0) {
+																	$.get("<?= base_url("api/listsiswakelas"); ?>", {
+																			kelas_id: kelas_id,
+																			user_id: '<?= $user_id; ?>'
+																		})
+																		.done(function(data) {
+																			$("#user_id").html(data);
+																		});
+																} else {
+																	$("#user_id").html('');
+																}
+															}
+
+															listsiswasekolah();
+														</script>
 
 
-													<div class="form-group hideclass">
-														<label for="user_id">Student:</label>
-														<select name="user_id" id="user_id" class="form-control">
+														<div class="form-group hideclass">
+															<label for="user_id">Student:</label>
+															<select name="user_id" id="user_id" class="form-control">
 
-														</select>
-													</div>
+															</select>
+														</div>
+													<?php } ?>
 													<button name="search" type="submit" class="btn btn-success fa fa-search"> Search</button>
 													<!-- <button type="button" class="btn btn-info fa fa-print" onclick="print()"> Print</button>
 													<script>
@@ -425,7 +434,8 @@
 														$usr = $this->db
 															->join("sekolah", "sekolah.sekolah_id=tabungan.sekolah_id", "left")
 															->join("user", "user.user_nisn=tabungan.user_nisn", "left")
-															->join("kelas", "kelas.kelas_id=tabungan.kelas_id", "left")->join("tabungankode", "tabungankode.tabungankode_id=tabungan.tabungankode_id", "left")
+															->join("kelas", "kelas.kelas_id=tabungan.kelas_id", "left")
+															->join("tabungankode", "tabungankode.tabungankode_id=tabungan.tabungankode_id", "left")
 															->order_by("tabungan_datetime", "desc")
 															->get("tabungan");
 														// echo $this->db->last_query();
@@ -439,7 +449,7 @@
 																<?php if ($this->session->userdata("position_id") != 4) { ?>
 																	<td style="padding-left:0px; padding-right:0px;" align="center">
 																		<form title="Print Template" target="_blank" action="<?= base_url('printtabungan'); ?>" method="get" class="<?= $colbtn; ?>" style="padding:0px;">
-																			<button type="submit"  class="btn btn-info btn-xs btn-block" name="print" value="OK"><span class="fa fa-print" style="color:white;"></span> </button>
+																			<button type="submit" class="btn btn-info btn-xs btn-block" name="print" value="OK"><span class="fa fa-print" style="color:white;"></span> </button>
 																			<input type="hidden" name="user_id" value="<?= $tabungan->user_id; ?>" />
 																		</form>
 																		<form title="Print Tabungan" target="_blank" action="<?= site_url("tabunganprint"); ?>" method="get" class="<?= $colbtn; ?>" style="padding:0px;">
@@ -516,7 +526,7 @@
 															$this->db->where("tabungan.sekolah_id", $this->session->userdata("sekolah_id"));
 														}
 
-														if (isset($_GET['search']) && $_GET['kelas_id'] > 0) {
+														if (isset($_GET['search']) && isset($_GET['kelas_id']) && $_GET['kelas_id'] > 0) {
 															$this->db->where("kelas.kelas_id", $kelas_id);
 														}
 														if (isset($_GET['search']) && isset($_GET['user_id']) && $_GET['user_id'] > 0) {

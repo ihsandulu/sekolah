@@ -129,6 +129,9 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             window.print();
+            setTimeout(function(){
+                window.close();
+            },3000);
         });
     </script>
 </body>
