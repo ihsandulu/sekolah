@@ -215,7 +215,8 @@
 													tutupimport();
 
 													function printtemplate() {
-														window.open("<?= base_url('printtabungan?kosongan=OK'); ?>", '_blank');
+														// window.open("<?= base_url('printtabungan?kosongan=OK'); ?>", '_blank');
+														window.open("<?= base_url('printtemplatetabungan'); ?>", '_blank');
 													}
 												</script>
 												<br />
