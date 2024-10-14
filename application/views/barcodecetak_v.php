@@ -32,11 +32,25 @@ function truncateString($string, $length = 11) {
     }
 </style>
 <?php
+
+if ($_GET['kelas_id'] > 0||$_GET['kelas_id'] == -1) {
+    $this->db->where("kelas.kelas_id", $_GET['kelas_id']);
+}
+if (isset($_GET['user_id']) && $_GET['user_id'] > 0) {
+    $this->db->where("user.user_id", $_GET['user_id']);
+}
+
+if(!isset($_GET["kelas_id"])){
+    $this->db->where("user.kelas_id","-1");
+}
+
 $userd = $this->db->from("user")
 ->join("kelas", "kelas.kelas_id=user.kelas_id","left")
 ->where("position_id", "4")
+->order_by("kelas_name", "ASC")
 ->order_by("user_name", "ASC")
 ->get();
+// echo $this->db->last_query();die;
 foreach ($userd->result() as $row) {
     $kode_barcode = $row->user_nisn;
     $user_name = truncateString($row->user_name);

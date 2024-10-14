@@ -274,7 +274,7 @@
                         </li>
 
                         <li class="">
-                            <a target="_blank" href="<?= site_url("barcodecetak"); ?>">
+                            <a target="_self" href="<?= site_url("printtemplatebarcode"); ?>">
                                 <i class="menu-icon fa fa-caret-right"></i>
                                 Student Barcode Print
                             </a>
