@@ -270,7 +270,12 @@
                                                     if (isset($_GET['kelas_id']) && $_GET['kelas_id'] > 0) {
                                                         $this->db->where("absen.kelas_id", $_GET['kelas_id']);
                                                     }else{
-                                                        $this->db->where_in("absen.kelas_id", $arrkelguru);
+                                                        if (!empty($arrkelguru)) {
+                                                            $this->db->where_in("absen.kelas_id", $arrkelguru);
+                                                        } else {
+                                                            // Jika kosong, gunakan nilai default yang tidak mungkin, seperti 0
+                                                            $this->db->where("absen.kelas_id", 0);  // 0 dianggap sebagai ID kelas yang tidak valid
+                                                        }
                                                     }
                                                     if (isset($_GET['user_id']) && $_GET['user_id'] > 0) {
                                                         $this->db->where("absen.user_id", $_GET['user_id']);
