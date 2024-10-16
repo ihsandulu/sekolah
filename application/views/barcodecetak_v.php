@@ -1,7 +1,7 @@
 <?php
 $barcode_width = 37.8 * 4; // 1cm in pixels
 $barcode_height = 37.8 * 1.5;
-function truncateString($string, $length = 11) {
+function truncateString($string, $length = 9) {
     // Check if the string needs to be truncated
     if (strlen($string) > $length) {
         // Truncate the string and append ellipsis
