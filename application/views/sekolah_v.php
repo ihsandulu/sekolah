@@ -215,6 +215,12 @@
                                                 </div>
                                             </div>
                                             <div class="form-group">
+                                                <label class="control-label col-sm-2" for="sekolah_kkm">KKM:</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="sekolah_kkm" name="sekolah_kkm" placeholder="Enter KKM" value="<?= $sekolah_kkm; ?>">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
                                                 <label class="control-label col-sm-2" for="sekolah_serverwa">Server Whatsapp:</label>
                                                 <div class="col-sm-10">
                                                     <input type="text" class="form-control" id="sekolah_serverwa" name="sekolah_serverwa" placeholder="Enter Server" value="<?= $sekolah_serverwa; ?>">

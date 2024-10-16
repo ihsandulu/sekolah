@@ -61,6 +61,109 @@ class Nilai_M extends CI_Model
             }
         }
 
+
+        if (isset($_POST['import'])) {
+
+
+            if ($_FILES['filesiswa']['name'] != "") {
+                $file = $_FILES['filesiswa']['tmp_name'];
+                //load the excel library
+                $this->load->library('excel');
+                //read file from path
+                $objPHPExcel = PHPExcel_IOFactory::load($file);
+                //get only the Cell Collection
+                $cell_collection = $objPHPExcel->getActiveSheet()->getCellCollection();
+                //extract to a PHP readable array format
+                $row = 0;
+                $column = 0;
+                foreach ($cell_collection as $cell) {
+                    $column = $objPHPExcel->getActiveSheet()->getCell($cell)->getColumn();
+                    $row = $objPHPExcel->getActiveSheet()->getCell($cell)->getRow();
+                    $data_value = $objPHPExcel->getActiveSheet()->getCell($cell)->getValue();
+
+                    //header will/should be in row 1 only. 
+                    if ($row == 1) {
+                        $header[$row][$column] = $data_value;
+                    } else {
+                        $arr_data[$row][$column] = $data_value;
+                    }
+                }
+
+                // import data excel mulai baris ke-2 (karena tabel xls ada header pada baris 1)
+                $gagal = 0;
+                $sukses = 0;
+                //echo $row." ".$column;die;
+                // uraikan
+                for ($x = 2; $x <= $row; $x++) {
+                    //cek data
+
+                    if ($arr_data[$x]["C"] > $this->session->userdata("sekolah_kkm")) {
+                        $userrows = $this->db
+                            ->where("user_nisn", $arr_data[$x]["A"])
+                            ->where("kelas_id", $this->input->post("kelas_id"))
+                            ->get("user");
+                        if ($userrows->num_rows() > 0) {
+                            foreach ($userrows->result() as $urow) {
+                                $nilai = $this->db
+                                    ->where("sekolah_id", $this->session->userdata("sekolah_id"))
+                                    ->where("user_id", $urow->user_id)
+                                    ->where("kelas_id", $this->input->post("kelas_id"))
+                                    ->where("sumatif_id", $this->input->post("sumatif_id"))
+                                    ->where("matpel_id", $this->input->post("matpel_id"))
+                                    ->where("nilai_year", date("Y"))
+                                    ->get("nilai");
+
+                                if ($nilai->num_rows() > 0) {
+                                    foreach ($nilai->result() as $nilai) {
+                                        $where1["nilai_id"] = $nilai->nilai_id;
+                                        $input1["nilai_score"] = $arr_data[$x]["C"];
+                                        $input1["nilaigagal_temporary"] = $this->input->post("nilaigagal_temporary");
+                                        $this->db->update("nilai", $input1, $where1);
+                                        // echo $this->db->last_query();
+                                        $sukses++;
+                                    }
+                                } else {
+                                    $input2["nilaigagal_temporary"] = $this->input->post("nilaigagal_temporary");
+                                    $input2["kelas_id"] = $this->input->post("kelas_id");
+                                    $input2["sumatif_id"] = $this->input->post("sumatif_id");
+                                    $input2["matpel_id"] = $this->input->post("matpel_id");
+                                    $input2["nilai_year"] = date("Y");
+                                    $input2["user_id"] = $urow->user_id;
+                                    $input2["sekolah_id"] = $this->session->userdata("sekolah_id");
+                                    $input2["nilai_score"] = $arr_data[$x]["C"];
+                                    $this->db->insert("nilai", $input2);
+                                    $user_id = $this->db->insert_id();
+                                    $sukses++;
+                                    // echo $this->db->last_query();
+                                }
+                            }
+                        } else {
+                            $input3["nilaigagal_remarks"] = "Student Not Found";
+                            $input3["nilaigagal_temporary"] = $this->input->post("nilaigagal_temporary");
+                            $input3["user_nisn"] = $arr_data[$x]["A"];
+                            $input3["user_name"] = $arr_data[$x]["B"];
+                            $input3["nilaigagal_score"] = $arr_data[$x]["C"];
+                            $this->db->insert("nilaigagal", $input3);
+                            $gagal++;
+                        }
+                    } else {
+                        $input4["nilaigagal_remarks"] = "Value below KKM";
+                        $input4["nilaigagal_temporary"] = $this->input->post("nilaigagal_temporary");
+                        $input4["user_nisn"] = $arr_data[$x]["A"];
+                        $input4["user_name"] = $arr_data[$x]["B"];
+                        $input4["nilaigagal_score"] = $arr_data[$x]["C"];
+                        $this->db->insert("nilaigagal", $input4);
+                        $gagal++;
+                    }
+                }
+                $data["sukses"] = $sukses;
+                $data["gagal"] = $gagal;
+                $data["message"] ="Import Excel Success = ".$sukses.", Failed = ".$gagal;
+            }
+        }
+
+
+
         //upload image
         $data['uploadnilai_picture'] = "";
         if (isset($_FILES['nilai_picture']) && $_FILES['nilai_picture']['name'] != "") {
@@ -104,7 +207,7 @@ class Nilai_M extends CI_Model
                 ->where("sumatif_id", $input["sumatif_id"])
                 ->where("matpel_id", $input["matpel_id"])
                 ->get("nilai");
-            if ($double->num_rows() == 0) {                
+            if ($double->num_rows() == 0) {
                 $input["nilai_year"] = date("Y");
                 $this->db->insert("nilai", $input);
                 // echo $this->db->last_query();
