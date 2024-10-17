@@ -86,14 +86,49 @@
                                             <div class="form-group">
                                                 <label class="control-label col-sm-2" for="matpelgroup_id">Subject Group:</label>
                                                 <div class="col-sm-10">
+                                                <?php
+                                                        $matpelgroup = $this->db
+                                                            ->where("sekolah_id", $this->session->userdata("sekolah_id"))
+                                                            ->order_by("matpelgroup_name")->get("matpelgroup");
+                                                            // echo $this->db->last_query();
+                                                            ?>
                                                     <select class="form-control" id="matpelgroup_id" name="matpelgroup_id">
                                                         <option value="" <?= ($matpelgroup_id == "") ? "selected" : ""; ?>>Select Group</option>
-                                                        <?php 
-                                                        $matpelgroup = $this->db
-                                                        ->where("sekolah_id",$this->session->userdata("sekolah_id"))
-                                                        ->order_by("matpelgroup_name")->get("matpelgroup");
+                                                       <?php
                                                         foreach ($matpelgroup->result() as $row) { ?>
                                                             <option value="<?= $row->matpelgroup_id; ?>" <?= ($matpelgroup_id == $row->matpelgroup_id) ? "selected" : ""; ?>><?= $row->matpelgroup_name; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-2" for="kelas_id">Class:<br/>
+                                                <span style="color:red;">Anda dapat memilih kelas lebih dari satu dengan menekan CTRL</span></label>
+                                                <div class="col-sm-10">
+                                                    <?php
+                                                    $selected_kelas = $this->db
+                                                        ->select("kelas_id")
+                                                        ->where("matpel_id", $matpel_id)
+                                                        ->get("matpelkelas")
+                                                        ->result_array();
+                                                    $selected_kelas_ids = array_column($selected_kelas, 'kelas_id');
+                                                    // print_r($selected_kelas);
+
+                                                    $kelas = $this->db
+                                                        ->join("kelas", "kelas.kelas_id=kelas_sekolah.kelas_id", "left")
+                                                        ->where("kelas_sekolah.sekolah_id", $this->session->userdata("sekolah_id"))
+                                                        ->order_by("kelas_name")
+                                                        ->get("kelas_sekolah");
+                                                    // echo $this->db->last_query();
+                                                    ?>
+
+                                                    <select class="form-control" id="kelas_id" name="kelas_id[]" multiple>
+                                                        <option value="" <?= ($kelas_id == "") ? "selected" : ""; ?>>Select Class</option>
+                                                        <?php
+
+                                                        foreach ($kelas->result() as $row) { ?>
+                                                            <option value="<?= $row->kelas_id; ?>" <?= (in_array($row->kelas_id, $selected_kelas_ids)) ? "selected" : ""; ?>><?= $row->kelas_name; ?></option>
                                                         <?php } ?>
                                                     </select>
                                                 </div>

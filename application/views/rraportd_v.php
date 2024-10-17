@@ -152,10 +152,13 @@
                             </tr>
                             <?php
                             $matpel = $this->db
-                                ->where("sekolah_id", $this->session->userdata("sekolah_id"))
-                                ->where("matpelgroup_id", $row->matpelgroup_id)
-                                ->order_by("matpel_name", "ASC")
-                                ->get("matpel");
+                            ->join("matpel", "matpel.matpel_id=matpel_sekolah.matpel_id", "left")
+                            ->join("matpelkelas", "matpelkelas.sekolah_id=matpel_sekolah.sekolah_id AND matpelkelas.kelas_id=$kelas_id AND matpelkelas.matpel_id=matpel_sekolah.matpel_id", "left")
+                                ->where("matpel_sekolah.sekolah_id", $this->session->userdata("sekolah_id"))
+                                ->where("matpelkelas.kelas_id !=", "null")
+                                ->where("matpel.matpelgroup_id", $row->matpelgroup_id)
+                                ->order_by("matpel.matpel_name", "ASC")
+                                ->get("matpel_sekolah");
                             foreach ($matpel->result() as $rowm) {
                                 // $no = $sumatifno; 
                                 if (isset($matperarray[$rowm->matpel_id])) {
@@ -281,9 +284,9 @@
     <script>
         $("document").ready(function() {
             window.print();
-            setTimeout(function(){
+            setTimeout(function() {
                 window.close();
-            },5000);
+            }, 5000);
         });
     </script>
 
