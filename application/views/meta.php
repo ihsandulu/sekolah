@@ -1,13 +1,14 @@
 <?php
 date_default_timezone_set("Asia/Bangkok");
 $identity = $this->db->get("identity")->row();
-if ($this->session->userdata("sekolah_id") == "") {
-	$this->session->sess_destroy();
-	redirect(site_url("login"));
-}
 //cek user
 $userd["user_id"] = $this->session->userdata("user_id");
 if (current_url() != site_url("login")) {
+
+	if ($this->session->userdata("sekolah_id") == "") {
+		$this->session->sess_destroy();
+		redirect(site_url("login"));
+	}
 	$us = $this->db
 		->join("position", "position.position_id=user.position_id", "left")
 		->get_where('user', $userd);
