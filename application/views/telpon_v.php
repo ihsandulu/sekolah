@@ -35,6 +35,16 @@
                         </form>
 
                     <?php } ?>
+
+                    <?php if (isset($_GET['user_id'])) { ?>
+
+                        <form method="get" class="col-md-2" style="margin-top:-30px; float:right;" action="<?= base_url("siswa"); ?>">
+
+                            <button class="btn btn-warning btn-block btn-sm" value="OK" style="">Back</button>
+
+                        </form>
+
+                    <?php } ?>
                 </div>
 
                 <div class="row">
