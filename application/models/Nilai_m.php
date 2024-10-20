@@ -93,29 +93,80 @@ class Nilai_M extends CI_Model
                 $gagal = 0;
                 $sukses = 0;
                 //echo $row." ".$column;die;
-                // uraikan
+
+                // ambil token
+                $email = $this->session->userdata("sekolah_emailwa");
+                $password = $this->session->userdata("sekolah_passwordwa");
+                $server = $this->session->userdata("sekolah_serverwa");
+                $uri = "https://qithy.my.id/api/token?email=" . $email . "&password=" . $password . "";
+                $user = json_decode(
+                    file_get_contents($uri)
+                );
+                $token = $user->token;
+
+                $sumatif = $this->db->from("sumatif")
+                    ->where("sumatif_id", $this->input->post("sumatif_id"))
+                    ->get();
+                $sumatif_name = "";
+                foreach ($sumatif->result() as $sumatif) {
+                    $sumatif_name = $sumatif->sumatif_name;
+                }
+                if($this->input->post("sumatif_id")=="100"){$sumatif_name = "Sumatif Tengah Semester";}
+                if($this->input->post("sumatif_id")=="101"){$sumatif_name = "Sumatif Akhir Semester";}
+
+                $matpel = $this->db->from("matpel")
+                    ->where("matpel_id", $this->input->post("matpel_id"))
+                    ->get();
+                $matpel_name = "";
+                foreach ($matpel->result() as $matpel) {
+                    $matpel_name = $matpel->matpel_name;
+                }
+
                 for ($x = 2; $x <= $row; $x++) {
                     //cek data
 
                     if ($arr_data[$x]["C"] > $this->session->userdata("sekolah_kkm")) {
                         $userrows = $this->db
+                            ->join("telpon", "telpon.user_id=user.user_id", "left")
                             ->where("user_nisn", $arr_data[$x]["A"])
                             ->where("kelas_id", $this->input->post("kelas_id"))
                             ->get("user");
                         if ($userrows->num_rows() > 0) {
                             foreach ($userrows->result() as $urow) {
                                 $nilai = $this->db
-                                    ->where("sekolah_id", $this->session->userdata("sekolah_id"))
-                                    ->where("user_id", $urow->user_id)
-                                    ->where("kelas_id", $this->input->post("kelas_id"))
-                                    ->where("sumatif_id", $this->input->post("sumatif_id"))
-                                    ->where("matpel_id", $this->input->post("matpel_id"))
-                                    ->where("nilai_year", date("Y"))
+                                    ->where("nilai.sekolah_id", $this->session->userdata("sekolah_id"))
+                                    ->where("nilai.user_id", $urow->user_id)
+                                    ->where("nilai.kelas_id", $this->input->post("kelas_id"))
+                                    ->where("nilai.sumatif_id", $this->input->post("sumatif_id"))
+                                    ->where("nilai.matpel_id", $this->input->post("matpel_id"))
+                                    ->where("nilai.nilai_year", date("Y"))
                                     ->get("nilai");
+                                // echo $this->db->last_query();
+                                $nilai_id = 0;
+                                $nilainumrows=$nilai->num_rows();
+                                foreach ($nilai->result() as $nilai) {
+                                    $nilai_id = $nilai->nilai_id;
+                                }
+                                $user_name = $urow->user_name;
+                                $nilai_score = $arr_data[$x]["C"];
+                                $telpon_number = $urow->telpon_number;
+                                if ($nilainumrows > 0) {
+                                    $message = "Siswa " . $user_name . " telah mengikuti " . $sumatif_name . " Mapel " . $matpel_name . " dengan nilai " . $nilai_score;
+                                    $urimessage = "https://qithy.my.id:8000/send-message?email=" . $email . "&token=" . $token . "&id=" . $server . "&message=" . urlencode($message) . "&number=" . $telpon_number;
+                                    $options = [
+                                        "http" => [
+                                            "header" => "User-Agent: PHP\r\n",
+                                            "timeout" => 30
+                                        ]
+                                    ];
+                                    $context = stream_context_create($options);
+                                    $uripesan = file_get_contents($urimessage, false, $context);
+                                    if ($uripesan === false) {
+                                        $wapesan = "Gagal mengirim pesan.";
+                                    } else {
+                                        $wapesan = "Pesan berhasil dikirim.";
 
-                                if ($nilai->num_rows() > 0) {
-                                    foreach ($nilai->result() as $nilai) {
-                                        $where1["nilai_id"] = $nilai->nilai_id;
+                                        $where1["nilai_id"] = $nilai_id;
                                         $input1["nilai_score"] = $arr_data[$x]["C"];
                                         $input1["nilaigagal_temporary"] = $this->input->post("nilaigagal_temporary");
                                         $this->db->update("nilai", $input1, $where1);
@@ -135,6 +186,22 @@ class Nilai_M extends CI_Model
                                     $user_id = $this->db->insert_id();
                                     $sukses++;
                                     // echo $this->db->last_query();
+
+                                    $message = "Siswa " . $user_name . " telah mengikuti " . $sumatif_name . " Mapel " . $matpel_name . " dengan nilai " . $nilai_score;
+                                    $urimessage = "https://qithy.my.id:8000/send-message?email=" . $email . "&token=" . $token . "&id=" . $server . "&message=" . urlencode($message) . "&number=" . $telpon_number;
+                                    $options = [
+                                        "http" => [
+                                            "header" => "User-Agent: PHP\r\n",
+                                            "timeout" => 30
+                                        ]
+                                    ];
+                                    $context = stream_context_create($options);
+                                    $uripesan = file_get_contents($urimessage, false, $context);
+                                    if ($uripesan === false) {
+                                        $wapesan = "Gagal mengirim pesan.";
+                                    } else {
+                                        $wapesan = "Pesan berhasil dikirim.";
+                                    }
                                 }
                             }
                         } else {
@@ -158,7 +225,7 @@ class Nilai_M extends CI_Model
                 }
                 $data["sukses"] = $sukses;
                 $data["gagal"] = $gagal;
-                $data["message"] ="Import Excel Success = ".$sukses.", Failed = ".$gagal;
+                $data["message"] = "Import Excel Success = " . $sukses . ", Failed = " . $gagal;
             }
         }
 
