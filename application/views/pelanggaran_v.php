@@ -134,7 +134,7 @@
                                             <div class="form-group">
                                                 <label class="control-label col-sm-2" for="pelanggaran_point">Point:</label>
                                                 <div class="col-sm-10">
-                                                    <input type="number" class="form-control" id="pelanggaran_point" name="pelanggaran_point" placeholder="Enter Violation" value="<?= $pelanggaran_point; ?>">
+                                                    <input type="number" min="1" class="form-control" id="pelanggaran_point" name="pelanggaran_point" placeholder="Enter Violation" value="<?= $pelanggaran_point; ?>">
                                                 </div>
                                             </div>
 
@@ -309,7 +309,7 @@
                                                     // echo $this->db->last_query();
                                                     foreach ($usr->result() as $pelanggaran) { ?>
                                                         <tr>
-                                                            <?php if (isset($_GET["laporan"]) && $_GET["laporan"] == "OK") { ?>
+                                                            <?php if (!isset($_GET["laporan"])) { ?>
                                                                 <td style="padding-left:0px; padding-right:0px;">
                                                                     <form method="post" class="col-md-6" style="padding:0px;">
                                                                         <button class="btn btn-warning " name="edit" value="OK"><span class="fa fa-edit" style="color:white;"></span> </button>
