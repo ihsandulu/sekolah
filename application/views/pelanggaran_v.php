@@ -134,7 +134,7 @@
                                             <div class="form-group">
                                                 <label class="control-label col-sm-2" for="pelanggaran_point">Point:</label>
                                                 <div class="col-sm-10">
-                                                    <input type="number" min="1" class="form-control" id="pelanggaran_point" name="pelanggaran_point" placeholder="Enter Violation" value="<?= $pelanggaran_point; ?>">
+                                                    <input type="number" class="form-control" id="pelanggaran_point" name="pelanggaran_point" placeholder="Enter Violation" value="<?= $pelanggaran_point; ?>">
                                                 </div>
                                             </div>
 
