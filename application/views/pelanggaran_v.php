@@ -259,7 +259,7 @@
                                             <table id="dataTable" class="table table-condensed table-hover">
                                                 <thead>
                                                     <tr>
-                                                        <?php if (isset($_GET["laporan"]) && $_GET["laporan"] == "OK") { ?>
+                                                        <?php if (!isset($_GET["laporan"])) { ?>
                                                             <th class="col-md-1">Action</th>
                                                         <?php } ?>
                                                         <th>Date</th>
