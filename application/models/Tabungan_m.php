@@ -60,6 +60,18 @@ class tabungan_M extends CI_Model
 		return $hasil;
 	}
 
+	function saldonya($type, $nisn)
+	{
+		$uang = $this->db
+			->select("SUM(tabungan_amount)as saldo")
+			->where("user_nisn", $nisn)
+			->where("tabungan_type", $type)
+			->get("tabungan");
+		foreach ($uang->result() as $uang) {
+			return $uang = $uang->saldo;
+		}
+	}
+
 	public function data()
 	{
 		$data = array();
@@ -276,7 +288,9 @@ class tabungan_M extends CI_Model
 						} else {
 							$untuk = "";
 						}
-						$pesan = "Siswa/i " . $user_name . " telah menarik tabungan sejumlah: " . number_format($tabungan_amount, 0, ",", ".") . ",-" . $untuk;
+						$saldosiswa = $this->saldonya("Debet", $input["user_nisn"]) - $this->saldonya("Kredit", $input["user_nisn"]);
+						// $pesan = "Siswa/i " . $user_name . " telah menarik tabungan sejumlah: " . number_format($tabungan_amount, 0, ",", ".") . ",-" . $untuk;
+						$pesan = "Siswa/i " . $user_name . " memiliki saldo tabungan sejumlah: " . number_format($saldosiswa, 0, ",", ".");
 						foreach ($telp as $telepon) {
 							$urimessage = "https://qithy.my.id:8000/send-message?email=" . $email . "&token=" . $token . "&id=" . $server . "&message=" . urlencode($pesan) . "&number=" . $telepon . "";
 							// $uripesan = file_get_contents($urimessage);
@@ -324,7 +338,10 @@ class tabungan_M extends CI_Model
 					} else {
 						$untuk = "";
 					}
-					$pesan = "Siswa/i " . $user_name . " telah menabung sejumlah: " . number_format($tabungan_amount, 0, ",", ".") . ",-" . $untuk;
+					
+					$saldosiswa = $this->saldonya("Debet", $input["user_nisn"]) - $this->saldonya("Kredit", $input["user_nisn"]);
+					// $pesan = "Siswa/i " . $user_name . " telah menabung sejumlah: " . number_format($tabungan_amount, 0, ",", ".") . ",-" . $untuk;
+					$pesan = "Siswa/i " . $user_name . " memiliki saldo tabungan sejumlah: " . number_format($saldosiswa, 0, ",", ".");
 					foreach ($telp as $telepon) {
 						$urimessage = "https://qithy.my.id:8000/send-message?email=" . $email . "&token=" . $token . "&id=" . $server . "&message=" . urlencode($pesan) . "&number=" . $telepon . "";
 						// $uripesan = file_get_contents($urimessage);
