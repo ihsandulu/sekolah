@@ -274,7 +274,7 @@
                                                             $this->db->where_in("absen.kelas_id", $arrkelguru);
                                                         } else {
                                                             // Jika kosong, gunakan nilai default yang tidak mungkin, seperti 0
-                                                            $this->db->where("absen.kelas_id", 0);  // 0 dianggap sebagai ID kelas yang tidak valid
+                                                            // $this->db->where("absen.kelas_id", 0);  // 0 dianggap sebagai ID kelas yang tidak valid
                                                         }
                                                     }
                                                     if (isset($_GET['user_id']) && $_GET['user_id'] > 0) {
@@ -288,7 +288,7 @@
                                                         ->join("user", "user.user_id=absen.user_id", "left")
                                                         ->where("absen_year", date("Y"))
                                                         ->get("absen");
-                                                    echo $this->db->last_query();
+                                                    // echo $this->db->last_query();
                                                     foreach ($usr->result() as $absen) {
                                                         $type = array("Alpha", "In", "Out", "Sick", "Permission")
                                                     ?>
