@@ -288,7 +288,7 @@
                                                         ->join("user", "user.user_id=absen.user_id", "left")
                                                         ->where("absen_year", date("Y"))
                                                         ->get("absen");
-                                                    // echo $this->db->last_query();
+                                                    echo $this->db->last_query();
                                                     foreach ($usr->result() as $absen) {
                                                         $type = array("Alpha", "In", "Out", "Sick", "Permission")
                                                     ?>
