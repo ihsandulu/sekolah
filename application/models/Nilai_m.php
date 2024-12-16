@@ -111,8 +111,12 @@ class Nilai_M extends CI_Model
                 foreach ($sumatif->result() as $sumatif) {
                     $sumatif_name = $sumatif->sumatif_name;
                 }
-                if($this->input->post("sumatif_id")=="100"){$sumatif_name = "Sumatif Tengah Semester";}
-                if($this->input->post("sumatif_id")=="101"){$sumatif_name = "Sumatif Akhir Semester";}
+                if ($this->input->post("sumatif_id") == "100") {
+                    $sumatif_name = "Sumatif Tengah Semester";
+                }
+                if ($this->input->post("sumatif_id") == "101") {
+                    $sumatif_name = "Sumatif Akhir Semester";
+                }
 
                 $matpel = $this->db->from("matpel")
                     ->where("matpel_id", $this->input->post("matpel_id"))
@@ -127,6 +131,7 @@ class Nilai_M extends CI_Model
 
                     if ($arr_data[$x]["C"] > $this->session->userdata("sekolah_kkm")) {
                         $userrows = $this->db
+                            ->select("*,user.user_id as user_id")
                             ->join("telpon", "telpon.user_id=user.user_id", "left")
                             ->where("user_nisn", $arr_data[$x]["A"])
                             ->where("kelas_id", $this->input->post("kelas_id"))
@@ -143,7 +148,8 @@ class Nilai_M extends CI_Model
                                     ->get("nilai");
                                 // echo $this->db->last_query();
                                 $nilai_id = 0;
-                                $nilainumrows=$nilai->num_rows();
+                                $nilainumrows = $nilai->num_rows();
+                                // echo  $nilainumrows;
                                 foreach ($nilai->result() as $nilai) {
                                     $nilai_id = $nilai->nilai_id;
                                 }
@@ -151,6 +157,15 @@ class Nilai_M extends CI_Model
                                 $nilai_score = $arr_data[$x]["C"];
                                 $telpon_number = $urow->telpon_number;
                                 if ($nilainumrows > 0) {
+
+
+                                    $where1["nilai_id"] = $nilai_id;
+                                    $input1["nilai_score"] = $arr_data[$x]["C"];
+                                    $input1["nilaigagal_temporary"] = $this->input->post("nilaigagal_temporary");
+                                    $this->db->update("nilai", $input1, $where1);
+                                    // echo $this->db->last_query();
+                                    $sukses++;
+
                                     $message = "Siswa " . $user_name . " telah mengikuti " . $sumatif_name . " Mapel " . $matpel_name . " dengan nilai " . $nilai_score;
                                     $urimessage = "https://qithy.my.id:8000/send-message?email=" . $email . "&token=" . $token . "&id=" . $server . "&message=" . urlencode($message) . "&number=" . $telpon_number;
                                     $options = [
@@ -160,19 +175,18 @@ class Nilai_M extends CI_Model
                                         ]
                                     ];
                                     $context = stream_context_create($options);
+
+                                    // Nonaktifkan error reporting sementara
+                                    error_reporting(0);
                                     $uripesan = file_get_contents($urimessage, false, $context);
                                     if ($uripesan === false) {
                                         $wapesan = "Gagal mengirim pesan.";
                                     } else {
                                         $wapesan = "Pesan berhasil dikirim.";
-
-                                        $where1["nilai_id"] = $nilai_id;
-                                        $input1["nilai_score"] = $arr_data[$x]["C"];
-                                        $input1["nilaigagal_temporary"] = $this->input->post("nilaigagal_temporary");
-                                        $this->db->update("nilai", $input1, $where1);
-                                        // echo $this->db->last_query();
-                                        $sukses++;
                                     }
+                                    // Aktifkan kembali error reporting
+                                    error_reporting(E_ALL);
+                                    
                                 } else {
                                     $input2["nilaigagal_temporary"] = $this->input->post("nilaigagal_temporary");
                                     $input2["kelas_id"] = $this->input->post("kelas_id");
@@ -196,12 +210,17 @@ class Nilai_M extends CI_Model
                                         ]
                                     ];
                                     $context = stream_context_create($options);
+                                    
+                                    // Nonaktifkan error reporting sementara
+                                    error_reporting(0);
                                     $uripesan = file_get_contents($urimessage, false, $context);
                                     if ($uripesan === false) {
                                         $wapesan = "Gagal mengirim pesan.";
                                     } else {
                                         $wapesan = "Pesan berhasil dikirim.";
-                                    }
+                                    }                                    
+                                    // Aktifkan kembali error reporting
+                                    error_reporting(E_ALL);
                                 }
                             }
                         } else {

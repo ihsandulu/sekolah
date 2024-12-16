@@ -421,7 +421,7 @@
                                                             <th>Class</th>
                                                             <th>Subject</th>
                                                             <th>Sumatif</th>
-                                                            <th>NIK</th>
+                                                            <th>NISN</th>
                                                             <th>Name</th>
                                                             <th>Score</th>
                                                         </tr>
@@ -442,7 +442,7 @@
                                                             $this->db->where("user.user_id", $_GET['user_id']);
                                                         }
                                                         $usr = $this->db
-                                                            ->select("*,nilai.sumatif_id as sumatif_id")
+                                                            ->select("*,nilai.sumatif_id as sumatif_id, user.user_nisn as user_nisn")
                                                             ->join("sekolah", "sekolah.sekolah_id=nilai.sekolah_id", "left")
                                                             ->join("matpel", "matpel.matpel_id=nilai.matpel_id", "left")
                                                             ->join("sumatif", "sumatif.sumatif_id=nilai.sumatif_id", "left")
@@ -478,7 +478,7 @@
                                                                 <td><?= $nilai->kelas_name; ?></td>
                                                                 <td><?= $nilai->matpel_name; ?></td>
                                                                 <td><?= $sumatif_name; ?></td>
-                                                                <td><?= $nilai->user_nik; ?></td>
+                                                                <td><?= $nilai->user_nisn; ?></td>
                                                                 <td><?= $nilai->user_name; ?></td>
                                                                 <td><?= $nilai->nilai_score; ?></td>
                                                             </tr>
