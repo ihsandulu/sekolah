@@ -104,6 +104,31 @@
                                             </thead>
                                             <tbody>
                                                 <?php
+                                                //jumlah sumatif guru
+                                                $sumatifn = 0;
+                                                $matpelguru = $this->db
+                                                    ->where("sekolah_id", $this->session->userdata("sekolah_id"))
+                                                    ->where("matpel_id", $this->input->get("matpel_id"))
+                                                    ->where("user_id", $this->input->get("guru_id"))
+                                                    ->get("matpelguru");
+                                                // echo $this->db->last_query();
+                                                foreach ($matpelguru->result() as $matpelguru) {
+                                                    $sumatifn = $matpelguru->matpelguru_sumatif;
+                                                }
+
+                                                //jumlah sumatif sekolah
+                                                $sumatif = $this->db
+                                                    ->where("sekolah_id", $this->session->userdata("sekolah_id"))
+                                                    ->order_by("sumatif_name", "ASC")
+                                                    ->get("sumatif");
+                                                $sumarray = array();
+                                                foreach ($sumatif->result() as  $sumatif) {
+                                                    $sumarray[] = $sumatif->sumatif_id;
+                                                }
+                                               
+                                                // print_r($sumarray);die;
+
+
                                                 if ($this->session->userdata("sekolah_id") > 0) {
                                                     $this->db->where("user.sekolah_id", $this->session->userdata("sekolah_id"));
                                                 }
@@ -130,21 +155,21 @@
                                                         <td class="text-left"><?= $user->user_nisn; ?></td>
                                                         <td class="text-left"><?= $user->user_name; ?></td>
                                                         <?php
-                                                        $sumatif = $this->db
-                                                            ->where("sekolah_id", $this->session->userdata("sekolah_id"))
-                                                            ->order_by("sumatif_name", "ASC")
-                                                            ->get("sumatif");
+
                                                         $n = 0;
                                                         $tnsumatif = 0;
                                                         $rerata = 0;
-                                                        foreach ($sumatif->result() as  $sumatif) {
-                                                            $n++;
-                                                            if (isset($nilaiarray[$user->user_id][$sumatif->sumatif_id])) {
-                                                                $nsumatif = $nilaiarray[$user->user_id][$sumatif->sumatif_id];
-                                                            } else {
-                                                                $nsumatif = "0";
+                                                        foreach ($sumarray as $key => $value) {
+                                                            if ($n <= $sumatifn) {
+                                                                $n++;
+                                                                if (isset($nilaiarray[$user->user_id][$value])) {
+                                                                    $nsumatif = $nilaiarray[$user->user_id][$value];
+                                                                } else {
+                                                                    $nsumatif = "0";
+                                                                }
+                                                                $tnsumatif += $nsumatif;
                                                             }
-                                                            $tnsumatif += $nsumatif;
+
                                                         ?>
                                                             <td>
                                                                 <?= number_format($nsumatif, 0, ",", "."); ?>
@@ -152,7 +177,7 @@
 
                                                         <?php } ?>
                                                         <td><?php
-                                                            $rerata = $tnsumatif / $n;
+                                                            $rerata = $tnsumatif / $sumatifn;
                                                             if ($rerata > 0) {
                                                                 $rer = number_format($rerata, 1, ",", ".");
                                                             } else {

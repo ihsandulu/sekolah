@@ -401,7 +401,7 @@
                                                     foreach ($matpelguru->result() as $matpelguru) {
                                                         $matpel_id = $matpelguru->matpel_id;
                                                     ?>
-                                                        <a title="Raport STS <?= $matpelguru->matpel_name; ?>" href="<?= base_url("raportsts?matpel_id=" . $matpel_id . "&kelas_id=" . $kelas_id . "&user_id=" . $user_id . "&matpel_name=" . $matpelguru->matpel_name); ?>" target="_blank" type="submit" class="btn btn-success fa fa-file-excel-o" style="font-size:12px;"> Raport STS <?= $matpelguru->matpel_name; ?></a>
+                                                        <a title="Raport STS <?= $matpelguru->matpel_name; ?>" href="<?= base_url("raportsts?matpel_id=" . $matpel_id . "&kelas_id=" . $kelas_id . "&user_id=" . $user_id . "&matpel_name=" . $matpelguru->matpel_name. "&guru_id=" . $this->session->userdata("user_id")); ?>" target="_blank" type="submit" class="btn btn-success fa fa-file-excel-o" style="font-size:12px;"> Raport STS <?= $matpelguru->matpel_name; ?></a>
                                                     <?php } ?>
                                                 </div>
                                             <?php } ?>
