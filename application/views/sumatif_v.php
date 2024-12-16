@@ -83,6 +83,7 @@
                                                 });
                                             </script>
                                             <input type="hidden" name="sekolah_id" value="<?= $this->session->userdata("sekolah_id"); ?>" />
+                                            <input type="hidden" name="sumatif_id" value="<?= $sumatif_id; ?>" />
                                             <div class="form-group">
                                                 <div class="col-sm-offset-2 col-sm-10">
                                                     <button type="submit" id="submit" class="btn btn-primary col-md-5" <?= $namabutton; ?> value="OK">Submit</button>

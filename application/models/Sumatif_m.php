@@ -56,13 +56,15 @@ class Sumatif_M extends CI_Model
 
         //delete
         if ($this->input->post("delete") == "OK") {
-            $ceksumatifsekolah = $this->db->where("sumatif_id", $this->input->post("sumatif_id"))->get("sumatif_sekolah");
+            /* $ceksumatifsekolah = $this->db->where("sumatif_id", $this->input->post("sumatif_id"))->get("sumatif_sekolah");            
             if ($ceksumatifsekolah->num_rows() > 0) {
                 $data["message"] = "Delete gagal! sumatif dipakai oleh sekolah.";
             } else {
                 $this->db->delete("sumatif", array("sumatif_id" => $this->input->post("sumatif_id")));
                 $data["message"] = "Delete Success";
-            }
+            } */
+            $this->db->delete("sumatif", array("sumatif_id" => $this->input->post("sumatif_id")));
+                $data["message"] = "Delete Success";
         }
 
         //insert
