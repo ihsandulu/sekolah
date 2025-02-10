@@ -434,7 +434,7 @@ class api extends CI_Controller
 		$kel = $this->db
 			->join("kelas", "kelas.kelas_id=kelas_sekolah.kelas_id", "left")
 			->where("kelas_sekolah.sekolah_id", $sekolah_id)
-			->order_by("kelas.kelas_name","ASC")
+			->order_by("kelas.kelas_name", "ASC")
 			->get("kelas_sekolah");
 		echo $this->db->last_query();
 		foreach ($kel->result() as $kelas) {
@@ -458,7 +458,7 @@ class api extends CI_Controller
 			->join("kelas", "kelas.kelas_id=kelas_guru.kelas_id", "left")
 			->where("kelas_guru.sekolah_id", $sekolah_id)
 			->where("kelas_guru.user_id", $user_id)
-			->order_by("kelas.kelas_name","ASC")
+			->order_by("kelas.kelas_name", "ASC")
 			->get("kelas_guru");
 		foreach ($kela->result() as $kelasguru) {
 			?>
@@ -1406,33 +1406,18 @@ class api extends CI_Controller
 	<?php
 	}
 
-
+	public function statusblast()
+	{
+		$input["timewa_status"] = $this->input->get("status");
+		$this->db
+			->where("sekolah_id", $this->session->userdata("sekolah_id"))
+			->update("timewa", $input);
+	}
 
 	public function tagihpelunasan()
 	{
 
 		$data = array();
-
-		//hari terakhir kirim pesan
-		$pelunasanwa = $this->db
-			->where("sekolah_id", $this->session->userdata("sekolah_id"))
-			->order_by("pelunasanwa_id", "desc")
-			->limit(1)
-			->get("pelunasanwa");
-		// echo $this->db->last_query();
-		$tgl1 = date("Y-m-d");
-		foreach ($pelunasanwa->result() as $pelunasanwa) {
-			$tgl1 = $pelunasanwa->pelunasanwa_date;
-		}
-
-		//selisih waktu
-		$tgl1 = strtotime($tgl1);
-		$tgl2 = strtotime(date("Y-m-d"));
-		$jarak = $tgl2 - $tgl1;
-		$hari = $jarak / 60 / 60 / 24;
-
-		// Output: Total selisih hari: 10398
-		// $data["sisahari"]=$hari;
 
 		$timewa = $this->db
 			->where("sekolah_id", $this->session->userdata("sekolah_id"))
@@ -1441,61 +1426,95 @@ class api extends CI_Controller
 			$pesan = $timewa->timewa_message;
 			$timewa_day = $timewa->timewa_day;
 			$timewa_time = date("H:i", strtotime($timewa->timewa_time));
+			$statusaktif = $timewa->timewa_status;
 		}
-		// $data["jam"]=$timewa_time;
-		// echo $data['note']=$hari."==".$timewa_day ."&&". $timewa_time."==".date("H:i");
-		if ($_GET["filter"] == 0) {
-			$hari = 0;
-			$timewa_day = 0;
-			$timewa_time = date("H:i");
-		}
-		if ($hari >= $timewa_day && $timewa_time == date("H:i")) {
-
-			// echo $data['note']=$hari."==".$timewa_day ."&&". $timewa_time."==".date("H:i");
-			$telpon = $this->db
-				->join("user", "user.user_id=telpon.user_id", "left")
-				->join("(SELECT SUM(transaction_amount)AS kreditnya,transaction_tahun FROM transaction WHERE transaction_type='Kredit' AND sekolah_id=" . $this->session->userdata("sekolah_id") . " GROUP BY sekolah_id,transaction_tahun)As transaction", "transaction.transaction_tahun=user.user_tahunajaran", "left")
-				->join("sekolah", "sekolah.sekolah_id=telpon.sekolah_id", "left")
-				->where("telpon.sekolah_id", $this->session->userdata("sekolah_id"))
-				->where("user.position_id", "4")
-				->get("telpon");
+		if ($statusaktif == 1) {
+			//hari terakhir kirim pesan
+			$pelunasanwa = $this->db
+				->where("sekolah_id", $this->session->userdata("sekolah_id"))
+				->order_by("pelunasanwa_id", "desc")
+				->limit(1)
+				->get("pelunasanwa");
 			// echo $this->db->last_query();
-			foreach ($telpon->result() as $telpon) {
-				$message = "";
+			$tgl1 = date("Y-m-d");
+			foreach ($pelunasanwa->result() as $pelunasanwa) {
+				$tgl1 = $pelunasanwa->pelunasanwa_date;
+			}
+
+			//selisih waktu
+			$tgl1 = strtotime($tgl1);
+			$tgl2 = strtotime(date("Y-m-d"));
+			$jarak = $tgl2 - $tgl1;
+			$hari = $jarak / 60 / 60 / 24;
+
+			// Output: Total selisih hari: 10398
+			// $data["sisahari"]=$hari;
 
 
-				$kredit = $telpon->kreditnya;
+			// $data["jam"]=$timewa_time;
+			// echo $data['note']=$hari."==".$timewa_day ."&&". $timewa_time."==".date("H:i");
+			if ($_GET["filter"] == 0) {
+				$hari = 0;
+				$timewa_day = 0;
+				$timewa_time = date("H:i");
+			}
+			if ($hari >= $timewa_day && $timewa_time == date("H:i")) {
 
-
-				$transactionsiswa = $this->db
-					->select("SUM(transaction_amount)AS debet")
-					->where("sekolah_id", $this->session->userdata("sekolah_id"))
-					->where("user_nisn", $telpon->user_nisn)
-					->where("transaction_type", "Debet")
-					->group_by("user_nisn")
-					->get("transaction");
+				// echo $data['note']=$hari."==".$timewa_day ."&&". $timewa_time."==".date("H:i");
+				$telpon = $this->db
+					->join("user", "user.user_id=telpon.user_id", "left")
+					->join("(SELECT SUM(transaction_amount)AS kreditnya,transaction_tahun FROM transaction WHERE transaction_type='Kredit' AND sekolah_id=" . $this->session->userdata("sekolah_id") . " GROUP BY sekolah_id,transaction_tahun)As transaction", "transaction.transaction_tahun=user.user_tahunajaran", "left")
+					->join("sekolah", "sekolah.sekolah_id=telpon.sekolah_id", "left")
+					->where("telpon.sekolah_id", $this->session->userdata("sekolah_id"))
+					->where("user.position_id", "4")
+					->get("telpon");
 				// echo $this->db->last_query();
-				$debet = 0;
-				foreach ($transactionsiswa->result() as $transactionsiswa) {
-					$debet .= $transactionsiswa->debet;
-				}
-				$nominal1 = $kredit - $debet;
-				$nominal = number_format($nominal1, 0, ",", ".");
-				$message1 = str_replace("#siswa", $telpon->user_name, $pesan);
-				$message = str_replace("#nominal", $nominal, $message1);
-				$number = $telpon->telpon_number;
-				$server = $telpon->sekolah_serverwa;
-				$email = $telpon->sekolah_emailwa;
-				$password = $telpon->sekolah_passwordwa;
-				$user_id = $telpon->user_id;
+				foreach ($telpon->result() as $telpon) {
+					$message = "";
 
-				$data1["message"] = $message;
-				$data1["number"] = $number;
-				$data1["server"] = $server;
-				$data1["email"] = $email;
-				$data1["password"] = $password;
-				$data1["nominal"] = $nominal1;
-				$data1["user_id"] = $user_id;
+
+					$kredit = $telpon->kreditnya;
+
+
+					$transactionsiswa = $this->db
+						->select("SUM(transaction_amount)AS debet")
+						->where("sekolah_id", $this->session->userdata("sekolah_id"))
+						->where("user_nisn", $telpon->user_nisn)
+						->where("transaction_type", "Debet")
+						->group_by("user_nisn")
+						->get("transaction");
+					// echo $this->db->last_query();
+					$debet = 0;
+					foreach ($transactionsiswa->result() as $transactionsiswa) {
+						$debet .= $transactionsiswa->debet;
+					}
+					$nominal1 = $kredit - $debet;
+					$nominal = number_format($nominal1, 0, ",", ".");
+					$message1 = str_replace("#siswa", $telpon->user_name, $pesan);
+					$message = str_replace("#nominal", $nominal, $message1);
+					$number = $telpon->telpon_number;
+					$server = $telpon->sekolah_serverwa;
+					$email = $telpon->sekolah_emailwa;
+					$password = $telpon->sekolah_passwordwa;
+					$user_id = $telpon->user_id;
+
+					$data1["message"] = $message;
+					$data1["number"] = $number;
+					$data1["server"] = $server;
+					$data1["email"] = $email;
+					$data1["password"] = $password;
+					$data1["nominal"] = $nominal1;
+					$data1["user_id"] = $user_id;
+					$data[] = $data1;
+				}
+			} else {
+				$data1["message"] = "";
+				$data1["number"] = "";
+				$data1["server"] = "";
+				$data1["email"] = "";
+				$data1["password"] = "";
+				$data1["nominal"] = "";
+				$data1["user_id"] = "";
 				$data[] = $data1;
 			}
 		} else {
@@ -1703,7 +1722,7 @@ class api extends CI_Controller
 		foreach ($mat->result() as $user) { ?>
 			<option value="<?= $user->user_id; ?>" <?= ($user_id == $user->user_id) ? 'selected="selected"' : ""; ?>><?= $user->user_name; ?></option>
 		<?php } ?>
-<?php
+	<?php
 	}
 
 	function listsiswakelasnisn()

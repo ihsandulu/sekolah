@@ -64,7 +64,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <a href="<?= base_url("pelunasanwa?color=blue;"); ?>" class="btn btn-block btn-primary">
-                                        Alert Pelunasan
+                                        Blast Notification
                                     </a>
                                 </div>
                             </div>
