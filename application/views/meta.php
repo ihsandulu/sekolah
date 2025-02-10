@@ -352,6 +352,10 @@ if (current_url() != site_url("login")) {
 	}
 	setInterval(() => {
 		cektelpon();
-		cektidakmasuk();
+		<?php
+		// Cek apakah hari ini bukan Sabtu (6) atau Minggu (7)
+		if (date("N") != 6 && date("N") != 7) { ?>
+			cektidakmasuk();
+		<?php } ?>
 	}, 60000);
 </script>
