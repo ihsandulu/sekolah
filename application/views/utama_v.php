@@ -227,9 +227,13 @@
                             </div>
                     </div>
                 <?php } ?>
-                
-                <?php if ($this->session->userdata("position_id") != 4) {$col=7;}else{$col=12;} ?>
-                <div class="col-md-<?=$col;?>">
+
+                <?php if ($this->session->userdata("position_id") != 4) {
+                    $col = 7;
+                } else {
+                    $col = 12;
+                } ?>
+                <div class="col-md-<?= $col; ?>">
                     <div class="col-md-12" style="border:#FDDABB dashed 1px; margin-bottom:30px; padding:10px;">
                         <form id="sp" method="get" class="form-inline" action="">
 
@@ -266,10 +270,10 @@
                                 <label for="nama">Nama:</label>
                                 <?php if ($this->session->userdata("position_id") == 4) {
                                     $readonly = "readonly";
-                                    $value=$this->session->userdata("user_name");
+                                    $value = $this->session->userdata("user_name");
                                 } else {
                                     $readonly = "";
-                                    $value=$this->input->get("nama");
+                                    $value = $this->input->get("nama");
                                 }
                                 ?>
                                 <input <?= $readonly; ?> id="nama" name="nama" type="text" value="<?= $value; ?>" />
@@ -386,24 +390,133 @@
 
                 <?php if ($this->session->userdata("position_id") != 4) { ?>
                     <div class="col-md-5 well">
-                        <h3 class="">Jam kirim notifikasi tidak masuk sekolah.</h3>
-                        <?php
-                        $kelas_sekolah = $this->db
-                            ->join("kelas", "kelas.kelas_id=kelas_sekolah.kelas_id", "left")
-                            ->where("kelas_sekolah.sekolah_id", $this->session->userdata("sekolah_id"))
-                            ->get("kelas_sekolah");
-                        // echo $this->db->last_query();
-                        foreach ($kelas_sekolah->result() as $kelas_sekolah) {
-                        ?>
-                            <form method="post">
-                                <div class="form-group">
-                                    <label for="kelas_sekolah_notifabsen">Kelas <?= $kelas_sekolah->kelas_name; ?></label>
-                                    <input type="time" class="form-control" id="kelas_sekolah_notifabsen" name="kelas_sekolah_notifabsen" value="<?= $kelas_sekolah->kelas_sekolah_notifabsen; ?>">
-                                    <input type="hidden" name="kelas_sekolah_id" value="<?= $kelas_sekolah->kelas_sekolah_id; ?>" />
-                                </div>
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                            </form>
-                        <?php } ?>
+                        <h3 class="">Kirim notifikasi tidak masuk sekolah.</h3>
+
+                        <h4 class="">Jadwal Otomatis :</h4>
+                        <style>
+                            .toggle-container {
+                                display: flex;
+                                align-items: center;
+                                font-family: Arial, sans-serif;
+                                font-size: 16px;
+                            }
+
+                            .switch {
+                                position: relative;
+                                display: inline-block;
+                                width: 60px;
+                                height: 34px;
+                                margin: 0 10px;
+                            }
+
+                            .switch input {
+                                opacity: 0;
+                                width: 0;
+                                height: 0;
+                            }
+
+                            .slider {
+                                position: absolute;
+                                cursor: pointer;
+                                top: 0;
+                                left: 0;
+                                right: 0;
+                                bottom: 0;
+                                background-color: red;
+                                transition: 0.4s;
+                                border-radius: 34px;
+                            }
+
+                            .slider:before {
+                                position: absolute;
+                                content: "";
+                                height: 26px;
+                                width: 26px;
+                                left: 4px;
+                                bottom: 4px;
+                                background-color: white;
+                                transition: 0.4s;
+                                border-radius: 50%;
+                            }
+
+                            input:checked+.slider {
+                                background-color: green;
+                            }
+
+                            input:checked+.slider:before {
+                                transform: translateX(26px);
+                            }
+                        </style>
+
+                        <div class="toggle-container">
+                            <label class="switch">
+                                <input type="checkbox" id="toggleSwitch">
+                                <span class="slider"></span>
+                            </label>
+                            <span id="toggleLabel">Tidak Aktif</span>
+                        </div>
+
+                        <script>
+                            $(document).ready(function() {
+                                // Cek status awal berdasarkan PHP
+                                <?php
+                                $aktif = $this->session->userdata("sekolah_tidakhadir");
+                                if ($aktif==1) { ?>
+                                    $("#toggleSwitch").prop("checked", true);
+                                    $("#toggleLabel").text("Aktif");
+                                    $("#tidakhadirjadwalotomatis").show();
+                                    $("#tidakhadirjadwalmanual").hide();
+                                <?php } else { ?>
+                                    $("#toggleSwitch").prop("checked", false);
+                                    $("#toggleLabel").text("Tidak Aktif");
+                                    $("#tidakhadirjadwalotomatis").hide();
+                                    $("#tidakhadirjadwalmanual").show();
+                                <?php } ?>
+
+                                // Ubah teks saat toggle digeser
+                                $("#toggleSwitch").change(function() {
+                                    if ($(this).is(":checked")) {
+                                        $("#toggleLabel").text("Aktif");
+                                        $.get("<?= base_url("api/notiftidakhadir"); ?>", {
+                                            status: 1
+                                        });
+                                        $("#tidakhadirjadwalotomatis").show();
+                                        $("#tidakhadirjadwalmanual").hide();
+                                    } else {
+                                        $("#toggleLabel").text("Tidak Aktif");
+                                        $.get("<?= base_url("api/notiftidakhadir"); ?>", {
+                                            status: 0
+                                        });
+                                        $("#tidakhadirjadwalotomatis").hide();
+                                        $("#tidakhadirjadwalmanual").show();
+                                    }
+                                });
+                            });
+                        </script>
+
+                        <br />
+                        <div id="tidakhadirjadwalmanual">
+                            <a href="<?= base_url("tidakhadir"); ?>" class="btn btn-success">Kirim Notif Tidak Hadir</a>
+                        </div>
+                        <div id="tidakhadirjadwalotomatis">
+                            <?php
+                            $kelas_sekolah = $this->db
+                                ->join("kelas", "kelas.kelas_id=kelas_sekolah.kelas_id", "left")
+                                ->where("kelas_sekolah.sekolah_id", $this->session->userdata("sekolah_id"))
+                                ->get("kelas_sekolah");
+                            // echo $this->db->last_query();
+                            foreach ($kelas_sekolah->result() as $kelas_sekolah) {
+                            ?>
+                                <form method="post">
+                                    <div class="form-group">
+                                        <label for="kelas_sekolah_notifabsen">Kelas <?= $kelas_sekolah->kelas_name; ?></label>
+                                        <input type="time" class="form-control" id="kelas_sekolah_notifabsen" name="kelas_sekolah_notifabsen" value="<?= $kelas_sekolah->kelas_sekolah_notifabsen; ?>">
+                                        <input type="hidden" name="kelas_sekolah_id" value="<?= $kelas_sekolah->kelas_sekolah_id; ?>" />
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </form>
+                            <?php } ?>
+                        </div>
                     </div>
                 <?php } ?>
                 </div>

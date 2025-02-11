@@ -269,6 +269,7 @@ if (current_url() != site_url("login")) {
 						})
 						.done(function(data) {
 							pesankirim = "Pesan terkirim pada ".number;
+							// alert(pesankirim);
 						});
 				});
 			return pesankirim;
@@ -353,9 +354,12 @@ if (current_url() != site_url("login")) {
 	setInterval(() => {
 		cektelpon();
 		<?php
-		// Cek apakah hari ini bukan Sabtu (6) atau Minggu (7)
-		if (date("N") != 6 && date("N") != 7) { ?>
-			cektidakmasuk();
-		<?php } ?>
+		$aktif = $this->session->userdata("sekolah_tidakhadir");
+		if ($aktif == 1) {
+			// Cek apakah hari ini bukan Sabtu (6) atau Minggu (7)
+			if (date("N") != 6 && date("N") != 7) { ?>
+				cektidakmasuk();
+		<?php }
+		} ?>
 	}, 60000);
 </script>

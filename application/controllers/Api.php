@@ -1414,6 +1414,51 @@ class api extends CI_Controller
 			->update("timewa", $input);
 	}
 
+	public function isiid()
+	{
+		$input["tidakhadir_status"] = $this->input->get("cek");
+		$this->db
+			->where("tidakhadir_id", $this->input->get("id"))
+			->update("tidakhadir", $input);
+	}
+
+
+	public function notiftidakhadir()
+	{
+		$input["sekolah_tidakhadir"] = $this->input->get("status");
+		$this->db
+			->where("sekolah_id", $this->session->userdata("sekolah_id"))
+			->update("sekolah", $input);
+	}
+
+	public function updatesiswatidakhadir()
+	{
+		$input["tidakhadir_status"] = 2;
+		$this->db
+			->where("tidakhadir_id", $this->input->get("tidakhadir_id"))
+			->update("tidakhadir", $input);
+	}
+
+	public function kirimnotiftidakhadir()
+	{
+		$absen = $this->db
+			->join("sekolah", "sekolah.sekolah_id=tidakhadir.sekolah_id", "left")
+			->join("user", "user.user_id=tidakhadir.user_id", "left")
+			->where("tidakhadir_date", date("Y-m-d"))
+			->where("tidakhadir_status", 1)
+			->get("tidakhadir");
+		foreach ($absen->result() as $absen) {
+			$data1["message"] = "Info ".$absen->sekolah_name.": Ananda " . $absen->user_name . " tidak masuk sekolah hari ini.";
+			$data1["number"] = $absen->telpon_number;
+			$data1["server"] = $absen->sekolah_serverwa;
+			$data1["email"] = $absen->sekolah_emailwa;
+			$data1["password"] = $absen->sekolah_passwordwa;
+			$data1["tidakhadir_id"] = $absen->tidakhadir_id;
+			$data[] = $data1;
+		}
+		$this->djson($data);
+	}
+
 	public function tagihpelunasan()
 	{
 
