@@ -67,10 +67,13 @@
                                                     <select class="form-control select2" id="kelas_id" name="kelas_id">
                                                         <option value="" <?= ($kelas_id == "") ? "selected" : ""; ?>>Choose Class</option>
                                                         <?php
-                                                        $kelas = $this->db->from("kelas_guru")
+                                                        /* $kelas = $this->db->from("kelas_guru")
                                                             ->join("kelas", "kelas.kelas_id=kelas_guru.kelas_id", "left")
                                                             ->where("kelas_guru.sekolah_id", $this->session->userdata("sekolah_id"))
-                                                            ->where("kelas_guru.user_id", $this->session->userdata("user_id"))
+                                                            ->where("kelas_guru.user_id", $this->session->userdata("user_id")) */
+
+                                                        $kelas = $this->db->from("kelas")
+                                                            ->where("kelas.sekolah_id", $this->session->userdata("sekolah_id"))
                                                             ->order_by("kelas_name", "ASC")
                                                             ->get();
                                                         foreach ($kelas->result() as $row) { ?>
@@ -258,10 +261,10 @@
                                                 </thead>
                                                 <tbody>
                                                     <?php
-                                                    $kelasguru=$this->db->where("user_id",$this->session->userdata("user_id"))->get("kelas_guru");
-                                                    $arrkelguru=array();
-                                                    foreach($kelasguru->result() as $row){
-                                                        $arrkelguru[]=$row->kelas_id;
+                                                    $kelasguru = $this->db->where("user_id", $this->session->userdata("user_id"))->get("kelas_guru");
+                                                    $arrkelguru = array();
+                                                    foreach ($kelasguru->result() as $row) {
+                                                        $arrkelguru[] = $row->kelas_id;
                                                     }
 
                                                     if ($this->session->userdata("sekolah_id") > 0) {
@@ -269,7 +272,7 @@
                                                     }
                                                     if (isset($_GET['kelas_id']) && $_GET['kelas_id'] > 0) {
                                                         $this->db->where("absen.kelas_id", $_GET['kelas_id']);
-                                                    }else{
+                                                    } else {
                                                         if (!empty($arrkelguru)) {
                                                             $this->db->where_in("absen.kelas_id", $arrkelguru);
                                                         } else {
