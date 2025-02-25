@@ -86,7 +86,8 @@ class Attandance_M extends CI_Model
 			->get("absen");
 		// echo $this->db->last_query();
             if ($double->num_rows() == 0) {
-                $input["absen_year"] = date("Y");
+                $input["absen_year"] = date("Y");	
+                $input["absen_datetime"] = date("Y-m-d H:i:s");
                 $this->db->insert("absen", $input);
                 // echo $this->db->last_query();
                 $data["message"] = "Insert Data Success";
