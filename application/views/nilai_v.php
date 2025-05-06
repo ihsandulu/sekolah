@@ -4,7 +4,7 @@
 <head>
     <?php
     require_once("meta.php");
-    $user_id = $this->session->userdata("user_id");
+    $userid = $this->session->userdata("user_id");
     ?>
     <style>
         .mt-5 {
@@ -129,6 +129,16 @@
                                                 </div>
                                             </div>
                                             <div class="form-group">
+                                                <label class="control-label col-sm-2" for="nilai_semester">Semester:</label>
+                                                <div class="col-sm-10">
+                                                    <select class="form-control" id="nilai_semester" name="nilai_semester">
+                                                        <option value="" <?= ($nilai_semester == "") ? "selected" : ""; ?>>Choose Semester</option>
+                                                        <option value="1" <?= ($nilai_semester == "1") ? "selected" : ""; ?>>Semester 1</option>
+                                                        <option value="2" <?= ($nilai_semester == "2") ? "selected" : ""; ?>>Semester 2</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
                                                 <label class="control-label col-sm-2" for="sumatif_id">Sumatif:</label>
                                                 <div class="col-sm-10">
                                                     <select onchange="sumatifname()" class="form-control" id="sumatif_id" name="sumatif_id">
@@ -158,7 +168,7 @@
                                                 function carinilai() {
                                                     let kelas_id = $('#kelas_id').val();
                                                     // alert('<?= site_url("api/liststudent"); ?>?user_id=<?= $user_id; ?>&kelas_id='+kelas_id);
-
+alert("<?= site_url("api/liststudent"); ?>?user_id=<?= $user_id; ?>&kelas_id="+kelas_id);
                                                     //siswa
                                                     $.get("<?= site_url("api/liststudent"); ?>", {
                                                             user_id: '<?= $user_id; ?>',
@@ -169,10 +179,10 @@
                                                         });
 
                                                     //matapelajaran
-                                                    // alert('<?= site_url("api/listmatpel"); ?>?matpel_id=<?= $matpel_id; ?>&kelas_id='+kelas_id+'&user_id=<?= $user_id; ?>');
+                                                    // alert('<?= site_url("api/listmatpel"); ?>?matpel_id=<?= $matpel_id; ?>&kelas_id='+kelas_id+'&user_id=<?= $userid; ?>');
                                                     $.get("<?= site_url("api/listmatpel"); ?>", {
                                                             matpel_id: '<?= $matpel_id; ?>',
-                                                            user_id: '<?= $user_id; ?>'
+                                                            user_id: '<?= $userid; ?>'
                                                         })
                                                         .done(function(data) {
                                                             $('#matpel_id').html(data);
@@ -189,7 +199,7 @@
                                                         });
                                                 }
                                                 $("#kelas_id").change(carinilai);
-                                                carinilai();
+                                                $(document).ready(carinilai);
                                             </script>
 
                                             <input type="hidden" name="sekolah_id" value="<?= $this->session->userdata("sekolah_id"); ?>" />
@@ -277,6 +287,17 @@
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
+                                                        <label class="control-label col-sm-2" for="nilai_semester">Semester:</label>
+                                                        <div class="col-sm-10">
+                                                            <select class="form-control" id="nilai_semester" name="nilai_semester">
+                                                                <option value="" <?= ($nilai_semester == "") ? "selected" : ""; ?>>Choose Semester</option>
+                                                                <option value="1" <?= ($nilai_semester == "1") ? "selected" : ""; ?>>Semester 1</option>
+                                                                <option value="2" <?= ($nilai_semester == "2") ? "selected" : ""; ?>>Semester 2</option>
+                                                            </select>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
                                                         <label>Import Excel : </label>
                                                         <input class="form-control" name="filesiswa" type="file" />
                                                     </div>
@@ -314,7 +335,21 @@
                                                     <div>
 
                                                         <form class="form-inline col-md-6">
-
+                                                            <div class="form-group">
+                                                                <label for="nilai_semester">Semester:</label>
+                                                                <?php
+                                                                if (isset($_GET["nilai_semester"])) {
+                                                                    $nilai_semester = $this->input->get("nilai_semester");
+                                                                } else {
+                                                                    $nilai_semester = 0;
+                                                                }
+                                                                ?>
+                                                                <select name="nilai_semester" id="nilai_semester" class="form-control" onChange="cari_user(this.value)">
+                                                                    <option value="0" <?= ($nilai_semester == 0) ? 'selected="selected"' : ""; ?>>Choose Semester</option>
+                                                                    <option value="1" <?= ($nilai_semester == 1) ? 'selected="selected"' : ""; ?>>Semester 1</option>
+                                                                    <option value="2" <?= ($nilai_semester == 2) ? 'selected="selected"' : ""; ?>>Semester 2</option>
+                                                                </select>
+                                                            </div>
                                                             <div class="form-group">
                                                                 <label for="kelas_id">Class:</label>
                                                                 <?php
@@ -340,7 +375,7 @@
                                                                 // echo $this->db->last_query();
                                                                 // echo $this->session->userdata("position_id");
                                                                 ?>
-                                                                <select onchange="listsiswasekolah();" name="kelas_id" id="kelas_id" class="form-control" onChange="cari_user(this.value)">
+                                                                <select onchange="listsiswasekolah();" name="kelas_id" id="fkelas_id" class="form-control" onChange="cari_user(this.value)">
                                                                     <option value="0" <?= ($kelas_id == 0) ? 'selected="selected"' : ""; ?>>Choose Class</option>
                                                                     <?php
 
@@ -352,7 +387,7 @@
 
                                                             <script>
                                                                 function listsiswasekolah() {
-                                                                    let kelas_id = $("#kelas_id").val();
+                                                                    let kelas_id = $("#fkelas_id").val();
                                                                     // alert("<?= base_url("api/listsiswakelas"); ?>?kelas_id="+kelas_id+"&user_id=<?= $user_id; ?>");
                                                                     if (kelas_id > 0) {
                                                                         $.get("<?= base_url("api/listsiswakelas"); ?>", {
@@ -360,7 +395,7 @@
                                                                                 user_id: '<?= $user_id; ?>'
                                                                             })
                                                                             .done(function(data) {
-                                                                                $("#user_id").html(data);
+                                                                                $("#fuser_id").html(data);
                                                                             });
                                                                     } else {
                                                                         $("#user_id").html('');
@@ -373,7 +408,7 @@
 
                                                             <div class="form-group">
                                                                 <label for="user_id">Student:</label>
-                                                                <select name="user_id" id="user_id" class="form-control">
+                                                                <select name="user_id" id="fuser_id" class="form-control">
 
                                                                 </select>
                                                             </div>
@@ -394,6 +429,11 @@
                                                     } else {
                                                         $user_id = "";
                                                     }
+                                                    if (isset($_GET["nilai_semester"]) && $_GET["nilai_semester"] != "") {
+                                                        $nilai_semester = $_GET["nilai_semester"];
+                                                    } else {
+                                                        $nilai_semester = "";
+                                                    }
                                                     $matpelguru = $this->db
                                                         ->join("matpel", "matpel.matpel_id=matpelguru.matpel_id", "left")
                                                         ->where("user_id", $this->session->userdata("user_id"))
@@ -401,7 +441,7 @@
                                                     foreach ($matpelguru->result() as $matpelguru) {
                                                         $matpel_id = $matpelguru->matpel_id;
                                                     ?>
-                                                        <a title="Raport STS <?= $matpelguru->matpel_name; ?>" href="<?= base_url("raportsts?matpel_id=" . $matpel_id . "&kelas_id=" . $kelas_id . "&user_id=" . $user_id . "&matpel_name=" . $matpelguru->matpel_name . "&guru_id=" . $this->session->userdata("user_id")); ?>" target="_blank" type="submit" class="btn btn-success fa fa-file-excel-o" style="font-size:12px;"> Raport STS <?= $matpelguru->matpel_name; ?></a>
+                                                        <a title="Raport STS <?= $matpelguru->matpel_name; ?>" href="<?= base_url("raportsts?matpel_id=" . $matpel_id . "&kelas_id=" . $kelas_id . "&nilai_semester=" . $nilai_semester . "&user_id=" . $user_id . "&matpel_name=" . $matpelguru->matpel_name . "&guru_id=" . $this->session->userdata("user_id")); ?>" target="_blank" type="submit" class="btn btn-success fa fa-file-excel-o" style="font-size:12px;"> Raport STS <?= $matpelguru->matpel_name; ?></a>
                                                     <?php } ?>
                                                 </div>
                                             <?php } ?>
@@ -417,6 +457,7 @@
                                                                 <th class="col-md-2">Action</th>
                                                             <?php } ?>
                                                             <th>Tahun</th>
+                                                            <th>Semester</th>
                                                             <th>School</th>
                                                             <th>Class</th>
                                                             <th>Subject</th>
@@ -454,6 +495,12 @@
                                                         if (isset($_GET['user_id']) && $_GET['user_id'] > 0) {
                                                             $this->db->where("user.user_id", $_GET['user_id']);
                                                         }
+
+                                                        
+                                                        if (isset($_GET['nilai_semester']) && $_GET['nilai_semester'] > 0) {
+                                                            $this->db->where("nilai.nilai_semester", $_GET['nilai_semester']);
+                                                        }
+
 
                                                         $usr = $this->db
                                                             ->select("*,nilai.sumatif_id as sumatif_id, user.user_nisn as user_nisn")
@@ -500,6 +547,7 @@
                                                                     </td>
                                                                 <?php } ?>
                                                                 <td><?= $nilai->nilai_year; ?></td>
+                                                                <td><?= ($nilai->nilai_semester > 0) ? "Semester ".$nilai->nilai_semester : ""; ?></td>
                                                                 <td><?= $nilai->sekolah_name; ?></td>
                                                                 <td><?= $nilai->kelas_name; ?></td>
                                                                 <td><?= $nilai->matpel_name; ?></td>

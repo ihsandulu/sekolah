@@ -48,9 +48,16 @@
 
             </div>
             <div class="page-content">
-
+                <?php
+                if ($_GET["nilai_semester"] > 0) {
+                    $psemester = "Semester " . $_GET["nilai_semester"];
+                    $semester = $_GET["nilai_semester"];
+                } else {
+                    $psemester = "";
+                    $semester = "";
+                } ?>
                 <div class="page-header">
-                    <h1>Raport STS <?= $_GET["matpel_name"]; ?></h1>
+                    <h1>Raport STS <?= $_GET["matpel_name"]; ?> <?= $psemester; ?></h1>
                 </div>
 
                 <div class="row">
@@ -58,6 +65,9 @@
                         <div class="panel panel-default">
                             <div class="panel-body">
                                 <?php
+                                if ($_GET["nilai_semester"] > 0) {
+                                    $this->db->where("nilai_semester", $_GET["nilai_semester"]);
+                                }
                                 if (isset($_GET['kelas_id']) && $_GET['kelas_id'] > 0) {
                                     $this->db->where("nilai.kelas_id", $_GET['kelas_id']);
                                 }
@@ -85,13 +95,13 @@
                                                     <th rowspan="3">NISN</th>
                                                     <th rowspan="3">Nama Siswa</th>
                                                     <th colspan="6"></th>
-                                                    <th rowspan="3">SUMATIF TENGAH SEMESTER</th>
-                                                    <th rowspan="3">SUMATIF AKHIR SEMESTER</th>
-                                                    <th rowspan="3">NILAI RAPOR</th>
+                                                    <th rowspan="3">SUMATIF TENGAH SEMESTER <?= strtoupper($semester); ?></th>
+                                                    <th rowspan="3">SUMATIF AKHIR SEMESTER <?= strtoupper($semester); ?></th>
+                                                    <th rowspan="3">NILAI RAPOR <?= strtoupper($psemester); ?></th>
                                                     <th rowspan="3">NILAI RAPOR PEMBULATAN UNTUK DI COPY KE FORMAT EXCEL IMPORT E-RAPOR</th>
                                                 </tr>
                                                 <tr>
-                                                    <th colspan="6">SUMATIF / FORMATIF HARIAN</th>
+                                                    <th colspan="6">SUMATIF / FORMATIF HARIAN <?= strtoupper($psemester); ?></th>
                                                 </tr>
                                                 <tr>
                                                     <th>1</th>
@@ -125,7 +135,7 @@
                                                 foreach ($sumatif->result() as  $sumatif) {
                                                     $sumarray[] = $sumatif->sumatif_id;
                                                 }
-                                               
+
                                                 // print_r($sumarray);die;
 
 

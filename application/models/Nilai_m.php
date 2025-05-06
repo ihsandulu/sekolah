@@ -24,7 +24,7 @@ class Nilai_M extends CI_Model
                 foreach ($this->db->list_fields('nilai') as $field) {
                     $data[$field] = $nilai->$field;
                 }
-                foreach ($this->db->list_fields('sekolah') as $field) {
+                /* foreach ($this->db->list_fields('sekolah') as $field) {
                     $data[$field] = $nilai->$field;
                 }
                 foreach ($this->db->list_fields('matpel') as $field) {
@@ -38,13 +38,13 @@ class Nilai_M extends CI_Model
                 }
                 foreach ($this->db->list_fields('user') as $field) {
                     $data[$field] = $nilai->$field;
-                }
+                } */
             }
         } else {
             foreach ($this->db->list_fields('nilai') as $field) {
                 $data[$field] = "";
             }
-            foreach ($this->db->list_fields('sekolah') as $field) {
+            /* foreach ($this->db->list_fields('sekolah') as $field) {
                 $data[$field] = "";
             }
             foreach ($this->db->list_fields('matpel') as $field) {
@@ -58,7 +58,7 @@ class Nilai_M extends CI_Model
             }
             foreach ($this->db->list_fields('user') as $field) {
                 $data[$field] = "";
-            }
+            } */
         }
 
 
@@ -144,6 +144,7 @@ class Nilai_M extends CI_Model
                                     ->where("nilai.kelas_id", $this->input->post("kelas_id"))
                                     ->where("nilai.sumatif_id", $this->input->post("sumatif_id"))
                                     ->where("nilai.matpel_id", $this->input->post("matpel_id"))
+                                    ->where("nilai.nilai_semester", $this->input->post("nilai_semester"))
                                     ->where("nilai.nilai_year", date("Y"))
                                     ->get("nilai");
                                 // echo $this->db->last_query();
@@ -192,6 +193,7 @@ class Nilai_M extends CI_Model
                                     $input2["kelas_id"] = $this->input->post("kelas_id");
                                     $input2["sumatif_id"] = $this->input->post("sumatif_id");
                                     $input2["matpel_id"] = $this->input->post("matpel_id");
+                                    $input2["nilai_semester"] = $this->input->post("nilai_semester");
                                     $input2["nilai_year"] = date("Y");
                                     $input2["user_id"] = $urow->user_id;
                                     $input2["sekolah_id"] = $this->session->userdata("sekolah_id");
