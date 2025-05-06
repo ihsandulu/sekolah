@@ -106,10 +106,16 @@
                             ->order_by("sumatif_name", "ASC")
                             ->get("sumatif");
                         $sumatifno = $sumatif->num_rows();
+
+                        if($_GET["nilai_semester"] > 0) {
+                            $semester = "SEMESTER " . $_GET["nilai_semester"];
+                        } else {
+                            $semester = "";
+                        }
                         ?>
                         <tr>
                             <th rowspan="2" class="text-center tengah2">MATA PELAJARAN</th>
-                            <th colspan="<?= $sumatifno; ?>" class="text-center tengah2">REKAPITULASI NILAI ASESMEN SUMATIF</th>
+                            <th colspan="<?= $sumatifno; ?>" class="text-center tengah2">REKAPITULASI NILAI ASESMEN SUMATIF <?=$semester;?></th>
                             <th rowspan="2" class="text-center tengah2">KETERANGAN <br> (Jumlah Tugas yang belum
                                 dikerjakan)</th>
                         </tr>

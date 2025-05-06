@@ -138,7 +138,21 @@
 
                     <div>
                         <form class="form-inline col-md-6">
-
+                            <div class="form-group">
+                                <label for="nilai_semester">Semester:</label>
+                                <?php
+                                if (isset($_GET["nilai_semester"])) {
+                                    $nilai_semester = $this->input->get("nilai_semester");
+                                } else {
+                                    $nilai_semester = 0;
+                                }
+                                ?>
+                                <select name="nilai_semester" id="nilai_semester" class="form-control">
+                                    <option value="0" <?= ($nilai_semester == 0) ? 'selected="selected"' : ""; ?>>Choose Semester</option>
+                                    <option value="1" <?= ($nilai_semester == 1) ? 'selected="selected"' : ""; ?>>Semester 1</option>
+                                    <option value="2" <?= ($nilai_semester == 2) ? 'selected="selected"' : ""; ?>>Semester 2</option>
+                                </select>
+                            </div>
                             <div class="form-group">
                                 <label for="kelas_id">Class:</label>
                                 <?php
@@ -186,7 +200,7 @@
                                             .done(function(data) {
                                                 $("#user_id").html(data);
                                             });
-                                    }else{
+                                    } else {
                                         $("#user_id").html('');
                                     }
                                 }
@@ -257,7 +271,7 @@
                                 <tr>
                                     <td>
                                         <div class="col-md-12">
-                                            <a target="_blank" href="<?= base_url("rraportd?user_id=" . $user->user_id); ?>" type="button" onClick="raport()" class="btn btn-warning">Raport</a>
+                                            <a target="_blank" href="<?= base_url("rraportd?user_id=" . $user->user_id."&nilai_semester=".$nilai_semester); ?>" type="button" onClick="raport()" class="btn btn-warning">Raport</a>
                                         </div>
                                     </td>
                                     <td><?= $user->sekolah_name; ?></td>

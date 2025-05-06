@@ -168,7 +168,7 @@
                                                 function carinilai() {
                                                     let kelas_id = $('#kelas_id').val();
                                                     // alert('<?= site_url("api/liststudent"); ?>?user_id=<?= $user_id; ?>&kelas_id='+kelas_id);
-alert("<?= site_url("api/liststudent"); ?>?user_id=<?= $user_id; ?>&kelas_id="+kelas_id);
+                                                    // alert("<?= site_url("api/liststudent"); ?>?user_id=<?= $user_id; ?>&kelas_id="+kelas_id);
                                                     //siswa
                                                     $.get("<?= site_url("api/liststudent"); ?>", {
                                                             user_id: '<?= $user_id; ?>',
@@ -496,7 +496,7 @@ alert("<?= site_url("api/liststudent"); ?>?user_id=<?= $user_id; ?>&kelas_id="+k
                                                             $this->db->where("user.user_id", $_GET['user_id']);
                                                         }
 
-                                                        
+
                                                         if (isset($_GET['nilai_semester']) && $_GET['nilai_semester'] > 0) {
                                                             $this->db->where("nilai.nilai_semester", $_GET['nilai_semester']);
                                                         }
@@ -547,7 +547,7 @@ alert("<?= site_url("api/liststudent"); ?>?user_id=<?= $user_id; ?>&kelas_id="+k
                                                                     </td>
                                                                 <?php } ?>
                                                                 <td><?= $nilai->nilai_year; ?></td>
-                                                                <td><?= ($nilai->nilai_semester > 0) ? "Semester ".$nilai->nilai_semester : ""; ?></td>
+                                                                <td><?= ($nilai->nilai_semester > 0) ? "Semester " . $nilai->nilai_semester : ""; ?></td>
                                                                 <td><?= $nilai->sekolah_name; ?></td>
                                                                 <td><?= $nilai->kelas_name; ?></td>
                                                                 <td><?= $nilai->matpel_name; ?></td>
