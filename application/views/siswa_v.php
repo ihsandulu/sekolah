@@ -189,6 +189,10 @@
                         <label for="drop"> Update Student Data</label>
                       </div>
                       <div class="form-group">
+                        <input checked id="drop" class="" name="drop" type="radio" value="2" />
+                        <label for="drop"> Update Student Data Without Phone</label>
+                      </div>
+                      <div class="form-group">
                         <input id="drop" class="" name="drop" type="radio" value="1" />
                         <label for="drop"> Delete All Student Data and All Transaction</label>
                       </div>

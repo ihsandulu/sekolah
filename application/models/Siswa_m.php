@@ -113,44 +113,45 @@ class Siswa_M extends CI_Model
 							$user_id = $this->db->insert_id();
 						}
 
+						if ($_POST["drop"] != 2) {
+							if ($user_id > 0) {
+								$inputtelw["sekolah_id"] = $this->session->userdata("sekolah_id");
+								$inputtelw["user_id"] = $user_id;
+								$this->db->delete("telpon", $inputtelw);
 
-						if ($user_id > 0) {
-							$inputtelw["sekolah_id"] = $this->session->userdata("sekolah_id");
-							$inputtelw["user_id"] = $user_id;
-							$this->db->delete("telpon", $inputtelw);
+								$sukses++;
+								if (isset($arr_data[$x]["G"])) {
+									$pisah = explode(",", $arr_data[$x]["G"]);
+								} else {
+									$pisah = array();
+								}
 
-							$sukses++;
-							if (isset($arr_data[$x]["G"])) {
-								$pisah = explode(",", $arr_data[$x]["G"]);
-							} else {
-								$pisah = array();
-							}
-
-							if (!empty($pisah)) {
-								foreach ($pisah as $pisa) {
-									$pisa = trim($pisa);
-									if (!empty($pisa)) {
-										$inputtel["sekolah_id"] = $this->session->userdata("sekolah_id");
-										$inputtel["user_id"] = $user_id;
-										$inputtel["telpon_number"] = $pisa;
-										$inputtel["telpon_type"] = 1;
-										$this->db->insert("telpon", $inputtel);
-										if ($this->db->affected_rows() > 0) {
-											// Insert berhasil
-											// echo "Insert berhasil!";
-										} else {
-											// Insert gagal
-											// echo "Insert gagal!";
-											$last_query = $this->db->last_query();
-											// echo "Query yang dijalankan: " . $last_query;die;
+								if (!empty($pisah)) {
+									foreach ($pisah as $pisa) {
+										$pisa = trim($pisa);
+										if (!empty($pisa)) {
+											$inputtel["sekolah_id"] = $this->session->userdata("sekolah_id");
+											$inputtel["user_id"] = $user_id;
+											$inputtel["telpon_number"] = $pisa;
+											$inputtel["telpon_type"] = 1;
+											$this->db->insert("telpon", $inputtel);
+											if ($this->db->affected_rows() > 0) {
+												// Insert berhasil
+												// echo "Insert berhasil!";
+											} else {
+												// Insert gagal
+												// echo "Insert gagal!";
+												$last_query = $this->db->last_query();
+												// echo "Query yang dijalankan: " . $last_query;die;
+											}
 										}
 									}
+								} else {
+									log_message('error', 'Tidak ada nomor telepon yang ditemukan di data: ' . $arr_data[$x]["C"]);
 								}
 							} else {
-								log_message('error', 'Tidak ada nomor telepon yang ditemukan di data: ' . $arr_data[$x]["C"]);
+								$gagal++;
 							}
-						} else {
-							$gagal++;
 						}
 					}
 				}
