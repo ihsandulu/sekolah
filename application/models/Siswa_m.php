@@ -79,17 +79,18 @@ class Siswa_M extends CI_Model
 				//echo $row." ".$column;die;
 				// uraikan
 				for ($x = 2; $x <= $row; $x++) {
-
+					$kelas_name = str_replace(['‐', '‑', '–', '—'], '-', $arr_data[$x]["D"]);
 					$kelas = $this->db->from("kelas")
-						->where("kelas_name='" . $arr_data[$x]["D"] . "'")
+						->where("kelas_name=", $kelas_name)
 						->where("sekolah_id", $arr_data[$x]["A"])
 						->group_by("sekolah_id,kelas_name")
 						->get();
-					// echo $this->db->last_query();
-					// echo $kelas->num_rows();
+					// echo $this->db->last_query();die;
+					// echo $kelas->num_rows();die;
 					foreach ($kelas->result() as $kelas) {
 						//cek data
 						$userrows = $this->db->where("user_nisn", $arr_data[$x]["B"])->get("user");
+						// echo $userrows->num_rows();die;
 						if ($userrows->num_rows() > 0) {
 							foreach ($userrows->result() as $urow) {
 								$where["sekolah_id"] = $arr_data[$x]["A"];
