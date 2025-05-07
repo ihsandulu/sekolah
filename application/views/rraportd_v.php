@@ -136,6 +136,9 @@
                             $matperarray[$matapelajaran->matpel_id] = $matapelajaran->matpelguru_sumatif;
                         }
 
+                        if ($_GET["nilai_semester"] > 0) {
+                            $this->db->where("nilai_semester", $_GET["nilai_semester"]);
+                        }
                         $nilai = $this->db
                             ->where("sekolah_id", $this->session->userdata("sekolah_id"))
                             ->where("user_id", $this->input->get("user_id"))
