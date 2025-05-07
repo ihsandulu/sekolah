@@ -294,6 +294,7 @@ class Nilai_M extends CI_Model
                 ->where("user_id", $input["user_id"])
                 ->where("sumatif_id", $input["sumatif_id"])
                 ->where("matpel_id", $input["matpel_id"])
+                ->where("nilai_semester", $input["nilai_semester"])
                 ->get("nilai");
             if ($double->num_rows() == 0) {
                 $input["nilai_year"] = date("Y");
