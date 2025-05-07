@@ -76,27 +76,33 @@ class Siswa_M extends CI_Model
 				// import data excel mulai baris ke-2 (karena tabel xls ada header pada baris 1)
 				$gagal = 0;
 				$sukses = 0;
-				//echo $row." ".$column;die;
-				// uraikan
+				$kelas = $this->db->from("kelas")
+					->group_by("sekolah_id,kelas_name")
+					->get();
+				$akelas = array();
+				$akelasid = array();
+				foreach ($kelas->result() as $kelas) {
+					$akelas[] = $kelas->kelas_name;
+					$akelasid[$kelas->kelas_name] = $kelas->kelas_id;
+				}
+
 				for ($x = 2; $x <= $row; $x++) {
 					$kelas_name = str_replace(['‐', '‑', '–', '—'], '-', $arr_data[$x]["D"]);
-					$kelas = $this->db->from("kelas")
-						->where("kelas_name=", $kelas_name)
-						->where("sekolah_id", $arr_data[$x]["A"])
-						->group_by("sekolah_id,kelas_name")
-						->get();
-					// echo $this->db->last_query();die;
-					// echo $kelas->num_rows();die;
-					foreach ($kelas->result() as $kelas) {
-						//cek data
-						$userrows = $this->db->where("user_nisn", $arr_data[$x]["B"])->get("user");
+					if (in_array($kelas_name, $akelas)) {
+						$kelas_id = $akelasid[$kelas_name];
+						$nisn = trim((string)$arr_data[$x]["B"]);
+						$nisn = ltrim($nisn, "'`");
+						$userrows = $this->db
+							->where("user_nisn", $nisn)
+							->get("user");
 						// echo $userrows->num_rows();die;
 						if ($userrows->num_rows() > 0) {
 							foreach ($userrows->result() as $urow) {
 								$where["sekolah_id"] = $arr_data[$x]["A"];
-								$where["user_nisn"] = $arr_data[$x]["B"];
+								$where["user_nisn"] = $nisn;
+								$input["user_nisn"] = $nisn;
 								$input["user_name"] = $arr_data[$x]["C"];
-								$input["kelas_id"] = $kelas->kelas_id;
+								$input["kelas_id"] = $kelas_id;
 								$input["user_password"] = $arr_data[$x]["E"];
 								$input["position_id"] = "4";
 								$this->db->update("user", $input, $where);
@@ -104,9 +110,9 @@ class Siswa_M extends CI_Model
 							}
 						} else {
 							$input["sekolah_id"] = $arr_data[$x]["A"];
-							$input["user_nisn"] = $arr_data[$x]["B"];
+							$input["user_nisn"] = $nisn;
 							$input["user_name"] = $arr_data[$x]["C"];
-							$input["kelas_id"] = $kelas->kelas_id;
+							$input["kelas_id"] = $kelas_id;
 							$input["user_password"] = $arr_data[$x]["E"];
 							$input["user_tahunajaran"] = $arr_data[$x]["F"];
 							$input["position_id"] = "4";
@@ -154,6 +160,8 @@ class Siswa_M extends CI_Model
 								$gagal++;
 							}
 						}
+					} else {
+						$gagal++;
 					}
 				}
 				$data["sukses"] = $sukses;
