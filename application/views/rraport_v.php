@@ -264,6 +264,8 @@
                                 ->join("sekolah", "sekolah.sekolah_id=user.sekolah_id", "left")
                                 ->where("user.position_id", "4")
                                 ->group_by("user.user_id")
+                                ->order_by("kelas_name","ASC")
+                                ->order_by("user_name","ASC")
                                 ->get("user");
                             // echo $this->db->last_query();
                             foreach ($tdetail->result() as $user) {
