@@ -154,6 +154,7 @@
                                                 }
                                                 $usr = $this->db
                                                     ->where("position_id", "4")
+                                                    ->where("user.user_tahunajaran !=", "0")
                                                     ->order_by("user_name")
                                                     ->get("user");
                                                 // echo $this->db->last_query();
