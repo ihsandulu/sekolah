@@ -1242,7 +1242,7 @@ class api extends CI_Controller
 				->get_where("user", $where);
 			// echo $this->db->last_query();
 			if ($user->num_rows() > 0) {
-				foreach ($user->result() as $user) {					
+				foreach ($user->result() as $user) {
 					$input["absen_datetime"] = date("Y-m-d H:i:s");
 					$input["absen_year"] = date("Y");
 					$input["absen_date"] = date("Y-m-d");
@@ -1449,7 +1449,7 @@ class api extends CI_Controller
 			->where("tidakhadir_status", 1)
 			->get("tidakhadir");
 		foreach ($absen->result() as $absen) {
-			$data1["message"] = "Info ".$absen->sekolah_name.": Ananda " . $absen->user_name . " tidak masuk sekolah hari ini.";
+			$data1["message"] = "Info " . $absen->sekolah_name . ": Ananda " . $absen->user_name . " tidak masuk sekolah hari ini.";
 			$data1["number"] = $absen->telpon_number;
 			$data1["server"] = $absen->sekolah_serverwa;
 			$data1["email"] = $absen->sekolah_emailwa;
@@ -1763,6 +1763,7 @@ class api extends CI_Controller
 			$this->db->where("user.kelas_id", $kelas_id);
 		}
 		$mat = $this->db
+			->where("user.user_tahunajaran !=", "0")
 			->where("position_id", "4")
 			->get("user");
 		foreach ($mat->result() as $user) { ?>

@@ -263,6 +263,7 @@
                                 ->join("kelas", "kelas.kelas_id=user.kelas_id", "left")
                                 ->join("sekolah", "sekolah.sekolah_id=user.sekolah_id", "left")
                                 ->where("user.position_id", "4")
+                                ->where("user.user_tahunajaran !=", "0")
                                 ->group_by("user.user_id")
                                 ->order_by("kelas_name","ASC")
                                 ->order_by("user_name","ASC")

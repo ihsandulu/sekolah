@@ -509,7 +509,8 @@
                                                             ->join("sumatif", "sumatif.sumatif_id=nilai.sumatif_id", "left")
                                                             ->join("kelas", "kelas.kelas_id=nilai.kelas_id", "left")
                                                             ->join("user", "user.user_id=nilai.user_id", "left")
-                                                            ->where("nilai_year", date("Y"));
+                                                            ->where("nilai_year", date("Y"))
+                                                            ->where("user.user_tahunajaran !=", "0");
                                                         if ($this->session->userdata("position_id") == 3) {
                                                             $usr->group_start();
                                                             foreach ($kelas_guru->result() as $kelas_guru) {
@@ -609,6 +610,7 @@
                                                         $usr = $this->db
                                                             ->join("user", "user.user_id=nilai.user_id", "left")
                                                             ->where("nilaigagal_temporary", $_POST["nilaigagal_temporary"])
+                                                            ->where("user.user_tahunajaran !=", "0")
                                                             ->order_by("user_name","ASC")
                                                             ->get("nilai");
                                                         // echo $this->db->last_query();
