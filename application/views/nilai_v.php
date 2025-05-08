@@ -522,7 +522,12 @@
                                                             }
                                                             $usr->group_end();
                                                         }
-                                                        $usrr = $usr->get("nilai");
+                                                        $usrr = $usr
+                                                        ->order_by("matpel_name","ASC")
+                                                        ->order_by("sumatif_name","ASC")
+                                                        ->order_by("kelas_name","ASC")
+                                                        ->order_by("user_name","ASC")
+                                                        ->get("nilai");
                                                         // echo $this->db->last_query();
                                                         foreach ($usrr->result() as $nilai) {
                                                             $sumatif_name = $nilai->sumatif_name;
@@ -575,6 +580,7 @@
 
                                                         $usr = $this->db
                                                             ->where("nilaigagal_temporary", $_POST["nilaigagal_temporary"])
+                                                            ->order_by("user_name","ASC")
                                                             ->get("nilaigagal");
                                                         // echo $this->db->last_query();
                                                         foreach ($usr->result() as $nilai) {
@@ -603,6 +609,7 @@
                                                         $usr = $this->db
                                                             ->join("user", "user.user_id=nilai.user_id", "left")
                                                             ->where("nilaigagal_temporary", $_POST["nilaigagal_temporary"])
+                                                            ->order_by("user_name","ASC")
                                                             ->get("nilai");
                                                         // echo $this->db->last_query();
                                                         foreach ($usr->result() as $nilai) {
