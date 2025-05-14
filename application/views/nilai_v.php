@@ -307,8 +307,36 @@
                                                         <button class="btn btn-danger" type="button" onclick="tutupimport()">Close</button>
                                                     </div>
                                                 </form>
+                                                <form target="_blank" action="<?= base_url("excel/excelnilai"); ?>" id="importd" method="get" class="col-md-12 form well form-inline" enctype="multipart/form-data">
+                                                    <div class="form-group">
+                                                        <label class="control-label " for="kelas_id">Class:</label>
+                                                        <select onchange="kelasnamet()" class="form-control" id="kelas_idd" name="kelas_id">
+                                                            <option value="" <?= ($kelas_id == "") ? "selected" : ""; ?>>Choose Class</option>
+                                                            <?php
+                                                            $kelas = $this->db->from("kelas_guru")
+                                                                ->join("kelas", "kelas.kelas_id=kelas_guru.kelas_id", "left")
+                                                                ->where("kelas_guru.sekolah_id", $this->session->userdata("sekolah_id"))
+                                                                ->where("kelas_guru.user_id", $this->session->userdata("user_id"))
+                                                                ->order_by("kelas_name", "ASC")
+                                                                ->get();
+                                                            foreach ($kelas->result() as $row) { ?>
+                                                                <option kelas_namet="<?= $row->kelas_name; ?>" value="<?= $row->kelas_id; ?>" <?= ($kelas_id == $row->kelas_id) ? "selected" : ""; ?>><?= $row->kelas_name; ?></option>
+                                                            <?php } ?>
+                                                        </select>
+                                                        <input type="hidden" id="kelas_namet" name="kelas_name" />
+                                                        <input type="hidden" name="sekolah_id" value="<?=$this->session->userdata("sekolah_id");?>" />
+                                                        <script>
+                                                            function kelasnamet() {
+                                                                let kelas_namet = $("#kelas_idd option:selected").attr("kelas_namet");
+                                                                $("#kelas_namet").val(kelas_namet);
+                                                            }
+                                                        </script>
+                                                    </div>
+                                                    <button class="btn btn-primary" type="submit" name="import">Download Excel Template</button>
+                                                    <button class="btn btn-danger" type="button" onclick="tutupimportd()">Close</button>
+                                                </form>
                                                 <button id="btnimport" class="btn btn-primary" type="button" onclick="bukaimport()">Import Excel</button>
-                                                <button id="btntemplate" class="btn btn-success" type="button" onclick="downloadtemplate()"><i class="fa fa-print"></i> Download Excel Template</button>
+                                                <button id="btntemplate" class="btn btn-success" type="button" onclick="bukaimportd()"><i class="fa fa-print"></i> Download Excel Template</button>
                                                 <script>
                                                     function tutupimport() {
                                                         $("#importn").hide();
@@ -319,7 +347,19 @@
                                                         $("#importn").show();
                                                         $("#btnimport").hide();
                                                     }
+
+                                                    function tutupimportd() {
+                                                        $("#importd").hide();
+                                                        $("#btntemplate").show();
+                                                    }
+
+                                                    function bukaimportd() {
+                                                        $("#importd").show();
+                                                        $("#btntemplate").hide();
+                                                        tutupimport();
+                                                    }
                                                     tutupimport();
+                                                    tutupimportd();
 
                                                     function downloadtemplate() {
                                                         window.open("<?= base_url("score.xlsx"); ?>", '_self');
@@ -524,11 +564,11 @@
                                                             $usr->group_end();
                                                         }
                                                         $usrr = $usr
-                                                        ->order_by("matpel_name","ASC")
-                                                        ->order_by("sumatif_name","ASC")
-                                                        ->order_by("kelas_name","ASC")
-                                                        ->order_by("user_name","ASC")
-                                                        ->get("nilai");
+                                                            ->order_by("matpel_name", "ASC")
+                                                            ->order_by("sumatif_name", "ASC")
+                                                            ->order_by("kelas_name", "ASC")
+                                                            ->order_by("user_name", "ASC")
+                                                            ->get("nilai");
                                                         // echo $this->db->last_query();
                                                         foreach ($usrr->result() as $nilai) {
                                                             $sumatif_name = $nilai->sumatif_name;
@@ -581,7 +621,7 @@
 
                                                         $usr = $this->db
                                                             ->where("nilaigagal_temporary", $_POST["nilaigagal_temporary"])
-                                                            ->order_by("user_name","ASC")
+                                                            ->order_by("user_name", "ASC")
                                                             ->get("nilaigagal");
                                                         // echo $this->db->last_query();
                                                         foreach ($usr->result() as $nilai) {
@@ -611,7 +651,7 @@
                                                             ->join("user", "user.user_id=nilai.user_id", "left")
                                                             ->where("nilaigagal_temporary", $_POST["nilaigagal_temporary"])
                                                             ->where("user.user_tahunajaran !=", "0")
-                                                            ->order_by("user_name","ASC")
+                                                            ->order_by("user_name", "ASC")
                                                             ->get("nilai");
                                                         // echo $this->db->last_query();
                                                         foreach ($usr->result() as $nilai) {
