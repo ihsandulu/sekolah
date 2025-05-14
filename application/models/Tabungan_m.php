@@ -167,7 +167,7 @@ class tabungan_M extends CI_Model
 							} else {
 								$dateString = explode("/", $dateValue);
 								if (count($dateString) === 3) {
-									$tabungan_datetime = $dateString[2] . "-" . $dateString[1] . "-" . $dateString[0] . " 00:00:00";
+									$tabungan_datetime = $dateString[2] . "-" . $dateString[0] . "-" . $dateString[1] . " 00:00:00";
 								} else {
 									$tabungan_datetime = "1970-01-01 00:00:00";
 								}

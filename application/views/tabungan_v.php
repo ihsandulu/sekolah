@@ -200,8 +200,41 @@
 														<button class="btn btn-danger" type="button" onclick="tutupimport()">Close</button>
 													</div>
 												</form>
+												<?php
+												if (isset($_GET["kelas_id"]) && $_GET["kelas_id"] != "") {
+													$kelas_id = $_GET["kelas_id"];
+												} else {
+													$kelas_id = "";
+												}
+												?>
+												<form target="_blank" action="<?= base_url("excel/exceltabungan"); ?>" id="importd" method="get" class="col-md-12 form well form-inline" enctype="multipart/form-data">
+													<div class="form-group">
+														<label class="control-label " for="kelas_id">Class:</label>
+														<select onchange="kelasnamet()" class="form-control" id="kelas_idd" name="kelas_id">
+															<option value="" <?= ($kelas_id == "") ? "selected" : ""; ?>>Semua Kelas</option>
+															<?php
+															$kelas = $this->db->from("kelas")
+																->order_by("kelas_name", "ASC")
+																->get();
+															foreach ($kelas->result() as $row) { ?>
+																<option kelas_namet="<?= $row->kelas_name; ?>" value="<?= $row->kelas_id; ?>" <?= ($kelas_id == $row->kelas_id) ? "selected" : ""; ?>><?= $row->kelas_name; ?></option>
+															<?php } ?>
+														</select>
+														<input type="hidden" id="kelas_namet" name="kelas_name" />
+														<input type="hidden" name="sekolah_id" value="<?= $this->session->userdata("sekolah_id"); ?>" />
+														<script>
+															function kelasnamet() {
+																let kelas_namet = $("#kelas_idd option:selected").attr("kelas_namet");
+																$("#kelas_namet").val(kelas_namet);
+															}
+														</script>
+													</div>
+													<button class="btn btn-primary" type="submit" name="import">Download Excel Template</button>
+													<button class="btn btn-danger" type="button" onclick="tutupimportd()">Close</button>
+												</form>
 												<button id="btnimport" class="btn btn-primary" type="button" onclick="bukaimport()">Import From Another Application</button>
-												<button id="btntemplate" class="btn btn-success" type="button" onclick="printtemplate()"><i class="fa fa-print"></i> Print Template</button>
+												<button id="btntemplatep" class="btn btn-warning" type="button" onclick="printtemplate()"><i class="fa fa-print"></i> Print Template</button>
+												<button id="btntemplate" class="btn btn-success" type="button" onclick="bukaimportd()"><i class="fa fa-print"></i> Download Excel Template</button>
 												<script>
 													function tutupimport() {
 														$("#importn").hide();
@@ -212,7 +245,24 @@
 														$("#importn").show();
 														$("#btnimport").hide();
 													}
+
+													function tutupimportd() {
+														$("#importd").hide();
+														$("#btntemplate").show();
+													}
+
+													function bukaimportd() {
+														$("#importd").show();
+														$("#btntemplate").hide();
+														tutupimport();
+													}
 													tutupimport();
+													tutupimportd();
+
+													function downloadtemplate() {
+														window.open("<?= base_url("score.xlsx"); ?>", '_self');
+													}
+
 
 													function printtemplate() {
 														// window.open("<?= base_url('printtabungan?kosongan=OK'); ?>", '_blank');
