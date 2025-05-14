@@ -104,72 +104,74 @@ class tabungan_M extends CI_Model
 
 			if (isset($_POST["drop"]) && $_POST["drop"] == 1) {
 				$this->db->delete("tabungan", array("sekolah_id" => $this->session->userdata("sekolah_id")));
+			} else {
+				// $data["message"] = "Import gagal karena pilihan 'Delete All Transaction' tidak di pilih!";
+				$data["message"] = "Data berhasil diinput tanpa delete ataupun update data sebelumnya!";
+			}
+			if ($_FILES['filesiswa']['name'] != "") {
+				$file = $_FILES['filesiswa']['tmp_name'];
+				$this->load->library('excel');
+				$objPHPExcel = PHPExcel_IOFactory::load($file);
+				$sheetData = $objPHPExcel->getActiveSheet()->toArray(null, true, true, true); // <<< Fix penting
 
-				if ($_FILES['filesiswa']['name'] != "") {
-					$file = $_FILES['filesiswa']['tmp_name'];
-					$this->load->library('excel');
-					$objPHPExcel = PHPExcel_IOFactory::load($file);
-					$sheetData = $objPHPExcel->getActiveSheet()->toArray(null, true, true, true); // <<< Fix penting
+				$gagal = 0;
+				$sukses = 0;
 
-					$gagal = 0;
-					$sukses = 0;
+				foreach ($sheetData as $index => $row) {
+					if ($index == 1) continue; // lewati header
 
-					foreach ($sheetData as $index => $row) {
-						if ($index == 1) continue; // lewati header
+					$typ = isset($row['H']) && $row['H'] != "" ? $row['H'] : "T";
+					$type = $typ == "T" ? "Debet" : "Kredit";
 
-						$typ = isset($row['H']) && $row['H'] != "" ? $row['H'] : "T";
-						$type = $typ == "T" ? "Debet" : "Kredit";
+					// tabungankode_id
+					$tabungankode_id = 0;
+					$tabungankode = $this->db->where("tabungankode_kode", $typ)->get("tabungankode");
+					foreach ($tabungankode->result() as $tk) {
+						$tabungankode_id = $tk->tabungankode_id;
+					}
 
-						// tabungankode_id
-						$tabungankode_id = 0;
-						$tabungankode = $this->db->where("tabungankode_kode", $typ)->get("tabungankode");
-						foreach ($tabungankode->result() as $tk) {
-							$tabungankode_id = $tk->tabungankode_id;
-						}
-
-						// Tanggal
-						$dateValue = $row["E"];
-						if (is_numeric($dateValue)) {
-							$timestamp = PHPExcel_Shared_Date::ExcelToPHP($dateValue);
-							$tabungan_datetime = date("Y-m-d 00:00:00", $timestamp);
+					// Tanggal
+					$dateValue = $row["E"];
+					if (is_numeric($dateValue)) {
+						$timestamp = PHPExcel_Shared_Date::ExcelToPHP($dateValue);
+						$tabungan_datetime = date("Y-m-d 00:00:00", $timestamp);
+					} else {
+						$dateString = explode("/", $dateValue);
+						if (count($dateString) === 3) {
+							$tabungan_datetime = $dateString[2] . "-" . $dateString[0] . "-" . $dateString[1] . " 00:00:00";
 						} else {
-							$dateString = explode("/", $dateValue);
-							if (count($dateString) === 3) {
-								$tabungan_datetime = $dateString[2] . "-" . $dateString[0] . "-" . $dateString[1] . " 00:00:00";
-							} else {
-								$tabungan_datetime = "1970-01-01 00:00:00";
-							}
-						}
-
-						// Ambil data user
-						$user = $this->db->where("user_nisn", $row["B"])->get("user");
-						if ($user->num_rows() > 0) {
-							foreach ($user->result() as $u) {
-								$input = [
-									"user_nisn" => $row["B"],
-									"tabungan_datetime" => $tabungan_datetime,
-									"tabungan_amount" => $row["F"],
-									"user_id" => $u->user_id,
-									"tabungan_type" => $type,
-									"tabungan_remarks" => "Hasil Import",
-									"sekolah_id" => $this->session->userdata("sekolah_id"),
-									"tabungan_tahun" => $u->user_tahunajaran,
-									"kelas_id" => $u->kelas_id,
-									"tabungankode_id" => $tabungankode_id
-								];
-
-								$this->db->insert("tabungan", $input);
-								$sukses++;
-							}
-						} else {
-							$gagal++;
+							$tabungan_datetime = "1970-01-01 00:00:00";
 						}
 					}
 
-					$data["message"] = "Keterangan Import Data Tabungan : Sukses=" . $sukses . ", Gagal=" . $gagal;
+					// Ambil data user
+					$user = $this->db->where("user_nisn", $row["B"])->get("user");
+					$tidakadadata = "";
+					if ($user->num_rows() > 0) {
+						foreach ($user->result() as $u) {
+							$input = [
+								"user_nisn" => $row["B"],
+								"tabungan_datetime" => $tabungan_datetime,
+								"tabungan_amount" => $row["F"],
+								"user_id" => $u->user_id,
+								"tabungan_type" => $type,
+								"tabungan_remarks" => "Hasil Import",
+								"sekolah_id" => $this->session->userdata("sekolah_id"),
+								"tabungan_tahun" => $u->user_tahunajaran,
+								"kelas_id" => $u->kelas_id,
+								"tabungankode_id" => $tabungankode_id
+							];
+
+							$this->db->insert("tabungan", $input);
+							$sukses++;
+						}
+					} else {
+						$gagal++;
+						$tidakadadata = $tidakadadata . "," . $row["B"];
+					}
 				}
-			} else {
-				$data["message"] = "Import gagal karena pilihan 'Delete All Transaction' tidak di pilih!";
+
+				$data["message"] = "Keterangan Import Data Tabungan : Sukses=" . $sukses . ", Gagal=" . $gagal;
 			}
 		}
 
