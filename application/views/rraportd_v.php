@@ -155,7 +155,7 @@
                         $guruarray = array();
                         foreach ($matapelajaran->result() as $matapelajaran) {
                             $matperarray[$matapelajaran->matpel_id] = $matapelajaran->matpelguru_sumatif;
-                            if ($matapelajaran->matpel_id == 1) {
+                            if ($matapelajaran->matpel_id == 12 AND $matapelajaran->kelas_id==23) {
                                 $guruarray[] = $matapelajaran->user_id . "--" . $matapelajaran->matpel_id . "--" . $matapelajaran->matpel_id . "--" . $matapelajaran->matpelguru_sumatif;
                             }
                         }
