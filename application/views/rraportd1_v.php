@@ -151,41 +151,50 @@
                             $nilaiuser[$row->matpel_id][$row->sumatif_id] = $row->nilai_score;
                         }
                         // print_r($nilaiuser);
-
-                        $matpel = $this->db
-                            ->join("matpel", "matpel.matpel_id=matpel_sekolah.matpel_id", "left")
-                            ->join("matpelkelas", "matpelkelas.sekolah_id=matpel_sekolah.sekolah_id AND matpelkelas.kelas_id=$kelas_id AND matpelkelas.matpel_id=matpel_sekolah.matpel_id", "left")
-                            ->where("matpel_sekolah.sekolah_id", $this->session->userdata("sekolah_id"))
-                            ->where("matpelkelas.kelas_id !=", "null")
-                            ->order_by("FIELD(matpel.matpel_id, 15, 16, 17, 3, 1,2,12,29,19,20,21)", "", false)
-                            ->get("matpel_sekolah");
-                        foreach ($matpel->result() as $rowm) {
-                            // $no = $sumatifno; 
-                            if (isset($matperarray[$rowm->matpel_id])) {
-                                $no = $matperarray[$rowm->matpel_id];
-                            } else {
-                                $no = $sumatifno;
-                            }
-                        ?>
-                            <tr>
-                                <td><?= $rowm->matpel_name; ?></td>
-                                <?php foreach ($sumatif->result() as $rows) { ?>
-                                    <td class="text-center">
-                                        <?php
-                                        if (isset($nilaiuser[$rowm->matpel_id][$rows->sumatif_id])) {
-                                            echo $nilaiuser[$rowm->matpel_id][$rows->sumatif_id];
-                                            $no--;
-                                        } else {
-                                            echo "-";
-                                        } ?>
-                                    </td>
-                                <?php } ?>
-                                <td class="text-center">
-                                    <?= $no; ?>
-                                </td>
+                        $matpelgroup = $this->db
+                            ->where("sekolah_id", $this->session->userdata("sekolah_id"))
+                            ->order_by("matpelgroup_name", "ASC")
+                            ->get("matpelgroup");
+                        foreach ($matpelgroup->result() as $row) { ?>
+                            <tr class="bg-light font-weight-bold">
+                                <td colspan="<?= $sumatifno + 2; ?>" class="thead-light2"><?= $row->matpelgroup_name; ?></td>
                             </tr>
+                            <?php
+                            $matpel = $this->db
+                                ->join("matpel", "matpel.matpel_id=matpel_sekolah.matpel_id", "left")
+                                ->join("matpelkelas", "matpelkelas.sekolah_id=matpel_sekolah.sekolah_id AND matpelkelas.kelas_id=$kelas_id AND matpelkelas.matpel_id=matpel_sekolah.matpel_id", "left")
+                                ->where("matpel_sekolah.sekolah_id", $this->session->userdata("sekolah_id"))
+                                ->where("matpelkelas.kelas_id !=", "null")
+                                ->where("matpel.matpelgroup_id", $row->matpelgroup_id)
+                                ->order_by("matpel.matpel_name", "ASC")
+                                ->get("matpel_sekolah");
+                            foreach ($matpel->result() as $rowm) {
+                                // $no = $sumatifno; 
+                                if (isset($matperarray[$rowm->matpel_id])) {
+                                    $no = $matperarray[$rowm->matpel_id];
+                                } else {
+                                    $no = $sumatifno;
+                                }
+                            ?>
+                                <tr>
+                                    <td><?= $rowm->matpel_name; ?></td>
+                                    <?php foreach ($sumatif->result() as $rows) { ?>
+                                        <td class="text-center">
+                                            <?php
+                                            if (isset($nilaiuser[$rowm->matpel_id][$rows->sumatif_id])) {
+                                                echo $nilaiuser[$rowm->matpel_id][$rows->sumatif_id];
+                                                $no--;
+                                            } else {
+                                                echo "-";
+                                            } ?>
+                                        </td>
+                                    <?php } ?>
+                                    <td class="text-center">
+                                        <?= $no; ?>
+                                    </td>
+                                </tr>
+                            <?php } ?>
                         <?php } ?>
-
                     </tbody>
                 </table>
             </div>
