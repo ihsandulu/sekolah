@@ -53,6 +53,7 @@
                 text-align: center;
             }
         }
+        .bold{font-weight: bold;}
     </style>
 </head>
 
@@ -74,6 +75,18 @@
         $npsn = $row->sekolah_npsn;
         $nss = $row->sekolah_nss;
     }
+
+    $usern = $this->db
+        ->join("kelas", "kelas.kelas_id=user.kelas_id", "left")
+        ->where("user_id", $_GET["user_id"])->get("user");
+    $nama = "";
+    $nisn = "";
+    $kelas = "";
+    foreach ($usern->result() as $row) {
+        $nama = $row->user_name;
+        $nisn = $row->user_nisn;
+        $kelas = $row->kelas_name;
+    }
     ?>
 
     <div class="text-center mt-5">
@@ -91,12 +104,14 @@
     <div class="text-center mt-5 row">
         <div class="judul2 col-md-12 col-sm-12 col-xs-12"><?= $alamat; ?> Telp. <?= $telp; ?></div>
         <div class="judul2 col-md-12 col-sm-12 col-xs-12">
-            <Email: ?=$email; ?> Website: <?= $website; ?>, NPSN: <?= $npsn; ?>, NSS: <?= $nss; ?>
+            Email: <?=$email; ?> Website: <?= $website; ?>, NPSN: <?= $npsn; ?>, NSS: <?= $nss; ?>
         </div>
     </div>
 
-
-    <div class="container mt-5">
+    <div class="container mt-2 mb-2">
+        <div class="judul2 text-center bold">
+            Nama: <?=$nama; ?> | Kelas: <?= $kelas; ?> | NISN: <?= $nisn; ?> | Semester: <?= $_GET["nilai_semester"]; ?>
+        </div>
         <div class="row">
             <div class="col-md-12">
                 <table class="table table-bordered">
@@ -153,6 +168,7 @@
                         // print_r($nilaiuser);
 
                         $matpel = $this->db
+                            ->select("*,matpel_sekolah.matpel_id AS matpel_id")
                             ->join("matpel", "matpel.matpel_id=matpel_sekolah.matpel_id", "left")
                             ->join("matpelkelas", "matpelkelas.sekolah_id=matpel_sekolah.sekolah_id AND matpelkelas.kelas_id=$kelas_id AND matpelkelas.matpel_id=matpel_sekolah.matpel_id", "left")
                             ->where("matpel_sekolah.sekolah_id", $this->session->userdata("sekolah_id"))
