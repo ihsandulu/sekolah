@@ -53,7 +53,10 @@
                 text-align: center;
             }
         }
-        .bold{font-weight: bold;}
+
+        .bold {
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -104,13 +107,13 @@
     <div class="text-center mt-5 row">
         <div class="judul2 col-md-12 col-sm-12 col-xs-12"><?= $alamat; ?> Telp. <?= $telp; ?></div>
         <div class="judul2 col-md-12 col-sm-12 col-xs-12">
-            Email: <?=$email; ?> Website: <?= $website; ?>, NPSN: <?= $npsn; ?>, NSS: <?= $nss; ?>
+            Email: <?= $email; ?> Website: <?= $website; ?>, NPSN: <?= $npsn; ?>, NSS: <?= $nss; ?>
         </div>
     </div>
 
     <div class="container mt-2 mb-2">
         <div class="judul2 text-center bold">
-            Nama: <?=$nama; ?> | Kelas: <?= $kelas; ?> | NISN: <?= $nisn; ?> | Semester: <?= $_GET["nilai_semester"]; ?>
+            Nama: <?= $nama; ?> | Kelas: <?= $kelas; ?> | NISN: <?= $nisn; ?> | Semester: <?= $_GET["nilai_semester"]; ?>
         </div>
         <div class="row">
             <div class="col-md-12">
@@ -145,11 +148,18 @@
                         $matapelajaran = $this->db->from("kelas_guru")
                             ->where("kelas_id", $kelas_id)
                             ->join("matpelguru", "matpelguru.user_id=kelas_guru.user_id")
+                            ->order_by("kelas_id", "ASC")
+                            ->order_by("matpel_id", "ASC")
                             ->get();
                         $matperarray = array();
+                        $guruarray = array();
                         foreach ($matapelajaran->result() as $matapelajaran) {
                             $matperarray[$matapelajaran->matpel_id] = $matapelajaran->matpelguru_sumatif;
+                            if ($matapelajaran->matpel_id == 1) {
+                                $guruarray[] = $matapelajaran->user_id . "--" . $matapelajaran->matpel_id . "--" . $matapelajaran->matpel_id . "--" . $matapelajaran->matpelguru_sumatif;
+                            }
                         }
+                        // print_r($guruarray);die;
 
                         if ($_GET["nilai_semester"] > 0) {
                             $this->db->where("nilai_semester", $_GET["nilai_semester"]);
