@@ -156,8 +156,9 @@
                             ->join("matpel", "matpel.matpel_id=matpel_sekolah.matpel_id", "left")
                             ->join("matpelkelas", "matpelkelas.sekolah_id=matpel_sekolah.sekolah_id AND matpelkelas.kelas_id=$kelas_id AND matpelkelas.matpel_id=matpel_sekolah.matpel_id", "left")
                             ->where("matpel_sekolah.sekolah_id", $this->session->userdata("sekolah_id"))
-                            ->where("matpelkelas.kelas_id !=", "null")
-                            ->order_by("FIELD(matpel.matpel_id, 15, 16, 17, 3, 1,2,12,29,19,20,21)", "", false)
+                            // ->where("matpelkelas.kelas_id !=", "null")
+                            ->where_in("matpel.matpel_id", [15, 16, 17, 3, 1, 2, 12, 29, 19, 20, 21])
+                            ->order_by("FIELD(matpel.matpel_id, 15, 16, 17, 3, 1, 2, 12, 29, 19, 20, 21)", "", false)
                             ->get("matpel_sekolah");
                         foreach ($matpel->result() as $rowm) {
                             // $no = $sumatifno; 
