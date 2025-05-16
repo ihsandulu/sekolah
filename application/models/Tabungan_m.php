@@ -153,7 +153,7 @@ class tabungan_M extends CI_Model
 									"user_nisn" => $row["B"],
 									"tabungan_datetime" => $tabungan_datetime,
 									"tabungan_amount" => $row["F"],
-									"user_id" => $u->user_id,
+									"user_id" => $this->session->userdata("user_id"),
 									"tabungan_type" => $type,
 									"tabungan_remarks" => "Hasil Import",
 									"sekolah_id" => $this->session->userdata("sekolah_id"),

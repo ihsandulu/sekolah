@@ -106,6 +106,7 @@
 													<div id="profil" style="color:#000066;"></div>
 													<script>
 														function profil() {
+														// alert("<?= site_url("api/datasiswa"); ?>?user_nisn="+$("#user_nisn").val()+"&sekolah_id=<?= $this->session->userdata("sekolah_id"); ?>");
 															$.get("<?= site_url("api/datasiswa"); ?>", {
 																	user_nisn: $("#user_nisn").val(),
 																	sekolah_id: '<?= $this->session->userdata("sekolah_id"); ?>'
@@ -156,10 +157,15 @@
 													</script>
 												</div>
 											</div>
+											<div class="form-group">
+												<label class="control-label col-sm-2" for="tabungan_remarks">Wajib Terisi:</label>
+												<div class="col-sm-10">
+													<input type="text" required class="form-control" id="kelas_id" name="kelas_id" value="<?= $kelas_id; ?>">
+												</div>
+											</div>
 
 
 
-											<input type="hidden" id="kelas_id" name="kelas_id" value="<?= $kelas_id; ?>">
 											<input type="hidden" name="sekolah_id" value="<?= $this->session->userdata("sekolah_id"); ?>" />
 											<input type="hidden" name="tabungan_id" value="<?= $tabungan_id; ?>" />
 											<input type="hidden" name="user_id" value="<?= $this->session->userdata("user_id"); ?>" />
@@ -349,10 +355,10 @@
 															} else {
 																$kelas_id = 0;
 															}
-															if (isset($_GET["user_id"])) {
-																$user_id = $this->input->get("user_id");
+															if (isset($_GET["user_nisn"])) {
+																$user_nisn = $this->input->get("user_nisn");
 															} else {
-																$user_id = 0;
+																$user_nisn = 0;
 															}
 															$this->db->join("kelas", "kelas.kelas_id=kelas_guru.kelas_id", "left");
 															if ($this->session->userdata("sekolah_id") > 0) {
@@ -377,17 +383,17 @@
 														<script>
 															function listsiswasekolah() {
 																let kelas_id = $("#kelas_id").val();
-																// alert("<?= base_url("api/listsiswakelas"); ?>?kelas_id="+kelas_id+"&user_id=<?= $user_id; ?>");
+																// alert("<?= base_url("api/listsiswakelasb"); ?>?kelas_id="+kelas_id+"&user_nisn=<?= $user_nisn; ?>");
 																if (kelas_id > 0) {
-																	$.get("<?= base_url("api/listsiswakelas"); ?>", {
+																	$.get("<?= base_url("api/listsiswakelasb"); ?>", {
 																			kelas_id: kelas_id,
-																			user_id: '<?= $user_id; ?>'
+																			user_nisn: '<?= $user_nisn; ?>'
 																		})
 																		.done(function(data) {
-																			$("#user_id").html(data);
+																			$("#user_nisn").html(data);
 																		});
 																} else {
-																	$("#user_id").html('');
+																	$("#user_nisn").html('');
 																}
 															}
 
@@ -396,8 +402,8 @@
 
 
 														<div class="form-group hideclass">
-															<label for="user_id">Student:</label>
-															<select name="user_id" id="user_id" class="form-control">
+															<label for="user_nisn">Student:</label>
+															<select name="user_nisn" id="user_nisn" class="form-control select">
 
 															</select>
 														</div>
@@ -474,8 +480,8 @@
 														if (isset($_GET['search']) && $_GET['kelas_id'] > 0) {
 															$this->db->where("kelas.kelas_id", $kelas_id);
 														}
-														if (isset($_GET['search']) && isset($_GET['user_id']) && $_GET['user_id'] > 0) {
-															$this->db->where("user.user_id", $_GET['user_id']);
+														if (isset($_GET['search']) && isset($_GET['user_nisn']) && $_GET['user_nisn'] > 0) {
+															$this->db->where("user.user_nisn", $_GET['user_nisn']);
 														}
 
 														if ($this->session->userdata("position_id") == 4) {
@@ -580,8 +586,8 @@
 														if (isset($_GET['search']) && isset($_GET['kelas_id']) && $_GET['kelas_id'] > 0) {
 															$this->db->where("kelas.kelas_id", $kelas_id);
 														}
-														if (isset($_GET['search']) && isset($_GET['user_id']) && $_GET['user_id'] > 0) {
-															$this->db->where("user.user_id", $_GET['user_id']);
+														if (isset($_GET['search']) && isset($_GET['user_nisn']) && $_GET['user_nisn'] > 0) {
+															$this->db->where("user.user_nisn", $_GET['user_nisn']);
 														}
 
 														if ($this->session->userdata("position_id") == 4) {
@@ -590,8 +596,8 @@
 
 														$usr = $this->db
 															->select("user.user_nisn, user.user_name, kelas.kelas_name, sekolah.sekolah_name,
-              (SUM(CASE WHEN tabungan.tabungan_type = 'debet' THEN tabungan.tabungan_amount ELSE 0 END) -
-              SUM(CASE WHEN tabungan.tabungan_type = 'kredit' THEN tabungan.tabungan_amount ELSE 0 END)) AS saldo")
+															(SUM(CASE WHEN tabungan.tabungan_type = 'debet' THEN tabungan.tabungan_amount ELSE 0 END) -
+															SUM(CASE WHEN tabungan.tabungan_type = 'kredit' THEN tabungan.tabungan_amount ELSE 0 END)) AS saldo")
 															->from("tabungan")
 															->join("sekolah", "sekolah.sekolah_id = tabungan.sekolah_id", "left")
 															->join("user", "user.user_nisn = tabungan.user_nisn", "left")
@@ -657,8 +663,8 @@
 														if (isset($_GET['search']) && $_GET['kelas_id'] > 0) {
 															$this->db->where("kelas.kelas_id", $kelas_id);
 														}
-														if (isset($_GET['search']) && isset($_GET['user_id']) && $_GET['user_id'] > 0) {
-															$this->db->where("user.user_id", $_GET['user_id']);
+														if (isset($_GET['search']) && isset($_GET['user_nisn']) && $_GET['user_nisn'] > 0) {
+															$this->db->where("user.user_nisn", $_GET['user_nisn']);
 														}
 
 														if ($this->session->userdata("position_id") == 4) {
@@ -668,8 +674,8 @@
 														// Query untuk mendapatkan saldo per kelas
 														$usr = $this->db
 															->select("kelas.kelas_name,sekolah.sekolah_name, 
-		  (SUM(CASE WHEN tabungan.tabungan_type = 'debet' THEN tabungan.tabungan_amount ELSE 0 END) -
-		  SUM(CASE WHEN tabungan.tabungan_type = 'kredit' THEN tabungan.tabungan_amount ELSE 0 END)) AS saldo")
+															(SUM(CASE WHEN tabungan.tabungan_type = 'debet' THEN tabungan.tabungan_amount ELSE 0 END) -
+															SUM(CASE WHEN tabungan.tabungan_type = 'kredit' THEN tabungan.tabungan_amount ELSE 0 END)) AS saldo")
 															->from("tabungan")
 															->join("sekolah", "sekolah.sekolah_id = tabungan.sekolah_id", "left")
 															->join("kelas", "kelas.kelas_id = tabungan.kelas_id", "left")

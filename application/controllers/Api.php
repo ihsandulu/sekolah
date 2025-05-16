@@ -121,6 +121,22 @@ class api extends CI_Controller
 		$this->djson($data);
 	}
 
+	function saldon()
+	{
+		$type = $_GET["type"];
+		$nisn = $_GET["nisn"];
+		$uang = $this->db
+			->select("SUM(tabungan_amount)as saldo")
+			->where("user_nisn", $nisn)
+			->where("tabungan_type", $type)
+			->get("tabungan");
+		echo $this->db->last_query();
+		die;
+		foreach ($uang->result() as $uang) {
+			return $uang = $uang->saldo;
+		}
+	}
+
 	function saldo($type, $nisn)
 	{
 		$uang = $this->db
@@ -1747,7 +1763,28 @@ class api extends CI_Controller
 		}
 	}
 
-
+	function listsiswakelasb()
+	{
+		$user_nisn = $this->input->get("user_nisn");
+		$kelas_id = $this->input->get("kelas_id");
+	?>
+		<option value="0" <?= ($user_nisn == 0) ? 'selected="selected"' : ""; ?>>All</option>
+		<?php
+		if ($this->session->userdata("sekolah_id") > 0) {
+			$this->db->where("user.sekolah_id", $this->session->userdata("sekolah_id"));
+		}
+		if ($kelas_id > 0) {
+			$this->db->where("user.kelas_id", $kelas_id);
+		}
+		$mat = $this->db
+			->where("user.user_tahunajaran !=", "0")
+			->where("position_id", "4")
+			->get("user");
+		foreach ($mat->result() as $user) { ?>
+			<option value="<?= $user->user_nisn; ?>" <?= ($user_nisn == $user->user_nisn) ? 'selected="selected"' : ""; ?>><?= $user->user_name; ?></option>
+		<?php } ?>
+	<?php
+	}
 
 	function listsiswakelas()
 	{
