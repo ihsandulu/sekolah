@@ -305,7 +305,7 @@
 																	$("#divkelas").hide();
 																} */
 																if (tipe != "detail") {
-																	$("#from").val("<?= date("Y-") . substr($this->session->userdata("sekolah_tglajar"), 5); ?>");
+																	// $("#from").val("<?= date("Y-") . substr($this->session->userdata("sekolah_tglajar"), 5); ?>");
 																}
 
 																if (tipe == "all") {
