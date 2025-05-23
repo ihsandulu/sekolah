@@ -106,7 +106,7 @@
 													<div id="profil" style="color:#000066;"></div>
 													<script>
 														function profil() {
-														// alert("<?= site_url("api/datasiswa"); ?>?user_nisn="+$("#user_nisn").val()+"&sekolah_id=<?= $this->session->userdata("sekolah_id"); ?>");
+															// alert("<?= site_url("api/datasiswa"); ?>?user_nisn="+$("#user_nisn").val()+"&sekolah_id=<?= $this->session->userdata("sekolah_id"); ?>");
 															$.get("<?= site_url("api/datasiswa"); ?>", {
 																	user_nisn: $("#user_nisn").val(),
 																	sekolah_id: '<?= $this->session->userdata("sekolah_id"); ?>'
@@ -431,7 +431,7 @@
 												isset($_GET["type"]) &&
 												($_GET["type"] == "detail" || $_GET["type"] == "Debet" || $_GET["type"] == "Kredit")
 											) { ?>
-												<table id="dataTable" class="table table-condensed table-hover">
+												<table id="dataTable2" class="table table-condensed table-hover">
 													<thead>
 														<tr>
 															<?php if (isset($_GET['laporan'])) {
@@ -551,13 +551,15 @@
 												isset($_GET["type"]) &&
 												($_GET["type"] == "current")
 											) { ?>
-												<table id="dataTable" class="table table-condensed table-hover">
+												<table id="dataTable2" class="table table-condensed table-hover">
 													<thead>
 														<tr>
 															<th>School</th>
 															<th>Class</th>
 															<th>User</th>
 															<th>NISN/NIK</th>
+															<th>Debet</th>
+															<th>Kredit</th>
 															<th>Balance</th>
 														</tr>
 													</thead>
@@ -596,6 +598,8 @@
 
 														$usr = $this->db
 															->select("user.user_nisn, user.user_name, kelas.kelas_name, sekolah.sekolah_name,
+															SUM(CASE WHEN tabungan.tabungan_type = 'debet' THEN tabungan.tabungan_amount ELSE 0 END) AS total_debet,
+															SUM(CASE WHEN tabungan.tabungan_type = 'kredit' THEN tabungan.tabungan_amount ELSE 0 END) AS total_kredit,
 															(SUM(CASE WHEN tabungan.tabungan_type = 'debet' THEN tabungan.tabungan_amount ELSE 0 END) -
 															SUM(CASE WHEN tabungan.tabungan_type = 'kredit' THEN tabungan.tabungan_amount ELSE 0 END)) AS saldo")
 															->from("tabungan")
@@ -618,6 +622,8 @@
 																<td><?= $tabungan->kelas_name; ?></td>
 																<td><?= $tabungan->user_name; ?></td>
 																<td><?= $tabungan->user_nisn; ?></td>
+																<td align="right"><?= number_format($tabungan->total_debet, 0, ",", "."); ?></td>
+																<td align="right"><?= number_format($tabungan->total_kredit, 0, ",", "."); ?></td>
 																<td align="right"><?= number_format($tabungan->saldo, 0, ",", "."); ?></td>
 															</tr>
 														<?php } ?>
@@ -630,11 +636,13 @@
 												isset($_GET["type"]) &&
 												($_GET["type"] == "all")
 											) { ?>
-												<table id="dataTable" class="table table-condensed table-hover">
+												<table id="dataTable2" class="table table-condensed table-hover">
 													<thead>
 														<tr>
 															<th>School</th>
 															<th>Class</th>
+															<th>Debet</th>
+															<th>Kredit</th>
 															<th>Balance</th>
 														</tr>
 													</thead>
@@ -674,6 +682,8 @@
 														// Query untuk mendapatkan saldo per kelas
 														$usr = $this->db
 															->select("kelas.kelas_name,sekolah.sekolah_name, 
+															SUM(CASE WHEN tabungan.tabungan_type = 'debet' THEN tabungan.tabungan_amount ELSE 0 END) AS total_debet,
+															SUM(CASE WHEN tabungan.tabungan_type = 'kredit' THEN tabungan.tabungan_amount ELSE 0 END) AS total_kredit,
 															(SUM(CASE WHEN tabungan.tabungan_type = 'debet' THEN tabungan.tabungan_amount ELSE 0 END) -
 															SUM(CASE WHEN tabungan.tabungan_type = 'kredit' THEN tabungan.tabungan_amount ELSE 0 END)) AS saldo")
 															->from("tabungan")
@@ -692,6 +702,8 @@
 															<tr style="">
 																<td><?= $tabungan->sekolah_name; ?></td>
 																<td><?= $tabungan->kelas_name; ?></td>
+																<td align="right"><?= number_format($tabungan->total_debet, 0, ",", "."); ?></td>
+																<td align="right"><?= number_format($tabungan->total_kredit, 0, ",", "."); ?></td>
 																<td align="right"><?= number_format($tabungan->saldo, 0, ",", "."); ?></td>
 															</tr>
 														<?php } ?>
@@ -711,6 +723,52 @@
 	</div>
 	<!-- /#wrap -->
 	<?php require_once("footer.php"); ?>
+	<script>
+		$(document).ready(function() {
+			$('#dataTable2').DataTable({
+				dom: 'Bfrtip',
+				buttons: [{
+						extend: 'excelHtml5',
+						text: 'Export ke Excel',
+						className: 'btn btn-success btn-sm',
+						exportOptions: {
+							columns: ':visible',
+							format: {
+								body: function(data) {
+									// Hapus titik (.) agar Excel tidak salah anggap sebagai koma
+									return data.replace(/\./g, '').replace(/\s/g, '');
+								}
+							}
+						}
+					},
+					{
+						extend: 'pdfHtml5',
+						text: 'Export ke PDF',
+						className: 'btn btn-danger btn-sm',
+						orientation: 'landscape',
+						pageSize: 'A4',
+						exportOptions: {
+							columns: ':visible',
+							format: {
+								body: function(data) {
+									// PDF: biarkan titik tetap ada
+									return data;
+								}
+							}
+						}
+					},
+					{
+						extend: 'print',
+						text: 'Print',
+						className: 'btn btn-primary btn-sm',
+						exportOptions: {
+							columns: ':visible'
+						}
+					}
+				]
+			});
+		});
+	</script>
 </body>
 
 </html>
