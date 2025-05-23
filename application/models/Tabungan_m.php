@@ -234,7 +234,7 @@ class tabungan_M extends CI_Model
 				// echo $this->saldo("Kredit", $input["user_nisn"])."-K";
 				// echo $this->validasi($input["tabungan_amount"], $input["user_nisn"]);die;
 
-				if ($this->validasi($input["tabungan_amount"], $input["user_nisn"])) {
+				// if ($this->validasi($input["tabungan_amount"], $input["user_nisn"])) {
 					$this->db->insert("tabungan", $input);
 					$data["s"] = $this->db->insert_id();
 					$data["message"] = "Insert Data Success";
@@ -281,9 +281,9 @@ class tabungan_M extends CI_Model
 							curl_close($ch);
 						}
 					}
-				} else {
+				/* } else {
 					$data["message"] = "<span style='color:red;'>The balance is not sufficient</span>";
-				}
+				} */
 			} else {
 				$this->db->insert("tabungan", $input);
 				$data["s"] = $this->db->insert_id();
@@ -344,13 +344,13 @@ class tabungan_M extends CI_Model
 			}
 			$tabungan_id = $this->input->post("tabungan_id");
 			// echo $this->validasikreditupdate($input["tabungan_amount"], $input["user_nisn"], $tabungan_id);
-			if ($this->validasikreditupdate($input["tabungan_amount"], $input["user_nisn"], $tabungan_id)) {
+			// if ($this->validasikreditupdate($input["tabungan_amount"], $input["user_nisn"], $tabungan_id)) {
 				$this->db->update("tabungan", $input, array("tabungan_id" => $tabungan_id));
 				$data["message"] = "Update Success";
 				//echo $this->db->last_query();die;
-			} else {
+			/* } else {
 				$data["message"] = "<span style='color:red;'>The balance is not sufficient</span>";
-			}
+			} */
 		}
 		return $data;
 	}
