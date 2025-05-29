@@ -608,7 +608,7 @@
 															->join("kelas", "kelas.kelas_id = tabungan.kelas_id", "left")
 															->join("tabungankode", "tabungankode.tabungankode_id = tabungan.tabungankode_id", "left")
 															->group_by("user.user_nisn, user.user_name, kelas.kelas_name, sekolah.sekolah_name") // Mengelompokkan berdasarkan NISN dan nama siswa
-															->order_by("tabungan.tabungan_datetime", "desc")
+															->order_by("user.user_name", "asc")
 															->get();
 														// echo $this->db->last_query();
 														foreach ($usr->result() as $tabungan) {
@@ -736,7 +736,8 @@
 							format: {
 								body: function(data) {
 									// Hapus titik (.) agar Excel tidak salah anggap sebagai koma
-									return data.replace(/\./g, '').replace(/\s/g, '');
+									return data.replace(/\./g, '');
+
 								}
 							}
 						}
