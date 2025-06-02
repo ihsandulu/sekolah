@@ -9,7 +9,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <style>
-        <style>@page {
+        @page {
             size: 10.5cm 29.7cm;
             margin: 0;
         }
@@ -73,11 +73,13 @@
 
         .barc {
             height: 56.7px;
-            width: 151.2px;
+            width: 100%;
             margin: 1px;
             padding: 0;
             float: left;
         }
+        .pl-0{padding-left: 0px!important;}
+        .f12{font-size: 11px;}
     </style>
 
     </style>
@@ -124,15 +126,15 @@
                             <?= $sekolah->sekolah_name; ?>
                         </div>
                     </div>
-                    <div class="col-xs-6">
-                        <div class="col-xs-2">NIS</div>
-                        <div class="col-xs-10">: <?= $user_nisn; ?></div>
-                        <div class="col-xs-2">NAMA</div>
-                        <div class="col-xs-10">: <?= $user_name; ?></div>
-                        <div class="col-xs-2">KELAS</div>
-                        <div class="col-xs-10">: <?= $kelas_name; ?></div>
+                    <div class="col-xs-8 p-0">
+                        <div class="col-xs-3 pl-0 f12">NIS</div>
+                        <div class="col-xs-9 pl-0 f12">: <?= $user_nisn; ?></div>
+                        <div class="col-xs-3 pl-0 f12">NAMA</div>
+                        <div class="col-xs-9 pl-0 f12">: <?= $user_name; ?></div>
+                        <div class="col-xs-3 pl-0 f12">KELAS</div>
+                        <div class="col-xs-9 pl-0 f12">: <?= $kelas_name; ?></div>
                     </div>
-                    <div class="col-xs-6">
+                    <div class="col-xs-4 p-0">
                         <div class="barc">
                             <?php
                             $kode_barcode = $row->user_nisn;
