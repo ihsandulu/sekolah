@@ -9,25 +9,27 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <style>
-        <style>@page {
-            size: 10.5cm 29.7cm;
+        @page {
+            size: auto;
+            /* auto is the initial value */
             margin: 0;
+            /* this affects the margin in the printer settings */
+        }
+
+        div {
+            margin: 0px;
+            padding: 0px;
         }
 
         body {
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            width: 10.5cm;
-            height: 29.7cm;
-            margin: 0 auto;
+            margin: 0px;
+            padding: 0px 20px 0px 20px;
         }
 
         .kartu {
-            padding: 0;
-            margin: 0;
+            /* border: black solid 1px; */
+            padding: 0px;
+            margin: 0px;
             margin-top: 20px;
         }
 
@@ -44,14 +46,14 @@
 
         #body {
             border: black solid 1px;
-            padding: 0;
-            margin: 0;
+            padding: 0px;
+            margin: 0px;
             height: 888px;
         }
 
         .tabel {
-            margin: 0;
-            padding: 0;
+            margin: 0px;
+            padding: 0px;
             border: black solid 1px;
             text-align: center;
             font-weight: bold;
@@ -64,22 +66,23 @@
         }
 
         #footer {
-            height: 0;
+            height: 0px;
         }
 
         #pemisah {
             height: 5px;
         }
 
-        .barc {
-            height: 56.7px;
-            width: 151.2px;
+        <?php
+        $barcode_width = 37.8 * 4; // 1cm in pixels
+        $barcode_height = 37.8 * 1.5;
+        ?>.barc {
+            height: <?= $barcode_height; ?>px;
+            width: <?= $barcode_width; ?>px;
             margin: 1px;
-            padding: 0;
+            padding: 0px;
             float: left;
         }
-    </style>
-
     </style>
 </head>
 
