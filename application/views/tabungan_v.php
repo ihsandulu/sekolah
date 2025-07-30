@@ -671,13 +671,13 @@
 														/* if (isset($_GET['search']) && $_GET['kelas_id'] > 0) {
 															$this->db->where("kelas.kelas_id", $kelas_id);
 														} */
-														if (isset($_GET['search']) && isset($_GET['user_nisn']) && $_GET['user_nisn'] > 0) {
+														/* if (isset($_GET['search']) && isset($_GET['user_nisn']) && $_GET['user_nisn'] > 0) {
 															$this->db->where("user.user_nisn", $_GET['user_nisn']);
-														}
+														} */
 
-														if ($this->session->userdata("position_id") == 4) {
+														/* if ($this->session->userdata("position_id") == 4) {
 															$this->db->where("tabungan.user_nisn", $this->session->userdata("user_nisn"));
-														}
+														} */
 
 														// Query untuk mendapatkan saldo per kelas
 														$usr = $this->db
@@ -694,7 +694,11 @@
 															->order_by("tabungan.tabungan_datetime", "desc")
 															->get();
 
-
+if ($usr === false) {
+	echo "Query gagal dijalankan: " . $this->db->last_query();
+	echo "<br>Error: " . $this->db->_error_message(); // di CI3
+	exit;
+}
 
 														// echo $this->db->last_query();
 														foreach ($usr->result() as $tabungan) {
