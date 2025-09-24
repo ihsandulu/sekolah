@@ -585,9 +585,9 @@
 															$this->db->where("tabungan.sekolah_id", $this->session->userdata("sekolah_id"));
 														}
 
-														/* if (isset($_GET['search']) && isset($_GET['kelas_id']) && $_GET['kelas_id'] > 0) {
+														if (isset($_GET['search']) && isset($_GET['kelas_id']) && $_GET['kelas_id'] > 0) {
 															$this->db->where("kelas.kelas_id", $kelas_id);
-														} */
+														}
 														if (isset($_GET['search']) && isset($_GET['user_nisn']) && $_GET['user_nisn'] > 0) {
 															$this->db->where("user.user_nisn", $_GET['user_nisn']);
 														}
