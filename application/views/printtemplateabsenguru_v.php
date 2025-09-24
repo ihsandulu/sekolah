@@ -110,7 +110,7 @@
 															let from = $("#from").val();
 															let to = $("#to").val();
 															let kelas_id = $("#kelas_id").val();
-															var url = "<?= site_url("barcodeabsenguru"); ?>?k=" + kelas_id;
+															var url = "<?= site_url("barcodeabsenguru"); ?>?kelas_id=" + kelas_id;
 															window.open(url, '_blank');
 														}
 													</script>
@@ -163,7 +163,7 @@
                                                             <?php if ($this->session->userdata("position_id") != 4) { ?>
                                                                 <form title="Print Barcode" target="_blank" action="<?= base_url('barcodeabsenguru'); ?>" method="get" class="<?= $colbtn; ?>" style="padding:0px;">
                                                                     <button type="submit" class="btn btn-info btn-xs btn-block" name="print" value="OK"><span class="fa fa-print" style="color:white;"></span> </button>
-                                                                    <input type="hidden" name="k" value="<?= $user->kelas_id; ?>" />
+                                                                    <input type="hidden" name="kelas_id" value="<?= $user->kelas_id; ?>" />
                                                                 </form>
                                                             <?php } ?>
                                                         </td>
