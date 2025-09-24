@@ -3,7 +3,7 @@ date_default_timezone_set("Asia/Bangkok");
 $identity = $this->db->get("identity")->row();
 //cek user
 $userd["user_id"] = $this->session->userdata("user_id");
-if (current_url() != site_url("login")) {
+if (current_url() != site_url("login") && current_url() != site_url("scanabsenguru")) {
 
 	if ($this->session->userdata("sekolah_id") == "") {
 		$this->session->sess_destroy();

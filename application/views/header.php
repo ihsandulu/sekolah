@@ -151,6 +151,16 @@
                     <b class="arrow"></b>
 
                     <ul class="submenu">
+                         <?php if ($this->session->userdata("position_id") == "1" || $this->session->userdata("position_id") == "2") { ?>
+                            <li class="">
+                                <a href="<?= site_url("position"); ?>">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Position
+                                </a>
+
+                                <b class="arrow"></b>
+                            </li>
+                        <?php } ?>
                         <li class="">
                             <a href="#" class="dropdown-toggle">
                                 <i class="menu-icon fa fa-caret-right"></i>
@@ -274,6 +284,15 @@
                         </li>
 
                         <li class="">
+                            <a target="_self" href="<?= site_url("printtemplateabsenguru"); ?>">
+                                <i class="menu-icon fa fa-caret-right"></i>
+                                Barcode Kelas
+                            </a>
+
+                            <b class="arrow"></b>
+                        </li>
+
+                        <li class="">
                             <a target="_self" href="<?= site_url("printtemplatebarcode"); ?>">
                                 <i class="menu-icon fa fa-caret-right"></i>
                                 Student Barcode Print
@@ -331,6 +350,15 @@
 
                     <b class="arrow"></b>
                     <ul class="submenu">
+                         <?php if ($this->session->userdata("position_id") != 5) { ?>
+                            <li class="">
+                                <a href="<?= site_url("attandanceg"); ?>">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Absen Guru
+                                </a>
+                                <b class="arrow"></b>
+                            </li>
+                        <?php } ?>
                         <!-- <li class="">
                         <a href="<?= site_url("grupt"); ?>">
                             <i class="menu-icon fa fa-caret-right"></i>
