@@ -365,7 +365,9 @@
 																$this->db->where("kelas.sekolah_id", $this->session->userdata("sekolah_id"));
 															}
 
-															$gru = $this->db->group_by("kelas_guru.kelas_id")
+															$gru = $this->db
+																->group_by("kelas_guru.kelas_id")
+																->order_by("kelas.kelas_name", "ASC")
 																->get("kelas_guru");
 															// echo $this->db->last_query();
 															// echo $this->session->userdata("position_id");
