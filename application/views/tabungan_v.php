@@ -585,9 +585,9 @@
 															$this->db->where("tabungan.sekolah_id", $this->session->userdata("sekolah_id"));
 														}
 
-														/* if (isset($_GET['search']) && isset($_GET['kelas_id']) && $_GET['kelas_id'] > 0) {
+														if (isset($_GET['search']) && isset($_GET['kelas_id']) && $_GET['kelas_id'] > 0) {
 															$this->db->where("kelas.kelas_id", $kelas_id);
-														} */
+														}
 														if (isset($_GET['search']) && isset($_GET['user_nisn']) && $_GET['user_nisn'] > 0) {
 															$this->db->where("user.user_nisn", $_GET['user_nisn']);
 														}
@@ -694,11 +694,11 @@
 															->order_by("tabungan.tabungan_datetime", "desc")
 															->get();
 
-if ($usr === false) {
-	echo "Query gagal dijalankan: " . $this->db->last_query();
-	echo "<br>Error: " . $this->db->_error_message(); // di CI3
-	exit;
-}
+														if ($usr === false) {
+															echo "Query gagal dijalankan: " . $this->db->last_query();
+															echo "<br>Error: " . $this->db->_error_message(); // di CI3
+															exit;
+														}
 
 														// echo $this->db->last_query();
 														foreach ($usr->result() as $tabungan) {
