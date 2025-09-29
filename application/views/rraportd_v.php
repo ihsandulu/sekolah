@@ -134,8 +134,7 @@
                         <tr>
                             <th rowspan="2" class="text-center tengah2">MATA PELAJARAN</th>
                             <th colspan="<?= $sumatifno; ?>" class="text-center tengah2">REKAPITULASI NILAI ASESMEN SUMATIF <?= $semester; ?></th>
-                            <th rowspan="2" class="text-center tengah2">KETERANGAN <br> (Jumlah Tugas yang belum
-                                dikerjakan)</th>
+                            <th rowspan="2" class="text-center tengah2">KETERANGAN</th>
                         </tr>
                         <tr>
                             <?php foreach ($sumatif->result() as $row) { ?>
@@ -155,7 +154,7 @@
                         $guruarray = array();
                         foreach ($matapelajaran->result() as $matapelajaran) {
                             $matperarray[$matapelajaran->matpel_id] = $matapelajaran->matpelguru_sumatif;
-                            if ($matapelajaran->matpel_id == 12 AND $matapelajaran->kelas_id==23) {
+                            if ($matapelajaran->matpel_id == 12 and $matapelajaran->kelas_id == 23) {
                                 $guruarray[] = $matapelajaran->user_id . "--" . $matapelajaran->matpel_id . "--" . $matapelajaran->matpel_id . "--" . $matapelajaran->matpelguru_sumatif;
                             }
                         }
@@ -215,8 +214,8 @@
 
                     </tbody>
                 </table>
+                <small style="position:relative; top:-15px;">Keterangan = Jumlah Tugas yang belum dikerjakan.</small>
             </div>
-
             <div class="col-md-12">
                 <table class="table table-bordered">
                     <?php

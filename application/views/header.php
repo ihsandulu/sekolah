@@ -86,7 +86,7 @@
                             if($this->session->userdata("position_id")==4){
                                 $urlprofile="siswa";
                             }
-                            if($this->session->userdata("position_id")==2){
+                            if($this->session->userdata("position_id")==2 || $this->session->userdata("position_id")==1){
                                 $urlprofile="admin";
                             }
                             if($this->session->userdata("position_id")==5){

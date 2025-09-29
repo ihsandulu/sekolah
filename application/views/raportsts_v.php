@@ -87,7 +87,17 @@
 
                                         <button class="btn btn-success fa fa-file-excel-o" onclick="exportTableToExcel('myTable', 'Raport STS <?= $_GET["matpel_name"]; ?>')"> Export to Excel</button>
                                         <button class="btn btn-danger fa fa-close" onclick="window.close();"> Close</button>
-
+                                        <?php
+                                        //jumlah sumatif sekolah
+                                        $sumatif = $this->db
+                                            ->where("sekolah_id", $this->session->userdata("sekolah_id"))
+                                            ->order_by("sumatif_name", "ASC")
+                                            ->get("sumatif");
+                                        $sumarray = array();
+                                        foreach ($sumatif->result() as  $sumatif) {
+                                            $sumarray[] = $sumatif->sumatif_id;
+                                        }
+                                        ?>
                                         <table border="1" id="myTable" class="table table-condensed table-hover mt-3">
                                             <thead>
                                                 <tr>
@@ -95,7 +105,7 @@
                                                     <th rowspan="3">NISN</th>
                                                     <th rowspan="3">Nama Siswa</th>
                                                     <th colspan="6"></th>
-                                                    <th rowspan="3">SUMATIF TENGAH SEMESTER <?= strtoupper($semester); ?></th>
+                                                    <!-- <th rowspan="3">SUMATIF TENGAH SEMESTER <?= strtoupper($semester); ?></th> -->
                                                     <th rowspan="3">SUMATIF AKHIR SEMESTER <?= strtoupper($semester); ?></th>
                                                     <th rowspan="3">NILAI RAPOR <?= strtoupper($psemester); ?></th>
                                                     <th rowspan="3">NILAI RAPOR PEMBULATAN UNTUK DI COPY KE FORMAT EXCEL IMPORT E-RAPOR</th>
@@ -104,11 +114,9 @@
                                                     <th colspan="6">SUMATIF / FORMATIF HARIAN <?= strtoupper($psemester); ?></th>
                                                 </tr>
                                                 <tr>
-                                                    <th>1</th>
-                                                    <th>2</th>
-                                                    <th>3</th>
-                                                    <th>4</th>
-                                                    <th>5</th>
+                                                    <?php
+                                                    $no = 1;
+                                                    foreach ($sumarray as $key => $value) { ?><th><?= $no++; ?></th><?php } ?>
                                                     <th>RERATA</th>
                                                 </tr>
                                             </thead>
@@ -126,15 +134,7 @@
                                                     $sumatifn = $matpelguru->matpelguru_sumatif;
                                                 }
 
-                                                //jumlah sumatif sekolah
-                                                $sumatif = $this->db
-                                                    ->where("sekolah_id", $this->session->userdata("sekolah_id"))
-                                                    ->order_by("sumatif_name", "ASC")
-                                                    ->get("sumatif");
-                                                $sumarray = array();
-                                                foreach ($sumatif->result() as  $sumatif) {
-                                                    $sumarray[] = $sumatif->sumatif_id;
-                                                }
+
 
                                                 // print_r($sumarray);die;
 
@@ -196,7 +196,7 @@
                                                             }
                                                             echo $rer;
                                                             ?></td>
-                                                        <td>
+                                                        <!-- <td>
                                                             <?php
                                                             if (isset($nilaiarray[$user->user_id][100])) {
                                                                 $tsemester = $nilaiarray[$user->user_id][100];
@@ -204,8 +204,8 @@
                                                             } else {
                                                                 echo $tsemester = 0;
                                                             }
-                                                            ?>
-                                                        </td>
+                                                            ?>adsf
+                                                        </td> -->
                                                         <td>
                                                             <?php
                                                             if (isset($nilaiarray[$user->user_id][101])) {
@@ -218,7 +218,8 @@
                                                         </td>
                                                         <td>
                                                             <?php
-                                                            $rapor = (75 / 100 * $rerata) + ($tsemester * 12.5 / 100) + ($asemester * 12.5 / 100);
+                                                            // $rapor = (75 / 100 * $rerata) + ($tsemester * 12.5 / 100) + ($asemester * 12.5 / 100);
+                                                            $rapor =  ((3 * $rerata) + $asemester) / 4;
                                                             if ($rapor > 0) {
                                                                 echo number_format($rapor, 3, ",", ".");
                                                             } else {
