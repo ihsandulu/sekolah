@@ -216,7 +216,7 @@
 		</div>
 		<div class="col-md-12" id="form">
 			<?php if (isset($_POST["kelas_id"]) && $_POST["kelas_id"] > 0) { ?>
-				<div class="alert alert-success bold">Absen Success!!</div>
+				<div class="alert alert-<?=$kode;?> bold"><?=$hasil;?></div>
 			<?php } else { ?>
 				<form method="post">
 					<?php

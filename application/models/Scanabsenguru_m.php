@@ -74,11 +74,14 @@ class scanabsenguru_M extends CI_Model
                     $this->db->insert("abseng", $input);
                     // echo $this->db->last_query();die;                    
                     $data["hasil"] = "Absen Success!";
+                    $data["kode"] = "success";
                 } else {
                     $data["hasil"] = "Anda telah absen di kelas ini sebelumnya!";
+                    $data["kode"] = "warning";
                 }
             } else {
                 $data["hasil"] = "Access Denied !";
+                $data["kode"] = "danger";
             }
         }
 
