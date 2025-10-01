@@ -51,7 +51,7 @@ $userd = $this->db->from("kelas_sekolah")
     ->get();
 // echo $this->db->last_query();die;
 foreach ($userd->result() as $row) {
-    $kode_barcode = base_url("scanabsenguru?k=" . $row->kelas_id . "&s=".$this->session->userdata("sekolah_id"));
+    $kode_barcode = base_url("scanabsenguru?k=" . $row->kelas_id . "|".$this->session->userdata("sekolah_id"));
     $file_gambar = base_url("Qrcodes?text=" . $kode_barcode . "&print=false&size=65");
 ?>
     <div class="barc">

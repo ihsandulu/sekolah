@@ -64,6 +64,7 @@ class scanabsenguru_M extends CI_Model
                     ->where("user_nik", $_POST["name"])
                     ->where("abseng_date", date("Y-m-d"))
                     ->get("abseng");
+                // echo $this->db->last_query();die;
                 if ($abseng->num_rows() == 0) {
                     $input["sekolah_id"] = $_POST["sekolah_id"];
                     $input["abseng_date"] = date("Y-m-d");
@@ -71,10 +72,13 @@ class scanabsenguru_M extends CI_Model
                     $input["kelas_id"] = $_POST["kelas_id"];
                     $input["user_nik"] = $_POST["name"];
                     $this->db->insert("abseng", $input);
-                    // echo $this->db->last_query();die;
+                    // echo $this->db->last_query();die;                    
+                    $data["hasil"] = "Absen Success!";
+                } else {
+                    $data["hasil"] = "Anda telah absen di kelas ini sebelumnya!";
                 }
             } else {
-                $data["hasil"] = " Access Denied !";
+                $data["hasil"] = "Access Denied !";
             }
         }
 

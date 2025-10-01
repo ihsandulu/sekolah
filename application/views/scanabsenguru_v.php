@@ -128,10 +128,11 @@
 
 		body {
 			background-image: url("assets/images/backgroundrumusnya.png");
-    background-size: cover; /* Mengisi seluruh area body */
-    background-repeat: no-repeat;
-    background-position: center;
-    background-attachment: fixed;
+			background-size: cover;
+			/* Mengisi seluruh area body */
+			background-repeat: no-repeat;
+			background-position: center;
+			background-attachment: fixed;
 			font-family: 'Open Sans', sans-serif;
 			/* background: #092756;
 	background: -moz-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%),-moz-linear-gradient(top,  rgba(57,173,219,.25) 0%, rgba(42,60,87,.4) 100%), -moz-linear-gradient(-45deg,  #670d10 0%, #092756 100%);
@@ -194,7 +195,10 @@
 		input:focus {
 			box-shadow: inset 0 -5px 45px rgba(100, 100, 100, 0.4), 0 1px 1px rgba(255, 255, 255, 0.2);
 		}
-        .bold{font-weight: bold;}
+
+		.bold {
+			font-weight: bold;
+		}
 	</style>
 
 	<script src="<?= base_url("assets/js/prefixfree.min.js"); ?>"></script>
@@ -211,18 +215,23 @@
 			</div>
 		</div>
 		<div class="col-md-12" id="form">
-            <?php if(isset($_POST["kelas_id"])&&$_POST["kelas_id"]>0){?>
-                <div class="alert alert-success bold">Absen Success!!</div>
-                <?php }else{?>
-			<form method="post">
-				<label class="label label-danger col-md-12" style="padding:2.5px;"><?= $hasil; ?></label>
-				<input type="text" autocomplete="on" auto name="name" placeholder="NIK / NISN" required="required" />
-				<input type="password" autocomplete="on" name="user_password" placeholder="Password" required="required" />
-				<input type="hidden" name="sekolah_id" value="<?=(isset($_GET["s"]))?$_GET["s"]:0;?>" />
-				<input type="hidden" name="kelas_id" value="<?=(isset($_GET["k"]))?$_GET["k"]:0;?>" />
-				<button type="submit" class="btn btn-success btn-block btn-large">ABSEN KELAS</button>
-			</form>
-            <?php }?>
+			<?php if (isset($_POST["kelas_id"]) && $_POST["kelas_id"] > 0) { ?>
+				<div class="alert alert-success bold">Absen Success!!</div>
+			<?php } else { ?>
+				<form method="post">
+					<?php
+					$ex = explode("|", $_GET["k"]);
+					$k = $ex[0];
+					$s = $ex[1];
+					?>
+					<label class="label label-danger col-md-12" style="padding:2.5px;"><?= $hasil; ?></label>
+					<input type="text" autocomplete="on" auto name="name" placeholder="NIK / NISN" required="required" />
+					<input type="password" autocomplete="on" name="user_password" placeholder="Password" required="required" />
+					<input type="hidden" name="sekolah_id" value="<?= (isset($s)) ? $s : 0; ?>" />
+					<input type="hidden" name="kelas_id" value="<?= (isset($k)) ? $k : 0; ?>" />
+					<button type="submit" class="btn btn-success btn-block btn-large">ABSEN KELAS</button>
+				</form>
+			<?php } ?>
 		</div>
 	</div>
 
