@@ -62,6 +62,7 @@ class scanabsenguru_M extends CI_Model
                 $abseng = $this->db
                     ->where("sekolah_id", $_POST["sekolah_id"])
                     ->where("user_nik", $_POST["name"])
+                    ->where("kelas_id", $_POST["kelas_id"])
                     ->where("abseng_date", date("Y-m-d"))
                     ->get("abseng");
                 // echo $this->db->last_query();die;
