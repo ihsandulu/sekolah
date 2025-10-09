@@ -1,7 +1,7 @@
 <?php
-$barcode_width = 4; // 1cm in pixels
-$barcode_height = 3;
-function truncateString($string, $length = 15) {
+$barcode_width = 37.8 * 4; // 1cm in pixels
+$barcode_height = 37.8 * 1.5;
+function truncateString($string, $length = 9) {
     // Check if the string needs to be truncated
     if (strlen($string) > $length) {
         // Truncate the string and append ellipsis
@@ -14,12 +14,12 @@ function truncateString($string, $length = 15) {
 <style>
     img {
         width: 100%;
-        height: 1.5cm;
+        height: 80%;
     }
 
     .barc {
-        height: <?= $barcode_height; ?>cm;
-        width: <?= $barcode_width; ?>cm;
+        height: <?= $barcode_height; ?>px;
+        width: <?= $barcode_width; ?>px;
         margin: 1px;
         padding: 5px;
         border: black solid 1px;
@@ -58,8 +58,7 @@ foreach ($userd->result() as $row) {
 ?>
     <div class="barc">
         <img src="<?php echo $file_gambar; ?>">
-        <div class="nama"><?= $user_name; ?></div>
-        <div class="nama"><?= $kode_barcode; ?> (<?= $row->kelas_name; ?>)</div>
+        <div class="nama"><?= $user_name; ?> (<?= $row->kelas_name; ?>)</div>
     </div>
 <?php } ?>
 <script>

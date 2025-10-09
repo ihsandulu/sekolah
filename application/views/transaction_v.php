@@ -13,7 +13,7 @@
 	if (isset($_GET['from']) && $_GET['from'] != "") {
 		$from = $this->input->get("from");
 	} else {
-		$from = date("Y-m-d");
+		$from = date("Y-m-d", strtotime("-7 days"));
 	}
 	if (isset($_GET['to']) && $_GET['to'] != "") {
 		$to = $this->input->get("to");
@@ -78,7 +78,7 @@
 						Transaction
 
 					</h1>
-					<?php if (!isset($_POST['new']) && !isset($_POST['edit']) && !isset($_GET['laporan'])&&$this->session->userdata("position_id") != 4) { ?>
+					<?php if (!isset($_POST['new']) && !isset($_POST['edit']) && !isset($_GET['laporan']) && $this->session->userdata("position_id") != 4) { ?>
 
 						<form method="post" class="col-md-2" style="margin-top:-30px; float:right;">
 
@@ -125,24 +125,25 @@
 													</div>
 												</div>
 
-												<!-- <div class="form-group">
-                                        <label class="control-label col-sm-2" for="kelas_id">Kelas:</label>
-                                        <div class="col-sm-10">
-                                          <select tabindex="2" type="kelas_id" class="form-control" id="kelas_id" name="kelas_id">
-											  <option value="0">Semua</option>
-											  <?php
-												$where["sekolah_id"] = $this->session->userdata("sekolah_id");
-												$kelas = $this->db
-													->join("kelas", "kelas.kelas_id=kelas_sekolah.kelas_id", "left")
-													->get("kelas_sekolah");
-												foreach ($kelas->result() as $kelas) { ?>
-											  <option value="<?= $kelas->kelas_id; ?>" <?= ($kelas_id == $kelas->kelas_id) ? "selected" : ""; ?>>
-												<?= $kelas->kelas_name; ?>
-											  </option>
-											  <?php } ?>
-										  </select>
-                                        </div>							  
-                                    </div> -->
+												<div class="form-group">
+													<label class="control-label col-sm-2" for="kelas_id">Kelas:</label>
+													<div class="col-sm-10">
+														<select tabindex="2" type="kelas_id" class="form-control" id="kelas_id" name="kelas_id">
+															<option value="0">Semua</option>
+															<?php
+															$where["sekolah_id"] = $this->session->userdata("sekolah_id");
+															$kelas = $this->db
+																->join("kelas", "kelas.kelas_id=kelas_sekolah.kelas_id", "left")
+																->order_by("kelas_name", "ASC")
+																->get("kelas_sekolah");
+															foreach ($kelas->result() as $kelas) { ?>
+																<option value="<?= $kelas->kelas_id; ?>" <?= ($kelas_id == $kelas->kelas_id) ? "selected" : ""; ?>>
+																	<?= $kelas->kelas_name; ?>
+																</option>
+															<?php } ?>
+														</select>
+													</div>
+												</div>
 												<div class="form-group">
 													<label class="control-label col-sm-2" for="transaction_tahun">Tahun Ajaran Masuk:</label>
 													<div class="col-sm-10">
@@ -183,17 +184,11 @@
 												</div>
 											<?php } ?>
 
-											<div class="form-group">
-												<label class="control-label col-sm-2" for="transaction_tahun">Tahun Ajaran Masuk:</label>
-												<div class="col-sm-10">
-													<input readonly type="text" class="form-control" id="transaction_tahun" name="transaction_tahun" placeholder="Enter NISN" value="<?= $transaction_tahun; ?>" required>
-												</div>
-											</div>
 
 											<div class="form-group">
 												<label class="control-label col-sm-2" for="transaction_name">Transaction Name:</label>
 												<div class="col-sm-10">
-													<input tabindex="2" type="text" readonly class="form-control" id="transaction_name" name="transaction_name" placeholder="Enter Transaction Name" value="<?= $transaction_name; ?>">
+													<input tabindex="2" type="text" class="form-control" id="transaction_name" name="transaction_name" placeholder="Enter Transaction Name" value="<?= $transaction_name; ?>">
 													<input id="transaction_bill" name="transaction_bill" value="<?= $transaction_bill; ?>" type="hidden">
 													<div id="tagihan" style="color:#000066;"></div>
 													<script>
@@ -205,7 +200,21 @@
 																	user_tahunajaran: user_tahunajaran
 																})
 																.done(function(data) {
-																	$("#tagihan").html(data.tagihan);
+																	// $("#tagihan").html(data.tagihan);
+																	let html = "";
+
+																	// pastikan data.tagihan itu ada
+																	if (data && data.tagihan) {
+																		// loop semua key dalam object tagihan
+																		$.each(data.tagihan, function(key, value) {
+																			html += value + " "; // value = <span class="btn ...">...</span>
+																		});
+																	} else {
+																		html = "<span class='text-danger'>Tidak ada tagihan.</span>";
+																	}
+
+																	// masukkan ke elemen #tagihan
+																	$("#tagihan").html(html);
 																});
 														}
 
@@ -222,16 +231,52 @@
 											<div class="form-group">
 												<label class="control-label col-sm-2" for="transaction_amount">Amount:</label>
 												<div class="col-sm-10">
-													<input readonly tabindex="3" onKeyUp="uang(this)" type="number" class="form-control" id="transaction_amount" name="transaction_amount" placeholder="Enter Amount" value="<?= $transaction_amount; ?>" required min="1">
+													<input tabindex="3" onKeyUp="uang(this)" type="number" class="form-control" id="transaction_amount" name="transaction_amount" placeholder="Enter Amount" value="<?= $transaction_amount; ?>" required min="1">
 													<div style="color:#BB0000; font-weight:bold; margin-top:5px;">Rp <span id="uang"><?= number_format($transaction_amount, 0, ",", "."); ?></span></div>
+													<script>
+														function uang(input) {
+															// Ambil nilai angka dari input
+															let nilai = input.value;
 
+															// Hapus semua karakter non-digit
+															nilai = nilai.replace(/\D/g, "");
+
+															// Ubah ke integer (jika kosong jadi 0)
+															let angka = parseInt(nilai) || 0;
+
+															// Format angka jadi format ribuan (IDR)
+															let format = angka.toLocaleString('id-ID');
+
+															// Tampilkan hasilnya ke <span id="uang">
+															document.getElementById('uang').textContent = format;
+														}
+													</script>
 												</div>
 											</div>
+											<?php if ($this->input->post("type") == "Kredit") { ?>
+												<div class="form-group">
+													<label class="control-label col-sm-2" for="transaction_cicilan">Cicilan:</label>
+													<div class="col-sm-10">
+														<input tabindex="4" onKeyUp="tampilCicilan(this)" type="number" class="form-control" id="transaction_cicilan" name="transaction_cicilan" placeholder="Jumlah Cicilan" value="<?= $transaction_cicilan; ?>" min="1">
+														<div style="color:#BB0000; font-weight:bold; margin-top:5px;">Rp <span id="cicilan"><?= number_format($transaction_cicilan, 0, ",", "."); ?></span></div>
+														<script>
+															function tampilCicilan(input) {
+																let nilai = input.value;
+																nilai = nilai.replace(/\D/g, "");
+																let angka = parseInt(nilai) || 0;
+																let format = angka.toLocaleString('id-ID');
+																document.getElementById('cicilan').textContent = format;
+															}
+														</script>
+													</div>
+												</div>
+											<?php } ?>
 
 
 
-
-											<input type="hidden" id="kelas_id" name="kelas_id" value="<?= $kelas_id; ?>">
+											<?php if ($this->input->post("type") == "Debet") { ?>
+												<input type="hidden" id="kelas_id" name="kelas_id" value="<?= $kelas_id; ?>">
+											<?php } ?>
 											<input type="hidden" name="sekolah_id" value="<?= $this->session->userdata("sekolah_id"); ?>" />
 											<input type="hidden" name="transaction_id" value="<?= $transaction_id; ?>" />
 											<div class="form-group">
@@ -251,93 +296,93 @@
 									<?php } ?>
 									<div class="box">
 										<div id="collapse4" class="body table-responsive">
-											<?php if($this->session->userdata("position_id")!=4){
+											<?php if ($this->session->userdata("position_id") != 4) {
 											?>
-											<div class="col-md-12" style="border:#FDDABB dashed 1px; margin-bottom:30px; padding:10px;">
-												<form id="sp" method="get" target="_blank" class="form-inline" action="<?= site_url("transactionreport_print"); ?>">
-													<div class="form-group">
-														<label for="type">Type:</label>
-														<select id="type" name="type" onChange="lihatkelas()">
-															<option value="">All</option>
-															<option value="Debet" <?= ($this->input->get("type") == "Debet") ? "selected" : ""; ?>>Debet</option>
-															<option value="Kredit" <?= ($this->input->get("type") == "Kredit") ? "selected" : ""; ?>>Kredit</option>
-														</select>
-														<script>
-															function lihatkelas() {
-																var tipe = $("#type").val();
-																if (tipe == "Kredit") {
-																	$("#divkelas").show();
-																} else {
-																	$("#divkelas").hide();
+												<div class="col-md-12" style="border:#FDDABB dashed 1px; margin-bottom:30px; padding:10px;">
+													<form id="sp" method="get" target="_blank" class="form-inline" action="<?= site_url("transactionreport_print"); ?>">
+														<div class="form-group">
+															<label for="type">Type:</label>
+															<select id="type" name="type" onChange="lihatkelas()">
+																<option value="">All</option>
+																<option value="Debet" <?= ($this->input->get("type") == "Debet") ? "selected" : ""; ?>>Debet</option>
+																<option value="Kredit" <?= ($this->input->get("type") == "Kredit") ? "selected" : ""; ?>>Kredit</option>
+															</select>
+															<script>
+																function lihatkelas() {
+																	var tipe = $("#type").val();
+																	if (tipe == "Kredit") {
+																		$("#divkelas").show();
+																	} else {
+																		$("#divkelas").hide();
+																	}
 																}
+															</script>
+														</div>
+														<?php if (isset($_POST['type']) && $_POST['type'] == "Kredit") {
+															$display = "display:inline;";
+														} else {
+															$display = "display:none;";
+														} ?>
+														<div class="form-group" style="<?= $display; ?>" id="divkelas">
+															<label for="kelas">Class:</label>
+															<select id="kelas" name="kelas">
+																<option value="" <?= ($this->input->get("kelas") == "") ? "selected" : ""; ?>>All</option>
+																<?php $kelas = $this->db
+																	->join("kelas", "kelas.kelas_id=kelas_sekolah.kelas_id", "left")
+																	->where("kelas_sekolah.sekolah_id", $this->session->userdata("sekolah_id"))
+																	->get("kelas_sekolah");
+																foreach ($kelas->result() as $kelas) { ?>
+																	<option value="<?= $kelas->kelas_id; ?>" <?= ($this->input->get("kelas") == $kelas->kelas_id) ? "selected" : ""; ?>><?= $kelas->kelas_name; ?></option>
+																<?php } ?>
+															</select>
+														</div>
+
+														<div class="form-group">
+															<label for="from">From:</label>
+															<input id="from" name="from" type="date" value="<?= $from; ?>" />
+														</div>
+														<div class="form-group">
+															<label for="to">To:</label>
+															<input id="to" name="to" type="date" value="<?= $to; ?>" />
+														</div>
+														<div class="form-group">
+															<label for="nisn">NISN:</label>
+															<input id="nisn" name="nisn" type="text" value="<?= $this->input->get("nisn"); ?>" />
+														</div>
+														<div class="form-group">
+															<label for="nama">Nama:</label>
+															<input id="nama" name="nama" type="text" value="<?= $this->input->get("nama"); ?>" />
+														</div>
+														<!--  <button type="submit" class="btn btn-success fa fa-search" onMouseOver="search()"> Search</button> -->
+														<?php if (isset($_GET["laporan"])) { ?>
+															<input type="hidden" name="laporan" value="<?= $_GET["laporan"]; ?>" />
+														<?php } ?>
+														<button type="submit" class="btn btn-success fa fa-search" onMouseOver="searchnormal()"> Search</button>
+														<button type="submit" class="btn btn-info fa fa-print" onMouseOver="print()"> Print</button>
+														<script>
+															function search() {
+																$("#sp").attr({
+																	"action": "<?= site_url("transaction?laporan=OK"); ?>",
+																	"target": "_self"
+																});
+															}
+
+															function searchnormal() {
+																$("#sp").attr({
+																	"action": "<?= site_url("transaction"); ?>",
+																	"target": "_self"
+																});
+															}
+
+															function print() {
+																$("#sp").attr({
+																	"action": "<?= site_url("transactionreport_print"); ?>",
+																	"target": "_blank"
+																});
 															}
 														</script>
-													</div>
-													<?php if (isset($_POST['type']) && $_POST['type'] == "Kredit") {
-														$display = "display:inline;";
-													} else {
-														$display = "display:none;";
-													} ?>
-													<div class="form-group" style="<?= $display; ?>" id="divkelas">
-														<label for="kelas">Class:</label>
-														<select id="kelas" name="kelas">
-															<option value="" <?= ($this->input->get("kelas") == "") ? "selected" : ""; ?>>All</option>
-															<?php $kelas = $this->db
-																->join("kelas", "kelas.kelas_id=kelas_sekolah.kelas_id", "left")
-																->where("kelas_sekolah.sekolah_id", $this->session->userdata("sekolah_id"))
-																->get("kelas_sekolah");
-															foreach ($kelas->result() as $kelas) { ?>
-																<option value="<?= $kelas->kelas_id; ?>" <?= ($this->input->get("kelas") == $kelas->kelas_id) ? "selected" : ""; ?>><?= $kelas->kelas_name; ?></option>
-															<?php } ?>
-														</select>
-													</div>
-
-													<div class="form-group">
-														<label for="from">From:</label>
-														<input id="from" name="from" type="date" value="<?= $from; ?>" />
-													</div>
-													<div class="form-group">
-														<label for="to">To:</label>
-														<input id="to" name="to" type="date" value="<?= $to; ?>" />
-													</div>
-													<div class="form-group">
-														<label for="nisn">NISN:</label>
-														<input id="nisn" name="nisn" type="text" value="<?= $this->input->get("nisn"); ?>" />
-													</div>
-													<div class="form-group">
-														<label for="nama">Nama:</label>
-														<input id="nama" name="nama" type="text" value="<?= $this->input->get("nama"); ?>" />
-													</div>
-													<!--  <button type="submit" class="btn btn-success fa fa-search" onMouseOver="search()"> Search</button> -->
-													<?php if (isset($_GET["laporan"])) { ?>
-														<input type="hidden" name="laporan" value="<?= $_GET["laporan"]; ?>" />
-													<?php } ?>
-													<button type="submit" class="btn btn-success fa fa-search" onMouseOver="searchnormal()"> Search</button>
-													<button type="submit" class="btn btn-info fa fa-print" onMouseOver="print()"> Print</button>
-													<script>
-														function search() {
-															$("#sp").attr({
-																"action": "<?= site_url("transaction?laporan=OK"); ?>",
-																"target": "_self"
-															});
-														}
-
-														function searchnormal() {
-															$("#sp").attr({
-																"action": "<?= site_url("transaction"); ?>",
-																"target": "_self"
-															});
-														}
-
-														function print() {
-															$("#sp").attr({
-																"action": "<?= site_url("transactionreport_print"); ?>",
-																"target": "_blank"
-															});
-														}
-													</script>
-												</form>
-											</div>
+													</form>
+												</div>
 											<?php }
 											?>
 											<?php
@@ -523,6 +568,8 @@
 															<td><?= $transaction->transaction_name; ?></td>
 															<td align="right">
 																<?= number_format($transaction->transaction_amount, 0, ",", "."); ?>
+																
+																<?= ($transaction->transaction_cicilan)?"<br/>Cicilan : ".number_format($transaction->transaction_cicilan, 0, ",", "."):""; ?>
 															</td>
 															<td>
 																<?= $transaction->transaction_type; ?><br />(<?= $tahunajaran; ?>)
