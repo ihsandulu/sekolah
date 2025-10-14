@@ -26,6 +26,7 @@ class transaction_M extends CI_Model
 				$data[$field] = "";
 			}
 			$data["transaction_amount"] = 0;
+			$data["transaction_cicilan"] = 0;
 		}
 
 		//upload image

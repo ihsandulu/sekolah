@@ -257,7 +257,7 @@
 												<div class="form-group">
 													<label class="control-label col-sm-2" for="transaction_cicilan">Cicilan:</label>
 													<div class="col-sm-10">
-														<input tabindex="4" onKeyUp="tampilCicilan(this)" type="number" class="form-control" id="transaction_cicilan" name="transaction_cicilan" placeholder="Jumlah Cicilan" value="<?= $transaction_cicilan; ?>" min="1">
+														<input tabindex="4" onKeyUp="tampilCicilan(this)" type="number" class="form-control" id="transaction_cicilan" name="transaction_cicilan" placeholder="Jumlah Cicilan" value="<?= $transaction_cicilan; ?>" min="0">
 														<div style="color:#BB0000; font-weight:bold; margin-top:5px;">Rp <span id="cicilan"><?= number_format($transaction_cicilan, 0, ",", "."); ?></span></div>
 														<script>
 															function tampilCicilan(input) {
