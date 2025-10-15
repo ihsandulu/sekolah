@@ -4,7 +4,7 @@
 <head>
 	<?php
 	require_once("meta.php");
-	$status = array("Alpha","Masuk","Pulang", "Sakit", "Izin");
+	$status = array("Alpha", "Masuk", "Pulang", "Sakit", "Izin");
 	if (isset($_GET['absen_date'])) {
 		$absen_date = $_GET['absen_date'];
 	} else {
@@ -169,11 +169,12 @@
 							$this->db->where("absen.sekolah_id", $this->session->userdata("sekolah_id"));
 						}
 
-						$this->db->where("absen.absen_date", $absen_date);
 						if ($this->session->userdata("position_id") == 4) {
 							$this->db->where("absen.user_id", $this->session->userdata("user_id"));
-						}					
-						
+						} else {
+							$this->db->where("absen.absen_date", $absen_date);
+						}
+
 						$ab = $this->db
 							->select("*, user.user_name as siswa_name")
 							->join("sekolah", "sekolah.sekolah_id=absen.sekolah_id", "left")
