@@ -484,7 +484,7 @@
 														$this->db->where("transaction.user_nisn", $this->input->get("nisn"));
 													}
 													if (isset($_GET['nama']) && $_GET['nama'] != "") {
-														$this->db->like("user_name", $this->input->get("nama"), "both");
+														$this->db->like("usersiswa.siswa", $this->input->get("nama"), "both");
 													}
 
 													$this->db->where("SUBSTR(transaction_datetime,1,10) >=", $from);
