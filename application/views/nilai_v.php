@@ -156,7 +156,7 @@
                                             <div class="form-group">
                                                 <label class="control-label col-sm-2" for="nilai_score">Score:</label>
                                                 <div class="col-sm-10">
-                                                    <input type="number" min="78" class="form-control" id="nilai_score" name="nilai_score" value="<?= $nilai_score; ?>">
+                                                    <input type="number" min="<?=$this->session->userdata("sekolah_kkm");?>" class="form-control" id="nilai_score" name="nilai_score" value="<?= $nilai_score; ?>">
                                                 </div>
                                             </div>
 
