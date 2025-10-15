@@ -329,7 +329,7 @@
 													if (isset($_GET["from"]) && $_GET["from"] != "") {
 														$from = $_GET["from"];
 													} else {
-														$from = date("Y-m-d");
+														$from = date("Y-m-d",strtotime("-1 month"));
 													}
 													if (isset($_GET["to"]) && $_GET["to"] != "") {
 														$to = $_GET["to"];
@@ -567,7 +567,7 @@
 													</thead>
 													<tbody>
 														<?php
-														if (isset($_GET['from']) && $_GET['from'] != "") {
+														/* if (isset($_GET['from']) && $_GET['from'] != "") {
 															$from = $this->input->get("from");
 														} else {
 															$from = date("Y-m-d");
@@ -576,7 +576,7 @@
 															$to = $this->input->get("to");
 														} else {
 															$to = date("Y-m-d");
-														}
+														} */
 
 														$this->db->where("SUBSTR(tabungan_datetime,1,10) >=", $from);
 														$this->db->where("SUBSTR(tabungan_datetime,1,10) <=", $to);

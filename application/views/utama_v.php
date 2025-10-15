@@ -234,6 +234,7 @@
                     $col = 12;
                 } ?>
                 <div class="col-md-<?= $col; ?>">
+                    <div class="label label-primary">DAFTAR ABSENSI</div>
                     <div class="col-md-12" style="border:#FDDABB dashed 1px; margin-bottom:30px; padding:10px;">
                         <form id="sp" method="get" class="form-inline" action="">
 
@@ -297,6 +298,9 @@
                             <?php
                             if (isset($_GET['nama']) && $_GET['nama'] != "") {
                                 $this->db->like("user_name", $this->input->get("nama"), "both");
+                            }
+                            if ($this->session->userdata("position_id") == 4) {
+                                $this->db->where("user.user_nisn", $this->session->userdata("user_nisn"));
                             }
 
                             $this->db->where("absen_date", $absen_date);
