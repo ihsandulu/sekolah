@@ -90,8 +90,8 @@ class transaction_M extends CI_Model
 				$whereuser["user.user_nisn"] = $input["user_nisn"];
 				$whereuser["user.sekolah_id"] = $input["sekolah_id"];
 				$user = $this->db
-				->select("user.*, GROUP_CONCAT(telpon.telpon_number SEPARATOR ',') as nomor_telepon")
-				->join("telpon","telpon.user_id=user.user_id","left")
+					->select("user.*, GROUP_CONCAT(telpon.telpon_number SEPARATOR ',') as nomor_telepon")
+					->join("telpon", "telpon.user_id=user.user_id", "left")
 					->get_where("user", $whereuser);
 				// echo $this->db->last_query();die;
 				if ($user->num_rows() > 0) {
@@ -106,24 +106,41 @@ class transaction_M extends CI_Model
 				$sekolah = $this->db->where("sekolah_id", $this->session->userdata("sekolah_id"))->get("sekolah");
 				// echo $this->db->last_query();die;
 				foreach ($sekolah->result() as $row) {
-					$user_name=$user->row()->user_name;
-					$server=$row->sekolah_serverwa;
-					$email=$row->sekolah_emailwa;
-					$password=$row->sekolah_passwordwa;
-					// **Mengirim Pesan Text**
-					$uri = "https://qithy.my.id/api/token?email=".$email."&password=".$password."";
-					// echo $uri;die;
-					$user = json_decode(
-						file_get_contents($uri)
-					);
+					$user_name = $user->row()->user_name;
+					$server = $row->sekolah_serverwa;
+					$email = $row->sekolah_emailwa;
+					$password = $row->sekolah_passwordwa;
+
+					// URL token
+					$uri = "https://qithy.my.id/api/token?email={$email}&password={$password}";
+
+					// Ambil data dengan @ untuk hindari warning jika gagal
+					$response = @file_get_contents($uri);
+
+					// Jika gagal ambil data, lanjut ke iterasi berikutnya tanpa error
+					if ($response === false) {
+						continue;
+					}
+
+					// Decode JSON dan cek apakah ada token
+					$user = json_decode($response);
+					if (!isset($user->token)) {
+						// Jika token tidak ada (mungkin salah password), lewati
+						continue;
+					}
+
 					$token = $user->token;
-					$transaction_amount=$this->input->post("transaction_amount");
-					$transaction_name=$this->input->post("transaction_name");
-					$pesan = "Siswa/i ".$user_name." telah membayar tagihan ".$transaction_name." sejumlah: ".number_format($transaction_amount,0,",",".").",-";
-					foreach($telp as $telepon){
-						$urimessage = "https://qithy.my.id:8000/send-message?email=".$email."&token=" . $token . "&id=".$server."&message=" . urlencode($pesan) . "&number=".$telepon."";
-						$uripesan = file_get_contents($urimessage);
-						// echo $urimessage;die;
+					$transaction_amount = $this->input->post("transaction_amount");
+					$transaction_name = $this->input->post("transaction_name");
+					$pesan = "Siswa/i {$user_name} telah membayar tagihan {$transaction_name} sejumlah: " .
+						number_format($transaction_amount, 0, ",", ".") . ",-";
+
+					foreach ($telp as $telepon) {
+						$urimessage = "https://qithy.my.id:8000/send-message?email={$email}&token={$token}&id={$server}&message=" .
+							urlencode($pesan) . "&number={$telepon}";
+
+						// Hindari error saat kirim pesan
+						@file_get_contents($urimessage);
 					}
 				}
 			}
