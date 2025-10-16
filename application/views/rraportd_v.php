@@ -229,6 +229,8 @@
                               SUM(CASE WHEN absen_type = 4 THEN 1 ELSE 0 END) AS izin")
                         ->where("sekolah_id", $this->session->userdata("sekolah_id"))
                         ->where("user_id", $this->input->get("user_id"))
+                        ->where("absen_date >=", $this->session->userdata("sekolah_semester1"))
+                        ->where("absen_date <", $this->session->userdata("sekolah_semester2"))
                         ->group_by("user_id")
                         ->get("absen");
                     $hadir = 0;

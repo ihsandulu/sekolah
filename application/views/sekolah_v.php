@@ -221,6 +221,18 @@
                                                 </div>
                                             </div>
                                             <div class="form-group">
+                                                <label class="control-label col-sm-2" for="sekolah_semester1">Mulai Semester 1:</label>
+                                                <div class="col-sm-10">
+                                                    <input type="date" class="form-control" id="sekolah_semester1" name="sekolah_semester1" placeholder="Enter Date" value="<?= $sekolah_semester1; ?>">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-2" for="sekolah_semester2">Mulai Semester 2:</label>
+                                                <div class="col-sm-10">
+                                                    <input type="date" class="form-control" id="sekolah_semester2" name="sekolah_semester2" placeholder="Enter Date" value="<?= $sekolah_semester2; ?>">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
                                                 <label class="control-label col-sm-2" for="sekolah_serverwa">Server Whatsapp:</label>
                                                 <div class="col-sm-10">
                                                     <input type="text" class="form-control" id="sekolah_serverwa" name="sekolah_serverwa" placeholder="Enter Server" value="<?= $sekolah_serverwa; ?>">
