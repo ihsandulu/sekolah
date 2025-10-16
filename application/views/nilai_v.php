@@ -481,7 +481,7 @@
                                                     foreach ($matpelguru->result() as $matpelguru) {
                                                         $matpel_id = $matpelguru->matpel_id;
                                                     ?>
-                                                        <a title="Raport STS <?= $matpelguru->matpel_name; ?>" href="<?= base_url("raportsts?matpel_id=" . $matpel_id . "&kelas_id=" . $kelas_id . "&nilai_semester=" . $nilai_semester . "&user_id=" . $user_id . "&matpel_name=" . $matpelguru->matpel_name . "&guru_id=" . $this->session->userdata("user_id")); ?>" target="_blank" type="submit" class="btn btn-success fa fa-file-excel-o" style="font-size:12px;"> Raport STS <?= $matpelguru->matpel_name; ?></a>
+                                                        <a title="Raport STS <?= $matpelguru->matpel_name; ?>" href="<?= base_url("raportsts?matpel_id=" . $matpel_id . "&kelas_id=" . $kelas_id . "&nilai_semester=" . $nilai_semester . "&user_id=" . $user_id . "&matpel_name=" . $matpelguru->matpel_name . "&guru_id=" . $this->session->userdata("user_id"). "&nilai_year=" . $this->session->userdata("user_id")); ?>" target="_blank" type="submit" class="btn btn-success fa fa-file-excel-o" style="font-size:12px;"> Raport STS <?= $matpelguru->matpel_name; ?></a>
                                                     <?php } ?>
                                                 </div>
                                             <?php } ?>
@@ -548,7 +548,7 @@
                                                             ->join("matpel", "matpel.matpel_id=nilai.matpel_id", "left")
                                                             ->join("sumatif", "sumatif.sumatif_id=nilai.sumatif_id", "left")
                                                             ->join("kelas", "kelas.kelas_id=nilai.kelas_id", "left")
-                                                            ->join("user", "user.user_id=nilai.user_id", "left")
+                                                            ->join("user", "user.user_id=nilai.user_id AND user.kelas_id='".$_GET['kelas_id']."'", "left")
                                                             ->where("nilai_year", date("Y"))
                                                             ->where("user.user_tahunajaran !=", "0");
                                                         if ($this->session->userdata("position_id") == 3) {
