@@ -93,6 +93,16 @@
                                                 </div>
                                             </div>
                                             <div class="form-group">
+                                                <label class="control-label col-sm-2" for="catatan_semester">Semester:</label>
+                                                <div class="col-sm-10">
+                                                    <select class="form-control" id="catatan_semester" name="catatan_semester">
+                                                        <option value="" <?= ($catatan_semester == "") ? "selected" : ""; ?>>Pilih Semester</option>
+                                                        <option value="1" <?= ($catatan_semester == "1") ? "selected" : ""; ?>>Semester 1</option>
+                                                        <option value="2" <?= ($catatan_semester == "2") ? "selected" : ""; ?>>Semester 2</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
                                                 <label class="control-label col-sm-2" for="catatan_note">Note:</label>
                                                 <div class="col-sm-10">
                                                     <input type="text" class="form-control" id="catatan_note" name="catatan_note" value="<?= $catatan_note; ?>">
@@ -223,6 +233,7 @@
                                                         <th>Class</th>
                                                         <th>NISN</th>
                                                         <th>Name</th>
+                                                        <th>Semester</th>
                                                         <th>Note</th>
                                                     </tr>
                                                 </thead>
@@ -240,11 +251,11 @@
                                                         $this->db->where("catatan.user_id", $_GET['user_id']);
                                                     }
                                                     $usr = $this->db
-                                                        ->join("sekolah", "sekolah.sekolah_id=catatan.sekolah_id", "left")
-                                                        ->join("kelas", "kelas.kelas_id=catatan.kelas_id", "left")
-                                                        ->join("user", "user.user_id=catatan.user_id", "left")
+                                                        ->join("sekolah", "sekolah.sekolah_id=user.sekolah_id", "left")
+                                                        ->join("kelas", "kelas.kelas_id=user.kelas_id", "left")
+                                                        ->join("catatan", "catatan.user_id=user.user_id AND user.kelas_id='".$_GET['kelas_id']."'", "left")
                                                         ->where("catatan_year",date("Y"))
-                                                        ->get("catatan");
+                                                        ->get("user");
                                                     // echo $this->db->last_query();
                                                     foreach ($usr->result() as $catatan) { ?>
                                                         <tr>
@@ -263,6 +274,7 @@
                                                             <td><?= $catatan->kelas_name; ?></td>
                                                             <td><?= $catatan->user_nisn; ?></td>
                                                             <td><?= $catatan->user_name; ?></td>
+                                                            <td><?= $catatan->catatan_semester; ?></td>
                                                             <td><?= $catatan->catatan_note; ?></td>
                                                         </tr>
                                                     <?php } ?>

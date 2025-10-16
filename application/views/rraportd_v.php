@@ -279,6 +279,7 @@
                                 <?php
                                 $catatan = $this->db
                                     ->where("sekolah_id", $this->session->userdata("sekolah_id"))
+                                    ->where("catatan_semester", $this->input->get("nilai_semester"))
                                     ->where("user_id", $this->input->get("user_id"))
                                     ->get("catatan");
                                 foreach ($catatan->result() as $rowcatatan) {
