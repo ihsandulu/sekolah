@@ -180,6 +180,8 @@
 							->join("sekolah", "sekolah.sekolah_id=absen.sekolah_id", "left")
 							->join("user", "user.user_id=absen.user_id", "left")
 							->join("kelas", "kelas.kelas_id=absen.kelas_id", "left")
+							->order_by("kelas.kelas_name","ASC")
+							->order_by("user.user_name","ASC")
 							->get("absen");
 						// echo $this->db->last_query();
 						foreach ($ab->result() as $absen) { ?>
