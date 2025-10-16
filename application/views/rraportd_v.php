@@ -189,8 +189,10 @@
                             // $no = $sumatifno; 
                             if (isset($matperarray[$rowm->matpel_id])) {
                                 $no = $matperarray[$rowm->matpel_id];
+                                $noasli = $matperarray[$rowm->matpel_id];
                             } else {
                                 $no = $sumatifno;
+                                $noasli = $sumatifno;
                             }
                         ?>
                             <tr>
@@ -207,7 +209,7 @@
                                     </td>
                                 <?php } ?>
                                 <td class="text-center">
-                                    <?= $no; ?>
+                                    <?= $no; ?> / <?= $noasli; ?>
                                 </td>
                             </tr>
                         <?php } ?>
