@@ -12,7 +12,7 @@ class Rraportd_M extends CI_Model {
 		$userd["user_id"]=$this->input->get("user_id");
 		$gr=$this->db
 		->join("kelas","kelas.kelas_id=user.kelas_id","left")
-		->join("(SELECT user_id AS usid, user_name as guru FROM user)user","user.usid=kelas.kelas_wali","left")
+		->join("(SELECT user_id AS usid, user_name as guru, user_nik as nik FROM user)user","user.usid=kelas.kelas_wali","left")
 		->get_where('user',$userd);	
 		// echo $this->db->last_query();die;	
 		if($gr->num_rows()>0)
@@ -27,6 +27,7 @@ class Rraportd_M extends CI_Model {
 					$data[$field]=$user->$field;
 				}	
 				$data["guru"]=$user->guru;	
+				$data["nik"]=$user->nik;	
 			}
 		}else{	
 			 		
@@ -39,6 +40,7 @@ class Rraportd_M extends CI_Model {
 				$data[$field]="";
 			}	
 			$data["guru"]="";
+			$data["nik"]="";
 			
 		}
 		

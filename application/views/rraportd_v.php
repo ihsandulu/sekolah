@@ -305,7 +305,7 @@
                 Wali Kelas <?= $kelas_name; ?><br><br><br><br><br>
 
 
-                <?= $guru; ?>
+                <b><u><?= $guru; ?></u></b><div style="top:-10px;"><?= $nik; ?></div>
 
             </div>
         </div>
