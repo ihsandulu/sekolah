@@ -291,7 +291,7 @@
 												<form id="sp" method="get" class="form-inline" action="<?= $url; ?>">
 													<div class="form-group">
 														<label for="type">Type:</label>
-														<select id="type" name="type" onChange="lihatkelas()">
+														<select id="type" name="type" onChange="lihatkelas();lihattgl();">
 															<?php if ($this->session->userdata("position_id") == 4) { ?>
 																<option value="current" <?= ($this->input->get("type") == "current") ? "selected" : ""; ?>>Current Class</option>
 															<?php } else { ?>
@@ -337,12 +337,25 @@
 														$to = date("Y-m-d");
 													}
 													?>
+													<script>
+														function lihattgl() {
+															var tipe = $("#type").val();
+															if (tipe == "current") {
+																$(".hidetgl").hide();
+															} else {
+																$(".hidetgl").show();
+															}
+														}
+														$(document).ready(function(){
+														lihattgl();
+														});
+													</script>
 
-													<div class="form-group">
+													<div class="form-group hidetgl">
 														<label for="from">From:</label>
 														<input id="from" name="from" type="date" value="<?= $from; ?>" />
 													</div>
-													<div class="form-group">
+													<div class="form-group hidetgl">
 														<label for="from">To:</label>
 														<input id="to" name="to" type="date" value="<?= $to; ?>" />
 													</div>
@@ -578,10 +591,11 @@
 															$to = date("Y-m-d");
 														} */
 
+														$kelas_id = isset($_GET['kelas_id']) ? $_GET['kelas_id'] : null;
 
 														$kelas = $this->db
 															->from("kelas")
-															->where("kelas_id", $_GET['kelas_id'])
+															->where("kelas_id", $kelas_id)
 															->get()
 															->row(); // ambil satu row
 
@@ -590,20 +604,26 @@
 														// ambil semua user_nisn siswa di kelas tersebut
 														$daftar = $this->db
 															->from("user")
-															->where("kelas_id", $_GET['kelas_id'])
+															->where("kelas_id", $kelas_id)
 															->get()
 															->result_array(); // ambil semua
 														$daftar = array_column($daftar, 'user_nisn'); // ambil cuma kolom user_nisn
 
-														$this->db->where("SUBSTR(tabungan_datetime,1,10) >=", $from);
-														$this->db->where("SUBSTR(tabungan_datetime,1,10) <=", $to);
+														// $this->db->where("SUBSTR(tabungan_datetime,1,10) >=", $from);
+														// $this->db->where("SUBSTR(tabungan_datetime,1,10) <=", $to);
 														if (isset($_GET['type']) && ($_GET['type'] == "Debet" || $_GET['type'] == "Kredit")) {
 															$this->db->where("tabungan_type", $this->input->get("type"));
 														}
 														if ($this->session->userdata("sekolah_id") > 0) {
 															$this->db->where("tabungan.sekolah_id", $this->session->userdata("sekolah_id"));
 														}
-														$this->db->where_in("user.user_nisn", $daftar);
+
+														if (!empty($daftar)) {
+															$this->db->where_in("user.user_nisn", $daftar);
+														} else {
+															// Jika daftar kosong, jangan jalankan query atau buat kondisi dummy
+															$this->db->where("1=0"); // supaya tidak mengembalikan baris apapun
+														}
 
 
 														if (isset($_GET['search']) && isset($_GET['user_nisn']) && $_GET['user_nisn'] > 0) {
