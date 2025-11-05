@@ -32,55 +32,68 @@ class api extends CI_Controller
 			->get_where("user", $whereuser);
 		// echo $this->db->last_query();
 
-		//tagihan umum
+		$artagihanvalue = array();
+		$artagihanid = array();
+		$artagihannama = array();
+		// Tagihan umum
 		$tagihanumum = $this->db
-			->select("SUM(transaction_amount)AS tagihan")
 			->where("transaction_type", "Kredit")
+			->group_start()
 			->where("kelas_id", "0")
+			->or_where("kelas_id", $user->row()->kelas_id)
+			->group_end()
 			->where("transaction_tahun", $user->row()->user_tahunajaran)
 			->where("sekolah_id", $this->input->get("sekolah_id"))
 			->get("transaction");
-		// echo $this->db->last_query();
+
+		// Hitung total tagihan umum
 		if ($tagihanumum->num_rows() > 0) {
-			$tagihan = $tagihanumum->row()->tagihan;
-		} else {
-			$tagihan = 0;
+			foreach ($tagihanumum->result() as $row) {
+				$artagihanid[] = $row->transaction_id;
+				$artagihannama[$row->transaction_id] = $row->transaction_name;
+				$artagihanvalue[$row->transaction_id] = $row->transaction_amount;
+			}
 		}
 
-		//tagihan kelas
-		$tagihankelas = $this->db
-			->select("SUM(transaction_amount)AS tagihan")
-			->where("transaction_type", "Kredit")
-			->where("kelas_id", $user->row()->kelas_id)
-			->where("transaction_tahun", $user->row()->user_tahunajaran)
-			->where("sekolah_id", $this->input->get("sekolah_id"))
-			->get("transaction");
-		// echo $this->db->last_query();
-		if ($tagihankelas->num_rows() > 0) {
-			$tagihan += $tagihankelas->row()->tagihan;
-		} else {
-			$tagihan += 0;
-		}
-
-		//pembayaran
-		$pembayaran = $this->db
-			->select("SUM(transaction_amount)AS pembayaran")
+		// Pembayaran
+		$bayar = $this->db
 			->where("user_nisn", $user->row()->user_nisn)
 			->where("sekolah_id", $user->row()->sekolah_id)
-			->group_by("user_nisn")
+			->where("transaction_type", "Debit") // pastikan jenis pembayaran adalah Debit
 			->get("transaction");
-		//echo $this->db->last_query();
-		if ($pembayaran->num_rows() > 0) {
-			$pembayaran = $pembayaran->row()->pembayaran;
-		} else {
-			$pembayaran = 0;
+
+		$arpembayaran = array();
+		$pembayaran = 0;
+		if ($bayar->num_rows() > 0) {
+			foreach ($bayar->result() as $row) {
+				$pembayaran += $row->transaction_amount;
+				// simpan per transaksi
+				// Jika sudah ada key dengan transaction_id yang sama, tambahkan
+				if (isset($arpembayaran[$row->transaction_bid])) {
+					$arpembayaran[$row->transaction_bid] += $row->transaction_amount;
+				} else {
+					$arpembayaran[$row->transaction_bid] = $row->transaction_amount;
+				}
+			}
 		}
 
-		$saldo = $tagihan - $pembayaran;
+
+
 
 		if ($user->num_rows() > 0) {
 			foreach ($user->result() as $user) {
-				$data["message"] = "Name: " . $user->user_name . ". Class: " . $user->kelas_name . ". Tagihan: Rp " . number_format($saldo, 0, ",", ".");
+				$isitagihan = "";
+				$tsaldo = 0;
+				foreach ($artagihanid as $idtagih) {
+					if (isset($arpembayaran[$idtagih])) {
+						$saldo = $artagihanvalue[$idtagih] - $arpembayaran[$idtagih];
+					} else {
+						$saldo = $artagihanvalue[$idtagih] - 0;
+					}
+					$isitagihan .= $artagihannama[$idtagih] . " = Rp " . number_format($saldo, 0, ",", ".") . ". ";
+					$tsaldo += $saldo;
+				}
+				$data["message"] = "Name: " . $user->user_name . ". Class: " . $user->kelas_name . ". " . $isitagihan . "Total Tagihan: Rp " . number_format($tsaldo, 0, ",", ".");
 				$data["user_tahunajaran"] = $user->user_tahunajaran;
 				$data["kelas_id"] = $user->kelas_id;
 			}
@@ -126,7 +139,10 @@ class api extends CI_Controller
 		$this->db
 			->where("sekolah_id", $this->input->get("sekolah_id"))
 			->where("transaction_type", "Kredit")
+			->group_start()
 			->where("kelas_id", "0")
+			->or_where("kelas_id", $kelas_id)
+			->group_end()
 			->where("transaction_tahun", $user_tahunajaran);
 		if (!empty($bill_ids)) { // Cek jika $bill_ids tidak kosong
 			$this->db->where_not_in("transaction_id", $bill_ids);
@@ -156,36 +172,7 @@ class api extends CI_Controller
 			$data["tagihan"][$no] = "No Data!";
 		}
 
-		//tagihan kelas
-		$this->db
-			->where("sekolah_id", $this->input->get("sekolah_id"))
-			->where("transaction_type", "Kredit")
-			->where("kelas_id", $kelas_id)
-			->where("transaction_tahun", $user_tahunajaran);
-		if (!empty($bill_ids)) { // Cek jika $bill_ids tidak kosong
-			$this->db->where_not_in("transaction_id", $bill_ids);
-		}
-		$tagihan = $this->db
-			->get("transaction");
-		//echo $this->db->last_query();
-
-		if ($tagihan->num_rows() > 0) {
-			foreach ($tagihan->result() as $row) {
-				if ($row->transaction_cicilan > 0) {
-					$transaction_amount = $row->transaction_cicilan;
-				} else {
-					$transaction_amount = $row->transaction_amount;
-				}
-				$data["tagihan"][$no] = '<span class="btn btn-warning" onclick="inputtagihan(\'' .
-					$row->transaction_id . '\',\'' .
-					$row->transaction_name . '\',\'' .
-					$row->transaction_tahun . '\',\'' .
-					$transaction_amount . '\',\'' .
-					number_format($transaction_amount, 0, ",", ".") . ',-\')">' .
-					$row->transaction_name . '</span>';
-				$no++;
-			}
-		}
+		
 
 		$this->djson($data);
 	}
@@ -1848,6 +1835,7 @@ class api extends CI_Controller
 		$mat = $this->db
 			->where("user.user_tahunajaran !=", "0")
 			->where("position_id", "4")
+			->order_by("user.user_name")
 			->get("user");
 		foreach ($mat->result() as $user) { ?>
 			<option value="<?= $user->user_nisn; ?>" <?= ($user_nisn == $user->user_nisn) ? 'selected="selected"' : ""; ?>><?= $user->user_name; ?></option>
