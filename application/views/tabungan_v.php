@@ -329,7 +329,7 @@
 													if (isset($_GET["from"]) && $_GET["from"] != "") {
 														$from = $_GET["from"];
 													} else {
-														$from = date("Y-m-d",strtotime("-1 month"));
+														$from = date("Y-m-d", strtotime("-1 month"));
 													}
 													if (isset($_GET["to"]) && $_GET["to"] != "") {
 														$to = $_GET["to"];
@@ -578,6 +578,23 @@
 															$to = date("Y-m-d");
 														} */
 
+
+														$kelas = $this->db
+															->from("kelas")
+															->where("kelas_id", $_GET['kelas_id'])
+															->get()
+															->row(); // ambil satu row
+
+														$kelas_name = $kelas ? $kelas->kelas_name : ""; // cek dulu apakah ada
+
+														// ambil semua user_nisn siswa di kelas tersebut
+														$daftar = $this->db
+															->from("user")
+															->where("kelas_id", $_GET['kelas_id'])
+															->get()
+															->result_array(); // ambil semua
+														$daftar = array_column($daftar, 'user_nisn'); // ambil cuma kolom user_nisn
+
 														$this->db->where("SUBSTR(tabungan_datetime,1,10) >=", $from);
 														$this->db->where("SUBSTR(tabungan_datetime,1,10) <=", $to);
 														if (isset($_GET['type']) && ($_GET['type'] == "Debet" || $_GET['type'] == "Kredit")) {
@@ -586,10 +603,9 @@
 														if ($this->session->userdata("sekolah_id") > 0) {
 															$this->db->where("tabungan.sekolah_id", $this->session->userdata("sekolah_id"));
 														}
+														$this->db->where_in("user.user_nisn", $daftar);
 
-														if (isset($_GET['search']) && isset($_GET['kelas_id']) && $_GET['kelas_id'] > 0) {
-															$this->db->where("kelas.kelas_id", $kelas_id);
-														}
+
 														if (isset($_GET['search']) && isset($_GET['user_nisn']) && $_GET['user_nisn'] > 0) {
 															$this->db->where("user.user_nisn", $_GET['user_nisn']);
 														}
@@ -599,7 +615,7 @@
 														}
 
 														$usr = $this->db
-															->select("user.user_nisn, user.user_name, kelas.kelas_name, sekolah.sekolah_name,
+															->select("user.user_nisn, user.user_name, sekolah.sekolah_name,
 															SUM(CASE WHEN tabungan.tabungan_type = 'debet' THEN tabungan.tabungan_amount ELSE 0 END) AS total_debet,
 															SUM(CASE WHEN tabungan.tabungan_type = 'kredit' THEN tabungan.tabungan_amount ELSE 0 END) AS total_kredit,
 															(SUM(CASE WHEN tabungan.tabungan_type = 'debet' THEN tabungan.tabungan_amount ELSE 0 END) -
@@ -609,7 +625,7 @@
 															->join("user", "user.user_nisn = tabungan.user_nisn", "left")
 															->join("kelas", "kelas.kelas_id = tabungan.kelas_id", "left")
 															->join("tabungankode", "tabungankode.tabungankode_id = tabungan.tabungankode_id", "left")
-															->group_by("user.user_nisn, user.user_name, kelas.kelas_name, sekolah.sekolah_name") // Mengelompokkan berdasarkan NISN dan nama siswa
+															->group_by("user.user_nisn, user.user_name, sekolah.sekolah_name") // Mengelompokkan berdasarkan NISN dan nama siswa
 															->order_by("user.user_name", "asc")
 															->get();
 														// echo $this->db->last_query();
@@ -621,7 +637,7 @@
 															} ?>
 															<tr style="<?= $back; ?>">
 																<td><?= $tabungan->sekolah_name; ?></td>
-																<td><?= $tabungan->kelas_name; ?></td>
+																<td><?= $kelas_name; ?></td>
 																<td><?= $tabungan->user_name; ?></td>
 																<td><?= $tabungan->user_nisn; ?></td>
 																<td align="right"><?= number_format($tabungan->total_debet, 0, ",", "."); ?></td>
@@ -707,7 +723,7 @@
 														?>
 															<tr style="">
 																<td><?= $tabungan->sekolah_name; ?></td>
-																<td><?= $tabungan->kelas_name; ?></td>
+																<td><?= $kelas_name; ?></td>
 																<td align="right"><?= number_format($tabungan->total_debet, 0, ",", "."); ?></td>
 																<td align="right"><?= number_format($tabungan->total_kredit, 0, ",", "."); ?></td>
 																<td align="right"><?= number_format($tabungan->saldo, 0, ",", "."); ?></td>

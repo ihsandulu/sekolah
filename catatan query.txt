@@ -1,0 +1,2 @@
+30 okt 2025
+ALTER TABLE `transaction` CHANGE `transaction_bill` `transaction_bill` INT(11) NOT NULL COMMENT 'id tagihan (khusus tipe debet) ';
