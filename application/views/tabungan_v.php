@@ -729,7 +729,8 @@
 															->join("kelas", "kelas.kelas_id = tabungan.kelas_id", "left")
 															->where("kelas.kelas_name !=", "") // Mengabaikan kelas tanpa nama
 															->group_by("kelas.kelas_name, sekolah.sekolah_name") // Mengelompokkan berdasarkan kelas
-															->order_by("tabungan.tabungan_datetime", "desc")
+															->order_by("kelas.kelas_name", "asc")
+															// ->order_by("tabungan.tabungan_datetime", "desc")
 															->get();
 
 														if ($usr === false) {
@@ -743,7 +744,7 @@
 														?>
 															<tr style="">
 																<td><?= $tabungan->sekolah_name; ?></td>
-																<td><?= $kelas_name; ?></td>
+																<td><?= $tabungan->kelas_name; ?></td>
 																<td align="right"><?= number_format($tabungan->total_debet, 0, ",", "."); ?></td>
 																<td align="right"><?= number_format($tabungan->total_kredit, 0, ",", "."); ?></td>
 																<td align="right"><?= number_format($tabungan->saldo, 0, ",", "."); ?></td>
