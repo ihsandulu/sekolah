@@ -235,52 +235,79 @@ class tabungan_M extends CI_Model
 				// echo $this->validasi($input["tabungan_amount"], $input["user_nisn"]);die;
 
 				// if ($this->validasi($input["tabungan_amount"], $input["user_nisn"])) {
-					$this->db->insert("tabungan", $input);
-					$data["s"] = $this->db->insert_id();
-					$data["message"] = "Insert Data Success";
+				$this->db->insert("tabungan", $input);
+				$data["s"] = $this->db->insert_id();
+				$data["message"] = "Insert Data Success";
 
-					$sekolah = $this->db->where("sekolah_id", $this->session->userdata("sekolah_id"))->get("sekolah");
-					// echo $this->db->last_query();die;
-					foreach ($sekolah->result() as $row) {
-						$server = $row->sekolah_serverwa;
-						$email = $row->sekolah_emailwa;
-						$password = $row->sekolah_passwordwa;
-						// **Mengirim Pesan Text**
-						$uri = "https://qithy.my.id/api/token?email=" . $email . "&password=" . $password . "";
-						// echo $uri;die;
-						$user = json_decode(
+				$sekolah = $this->db->where("sekolah_id", $this->session->userdata("sekolah_id"))->get("sekolah");
+				// echo $this->db->last_query();die;
+				foreach ($sekolah->result() as $row) {
+					$server = $row->sekolah_serverwa;
+					$email = $row->sekolah_emailwa;
+					$password = $row->sekolah_passwordwa;
+					// **Mengirim Pesan Text**
+					$uri = "https://qithy.my.id/api/token?email=" . $email . "&password=" . $password . "";
+					// echo $uri;die;
+					/* $user = json_decode(
 							file_get_contents($uri)
 						);
-						$token = $user->token;
-						$tabungan_amount = $this->input->post("tabungan_amount");
-						$tabungan_remarks = $this->input->post("tabungan_remarks");
-						if ($tabungan_remarks != "") {
-							$untuk = " untuk keperluan " . $tabungan_remarks;
-						} else {
-							$untuk = "";
-						}
-						$saldosiswa = $this->saldonya("Debet", $input["user_nisn"]) - $this->saldonya("Kredit", $input["user_nisn"]);
-						// $pesan = "Siswa/i " . $user_name . " telah menarik tabungan sejumlah: " . number_format($tabungan_amount, 0, ",", ".") . ",-" . $untuk;
-						$pesan = "Siswa/i " . $user_name . " memiliki saldo tabungan sejumlah: " . number_format($saldosiswa, 0, ",", ".");
-						foreach ($telp as $telepon) {
-							$urimessage = "https://qithy.my.id:8000/send-message?email=" . $email . "&token=" . $token . "&id=" . $server . "&message=" . urlencode($pesan) . "&number=" . $telepon . "";
-							// $uripesan = file_get_contents($urimessage);
-							// echo $urimessage;die;
+						$token = $user->token; */
 
-							$ch = curl_init();
-							curl_setopt($ch, CURLOPT_URL, $urimessage);
-							curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-							curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36');
+					// Cek apakah URL merespons sebelum ambil data
+					$ch = curl_init($uri);
+					curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+					curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
-							$response = curl_exec($ch);
+					$response = curl_exec($ch);
+					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					curl_close($ch);
 
-							if (curl_errno($ch)) {
-								echo 'Error:' . curl_error($ch);
-							}
-
-							curl_close($ch);
-						}
+					// Kalau tidak ada respons (bukan 200 OK), skip bagian kirim pesan
+					if ($http_code != 200 || !$response) {
+						continue; // atau return; jika di luar loop
 					}
+
+					$user = json_decode($response);
+
+					// Kalau JSON tidak valid atau token kosong, skip juga
+					if (json_last_error() !== JSON_ERROR_NONE || empty($user->token)) {
+						continue; // atau return;
+					}
+
+					$token = $user->token;
+
+
+
+					$tabungan_amount = $this->input->post("tabungan_amount");
+					$tabungan_remarks = $this->input->post("tabungan_remarks");
+					if ($tabungan_remarks != "") {
+						$untuk = " untuk keperluan " . $tabungan_remarks;
+					} else {
+						$untuk = "";
+					}
+					$saldosiswa = $this->saldonya("Debet", $input["user_nisn"]) - $this->saldonya("Kredit", $input["user_nisn"]);
+					// $pesan = "Siswa/i " . $user_name . " telah menarik tabungan sejumlah: " . number_format($tabungan_amount, 0, ",", ".") . ",-" . $untuk;
+					$pesan = "Siswa/i " . $user_name . " memiliki saldo tabungan sejumlah: " . number_format($saldosiswa, 0, ",", ".");
+					foreach ($telp as $telepon) {
+						$urimessage = "https://qithy.my.id:8000/send-message?email=" . $email . "&token=" . $token . "&id=" . $server . "&message=" . urlencode($pesan) . "&number=" . $telepon . "";
+						// $uripesan = file_get_contents($urimessage);
+						// echo $urimessage;die;
+
+						$ch = curl_init();
+						curl_setopt($ch, CURLOPT_URL, $urimessage);
+						curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+						curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36');
+
+						$response = curl_exec($ch);
+
+						if (curl_errno($ch)) {
+							echo 'Error:' . curl_error($ch);
+						}
+
+						curl_close($ch);
+					}
+				}
 				/* } else {
 					$data["message"] = "<span style='color:red;'>The balance is not sufficient</span>";
 				} */
@@ -298,10 +325,36 @@ class tabungan_M extends CI_Model
 					// **Mengirim Pesan Text**
 					$uri = "https://qithy.my.id/api/token?email=" . $email . "&password=" . $password . "";
 					// echo $uri;die;
-					$user = json_decode(
+					/* $user = json_decode(
 						file_get_contents($uri)
 					);
+					$token = $user->token; */
+
+					// Cek apakah URL merespons sebelum ambil data
+					$ch = curl_init($uri);
+					curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+					curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+					$response = curl_exec($ch);
+					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					curl_close($ch);
+
+					// Kalau tidak ada respons (bukan 200 OK), skip bagian kirim pesan
+					if ($http_code != 200 || !$response) {
+						continue; // atau return; jika di luar loop
+					}
+
+					$user = json_decode($response);
+
+					// Kalau JSON tidak valid atau token kosong, skip juga
+					if (json_last_error() !== JSON_ERROR_NONE || empty($user->token)) {
+						continue; // atau return;
+					}
+
 					$token = $user->token;
+
+
 					$tabungan_amount = $this->input->post("tabungan_amount");
 					$tabungan_remarks = $this->input->post("tabungan_remarks");
 					if ($tabungan_remarks != "") {
@@ -345,9 +398,9 @@ class tabungan_M extends CI_Model
 			$tabungan_id = $this->input->post("tabungan_id");
 			// echo $this->validasikreditupdate($input["tabungan_amount"], $input["user_nisn"], $tabungan_id);
 			// if ($this->validasikreditupdate($input["tabungan_amount"], $input["user_nisn"], $tabungan_id)) {
-				$this->db->update("tabungan", $input, array("tabungan_id" => $tabungan_id));
-				$data["message"] = "Update Success";
-				//echo $this->db->last_query();die;
+			$this->db->update("tabungan", $input, array("tabungan_id" => $tabungan_id));
+			$data["message"] = "Update Success";
+			//echo $this->db->last_query();die;
 			/* } else {
 				$data["message"] = "<span style='color:red;'>The balance is not sufficient</span>";
 			} */
