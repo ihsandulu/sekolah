@@ -89,18 +89,18 @@
                                                 <div class="col-sm-10">
                                                     <select onchange="isinisn()" class="form-control" id="user_nik" name="user_nik">
                                                         <option value="0" <?= ($user_nik == 0) ? "selected" : ""; ?>>Pilih Guru</option>
-                                                        <?php $user = $this->db                                                        
-                                                        ->where("sekolah_id", $this->session->userdata("sekolah_id"))
-                                                        ->where("user_nik !=", "")
-                                                        ->order_by("user_name", "asc")
-                                                        ->get("user");
+                                                        <?php $user = $this->db
+                                                            ->where("sekolah_id", $this->session->userdata("sekolah_id"))
+                                                            ->where("user_nik !=", "")
+                                                            ->order_by("user_name", "asc")
+                                                            ->get("user");
                                                         foreach ($user->result() as $row) { ?>
                                                             <option value="<?= $row->user_nik; ?>" <?= ($user_nik == $row->user_nik) ? "selected" : ""; ?>><?= $row->user_name; ?></option>
                                                         <?php } ?>
                                                     </select>
                                                 </div>
                                             </div>
-                                            
+
                                             <input type="hidden" name="sekolah_id" value="<?= $this->session->userdata("sekolah_id"); ?>" />
                                             <input type="hidden" name="abseng_id" value="<?= $abseng_id; ?>" />
                                             <div class="form-group">
@@ -142,52 +142,56 @@
                                                     <label for="to">To:</label>
                                                     <input type="date" name="to" id="to" class="form-control" value="<?= $to; ?>">
                                                 </div>
-                                                <div class="form-group">
-                                                    <label for="kelas_id">Class:</label>
-                                                    <?php
-                                                    if (isset($_GET["kelas_id"])) {
-                                                        $kelas_id = $this->input->get("kelas_id");
-                                                    } else {
-                                                        $kelas_id = 0;
-                                                    }
-                                                    $gru = $this->db
-                                                        ->join("kelas", "kelas.kelas_id=kelas_sekolah.kelas_id", "left")
-                                                        ->where("kelas.sekolah_id", $this->session->userdata("sekolah_id"))
-                                                        ->group_by("kelas.kelas_name")
-                                                        ->get("kelas_sekolah");
-                                                    // echo $this->db->last_query();
-                                                    // echo $this->session->userdata("position_id");
-                                                    ?>
-                                                    <select name="kelas_id" id="kelas_id" class="form-control" onChange="cari_user(this.value)">
-                                                        <option value="0" <?= ($kelas_id == 0) ? 'selected="selected"' : ""; ?>>Choose Class</option>
+                                                <?php if ($this->session->userdata("position_id") != 4) { ?>
+                                                    <div class="form-group">
+                                                        <label for="kelas_id">Class:</label>
                                                         <?php
-                                                        foreach ($gru->result() as $kelas) { ?>
-                                                            <option value="<?= $kelas->kelas_id; ?>" <?= ($kelas_id == $kelas->kelas_id) ? 'selected="selected"' : ""; ?>><?= $kelas->kelas_name; ?></option>
-                                                        <?php } ?>
-                                                    </select>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label for="user_nik">Guru:</label>
-                                                    <?php
-                                                    if (isset($_GET["user_nik"])) {
-                                                        $user_nik = $this->input->get("user_nik");
-                                                    } else {
-                                                        $user_nik = 0;
-                                                    }
-                                                    ?>
-                                                    <select name="user_nik" id="user_nik" class="form-control">
-                                                        <option value="0" <?= ($user_nik == 0) ? "selected" : ""; ?>>Pilih Guru</option>
-                                                        <?php $user = $this->db
-                                                        ->where("sekolah_id", $this->session->userdata("sekolah_id"))
-                                                        ->where("user_nik !=", "")
-                                                        ->order_by("user_name", "asc")->get("user");
-                                                        foreach ($user->result() as $row) { ?>
-                                                            <option value="<?= $row->user_nik; ?>" <?= ($user_nik == $row->user_nik) ? "selected" : ""; ?>><?= $row->user_name; ?></option>
-                                                        <?php } ?>
-                                                    </select>
-                                                </div>
-
+                                                        if (isset($_GET["kelas_id"])) {
+                                                            $kelas_id = $this->input->get("kelas_id");
+                                                        } else {
+                                                            $kelas_id = 0;
+                                                        }
+                                                        $gru = $this->db
+                                                            ->join("kelas", "kelas.kelas_id=kelas_sekolah.kelas_id", "left")
+                                                            ->where("kelas.sekolah_id", $this->session->userdata("sekolah_id"))
+                                                            ->group_by("kelas.kelas_name")
+                                                            ->get("kelas_sekolah");
+                                                        // echo $this->db->last_query();
+                                                        // echo $this->session->userdata("position_id");
+                                                        ?>
+                                                        <select name="kelas_id" id="kelas_id" class="form-control" onChange="cari_user(this.value)">
+                                                            <option value="0" <?= ($kelas_id == 0) ? 'selected="selected"' : ""; ?>>Choose Class</option>
+                                                            <?php
+                                                            foreach ($gru->result() as $kelas) { ?>
+                                                                <option value="<?= $kelas->kelas_id; ?>" <?= ($kelas_id == $kelas->kelas_id) ? 'selected="selected"' : ""; ?>><?= $kelas->kelas_name; ?></option>
+                                                            <?php } ?>
+                                                        </select>
+                                                    </div>
+                                                <?php } else { ?>
+                                                    <input type="hidden" name="kelas_id" id="kelas_id" value="<?= $this->session->userdata("kelas_id"); ?>" />
+                                                <?php } ?>
+                                                <?php if ($this->session->userdata("position_id") != 4) { ?>
+                                                    <div class="form-group">
+                                                        <label for="user_nik">Guru:</label>
+                                                        <?php
+                                                        if (isset($_GET["user_nik"])) {
+                                                            $user_nik = $this->input->get("user_nik");
+                                                        } else {
+                                                            $user_nik = 0;
+                                                        }
+                                                        ?>
+                                                        <select name="user_nik" id="user_nik" class="form-control">
+                                                            <option value="0" <?= ($user_nik == 0) ? "selected" : ""; ?>>Pilih Guru</option>
+                                                            <?php $user = $this->db
+                                                                ->where("sekolah_id", $this->session->userdata("sekolah_id"))
+                                                                ->where("user_nik !=", "")
+                                                                ->order_by("user_name", "asc")->get("user");
+                                                            foreach ($user->result() as $row) { ?>
+                                                                <option value="<?= $row->user_nik; ?>" <?= ($user_nik == $row->user_nik) ? "selected" : ""; ?>><?= $row->user_name; ?></option>
+                                                            <?php } ?>
+                                                        </select>
+                                                    </div>
+                                                <?php } ?>
                                                 <button type="submit" class="btn btn-default">Submit</button>
                                             </form>
                                         </div>
@@ -244,7 +248,7 @@
                                                             <td><?= $abseng->abseng_date; ?></td>
                                                             <td><?= $abseng->user_name; ?></td>
                                                             <td><?= $abseng->kelas_name; ?></td>
-                                                            <td><?= date("H:i",strtotime($abseng->abseng_time)); ?></td>
+                                                            <td><?= date("H:i", strtotime($abseng->abseng_time)); ?></td>
                                                         </tr>
                                                     <?php } ?>
                                                 </tbody>

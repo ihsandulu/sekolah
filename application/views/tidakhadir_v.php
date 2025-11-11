@@ -283,13 +283,14 @@
                                 function kirimpesantidakhadir(message, number, server, email, password, tidakhadir_id) {
                                     let pesankirim = '';
                                     setTimeout(() => {
+                                        alert("https://qithy.my.id/api/token?email="+email+"&password="+password);
                                         $.get("https://qithy.my.id/api/token", {
                                                 email: email,
                                                 password: password
                                             })
                                             .done(function(data) {
                                                 let token = data.token;
-                                                // alert("https://qithy.my.id:8000/send-message?email="+email+"&token="+token+"&message="+message+"&number="+number+"&id="+server);
+                                                alert("https://qithy.my.id:8000/send-message?email="+email+"&token="+token+"&message="+message+"&number="+number+"&id="+server);
                                                 $.get("https://qithy.my.id:8000/send-message", {
                                                         email: email,
                                                         'token': token,

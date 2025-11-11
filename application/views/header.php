@@ -79,21 +79,21 @@
 
                     <ul class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close" role="menu" aria-labelledby="userdetail">
                         <li role="presentation">
-                            <?php 
-                            if($this->session->userdata("position_id")==3){
-                                $urlprofile="guru";
+                            <?php
+                            if ($this->session->userdata("position_id") == 3) {
+                                $urlprofile = "guru";
                             }
-                            if($this->session->userdata("position_id")==4){
-                                $urlprofile="siswa";
+                            if ($this->session->userdata("position_id") == 4) {
+                                $urlprofile = "siswa";
                             }
-                            if($this->session->userdata("position_id")==2 || $this->session->userdata("position_id")==1){
-                                $urlprofile="admin";
+                            if ($this->session->userdata("position_id") == 2 || $this->session->userdata("position_id") == 1) {
+                                $urlprofile = "admin";
                             }
-                            if($this->session->userdata("position_id")==5){
-                                $urlprofile="petugastabungan";
+                            if ($this->session->userdata("position_id") == 5) {
+                                $urlprofile = "petugastabungan";
                             }
                             ?>
-                            <a role="menuitem" href="<?= site_url($urlprofile."?id=" . $this->session->userdata("user_id")); ?>">
+                            <a role="menuitem" href="<?= site_url($urlprofile . "?id=" . $this->session->userdata("user_id")); ?>">
                                 <i class="ace-icon fa fa-user"></i>
                                 Profile
                             </a>
@@ -151,7 +151,7 @@
                     <b class="arrow"></b>
 
                     <ul class="submenu">
-                         <?php if ($this->session->userdata("position_id") == "1" || $this->session->userdata("position_id") == "2") { ?>
+                        <?php if ($this->session->userdata("position_id") == "1" || $this->session->userdata("position_id") == "2") { ?>
                             <li class="">
                                 <a href="<?= site_url("position"); ?>">
                                     <i class="menu-icon fa fa-caret-right"></i>
@@ -350,7 +350,7 @@
 
                     <b class="arrow"></b>
                     <ul class="submenu">
-                         <?php if ($this->session->userdata("position_id") != 5) { ?>
+                        <?php if ($this->session->userdata("position_id") != 5) { ?>
                             <li class="">
                                 <a href="<?= site_url("attandanceg"); ?>">
                                     <i class="menu-icon fa fa-caret-right"></i>
@@ -440,7 +440,16 @@
                 <b class="arrow"></b>
 
                 <ul class="submenu">
-                    <?php if ($this->session->userdata("position_id") != 4 && $this->session->userdata("position_id") != 5) { ?>
+                    <?php if ($this->session->userdata("position_id") == 4) { ?>
+                        <li class="">
+                            <a href="<?= site_url("attandanceg"); ?>">
+                                <i class="menu-icon fa fa-caret-right"></i>
+                                Absen Guru
+                            </a>
+                            <b class="arrow"></b>
+                        </li>
+                    <?php } ?>
+                    <?php if ($this->session->userdata("position_id") != 5) { ?>
                         <li class="">
                             <a href="<?= site_url("rraport"); ?>">
                                 <i class="menu-icon fa fa-caret-right"></i>
