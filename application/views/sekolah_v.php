@@ -250,6 +250,12 @@
                                                     <input type="text" class="form-control" id="sekolah_passwordwa" name="sekolah_passwordwa" placeholder="Enter Server" value="<?= $sekolah_passwordwa; ?>">
                                                 </div>
                                             </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-2" for="sekolah_sendterlambat">Kirim WA jika sudah terlambat X kali:</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="sekolah_sendterlambat" name="sekolah_sendterlambat" placeholder="Enter Kali Keterlambatan" value="<?= $sekolah_sendterlambat; ?>">
+                                                </div>
+                                            </div>
 
                                             <div class="form-group">
                                                 <label class="control-label col-sm-2" for="sekolah_picture">Picture 1:</label>

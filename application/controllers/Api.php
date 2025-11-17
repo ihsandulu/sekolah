@@ -1331,6 +1331,8 @@ class api extends CI_Controller
 		$data["url"] = '';
 		$data["success"] = 0;
 		$data["message"] = "Tidak ada data!";
+		$data["terlambat"] = 0;
+		$data["kaliterlambat"] = 0;
 
 		if ($_GET["type"] == 1) {
 			$type = "Masuk";
@@ -1406,6 +1408,16 @@ class api extends CI_Controller
 							$inputpelanggaran["pelanggaran_date"] = date("Y-m-d");
 							$inputpelanggaran["pelanggaran_year"] = date("Y");
 							$this->db->insert("pelanggaran", $inputpelanggaran);
+
+							//update berapa kali terlambat
+							$terlambat = $user->user_terlambat + 1;
+							$inputuser["user_terlambat"] = $terlambat;
+							if ($terlambat >= $this->session->userdata("sekolah_sendterlambat")) {
+								$data["terlambat"] = 1;
+								$data["kaliterlambat"] = $terlambat;
+								$inputuser["user_terlambat"] = 0;
+							}
+							$this->db->update("user", $inputuser, array("user_id" => $user->user_id));
 						}
 					}
 				}
