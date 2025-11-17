@@ -172,7 +172,7 @@ class api extends CI_Controller
 			$data["tagihan"][$no] = "No Data!";
 		}
 
-		
+
 
 		$this->djson($data);
 	}
@@ -1277,6 +1277,48 @@ class api extends CI_Controller
 		}
 	}
 
+	public function rubahjam()
+	{
+		$kelas_id = $this->input->get("kelas_id");
+		$jamabsen_id = $this->input->get("jamabsen_id");
+		$jamkelas_id = $this->input->get("jamkelas_id");
+
+		$input = array(
+			"kelas_id"    => $kelas_id,
+			"jamabsen_id" => $jamabsen_id
+		);
+
+		// cek apakah record sudah ada
+
+
+		if ($jamkelas_id > 0) {
+			// update
+			$this->db
+				->where("jamkelas_id", $jamkelas_id)
+				->update("jamkelas", $input);
+		} else {
+			$cek = $this->db
+				->where("kelas_id", $kelas_id)
+				->where("jamabsen_id", $jamabsen_id)
+				->get("jamkelas")
+				->num_rows();
+			if ($cek > 0) {
+				// update
+				$this->db
+					->where("kelas_id", $kelas_id)
+					->where("jamabsen_id", $jamabsen_id)
+					->update("jamkelas", $input);
+			} else {
+				// insert
+				$this->db->insert("jamkelas", $input);
+			}
+		}
+		echo "Update Berhasil!";
+		// echo $this->db->last_query();
+	}
+
+
+
 	public function absensiswa()
 	{
 
@@ -1336,6 +1378,36 @@ class api extends CI_Controller
 					$data["datetime"] = date("d, M Y H:i:s");
 					$data["message"] = "Absensi Anda Berhasil!";
 					$data["url"] = base_url("api/qrcodesiswa?nisn=" . $user->user_nisn);
+
+					//cek terlambat
+					if ($_GET["type"] == 1) {
+						$jamkelas = $this->db
+							->join("jamabsen", "jamabsen.jamabsen_id=jamkelas.jamabsen_id", "left")
+							->where("kelas_id", $user->kelas_id)
+							->get("jamkelas");
+						$jammasuk = "07:00:00"; // default
+						foreach ($jamkelas->result() as $rows) {
+							$jammasuk = $rows->jamabsen_masuk;
+						}
+						$jammasuk = date("Y-m-d " . $jammasuk);
+						if ($input["absen_datetime"] > $jammasuk) {
+							//cek point
+							$pelanggaran_point = 1;
+							$mpelanggaran = $this->db->where("mpelanggaran_id", "-1")->get("mpelanggaran");
+							foreach ($mpelanggaran->result() as $rows) {
+								$pelanggaran_point = $rows->mpelanggaran_point;
+							}
+							$inputpelanggaran["mpelanggaran_id"] = -1;
+							$inputpelanggaran["pelanggaran_point"] = $pelanggaran_point;
+							$inputpelanggaran["user_nisn"] = $_GET["nisn"];
+							$inputpelanggaran["sekolah_id"] = $this->session->userdata("sekolah_id");
+							$inputpelanggaran["kelas_id"] = $user->kelas_id;
+							$inputpelanggaran["pelanggaran_notes"] = "";
+							$inputpelanggaran["pelanggaran_date"] = date("Y-m-d");
+							$inputpelanggaran["pelanggaran_year"] = date("Y");
+							$this->db->insert("pelanggaran", $inputpelanggaran);
+						}
+					}
 				}
 			} else {
 				$data["success"] = 0;

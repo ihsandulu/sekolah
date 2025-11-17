@@ -275,6 +275,15 @@
                         <?php } ?>
 
                         <li class="">
+                            <a href="<?= site_url("jamabsen"); ?>">
+                                <i class="menu-icon fa fa-clock-o"></i>
+                                Attandance Time
+                            </a>
+
+                            <b class="arrow"></b>
+                        </li>
+
+                        <li class="">
                             <a href="<?= site_url("sekolah"); ?>">
                                 <i class="menu-icon fa fa-caret-right"></i>
                                 School

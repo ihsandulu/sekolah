@@ -92,7 +92,7 @@ class Attandance_M extends CI_Model
                 // echo $this->db->last_query();
                 $data["message"] = "Insert Data Success";
             } else {
-                $data["message"] = "absen sudah ada!";
+                $data["message"] = "Absen sudah ada!";
             }
         }
         //echo $_POST["create"];die;
