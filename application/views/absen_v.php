@@ -199,7 +199,7 @@
 												tablesiswa();
 											}, 1000);
 											if (data.terlambat == 1) {
-												let pesanwaterlambat = 'Ananda ' + name + ' telah terlambat sebanyak ' + data.kaliterlambat + ' kali. ';
+												let pesanwaterlambat = 'Ananda ' + data.name + ' telah terlambat sebanyak ' + data.kaliterlambat + ' kali. ';
 												cektelponpesan(data.name, data.typename, data.datetime, data.number, data.id, pesanwaterlambat);
 											}
 										} else {
