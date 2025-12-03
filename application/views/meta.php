@@ -251,31 +251,36 @@ if (current_url() != site_url("login") && current_url() != site_url("scanabsengu
 </script>
 <script>
 	function kirimpesan(message, number, server, email, password) {
-		let pesankirim = '';
-		setTimeout(() => {
-			$.get("https://qithy.my.id/api/token", {
-					email: email,
-					password: password
+		return new Promise((resolve, reject) => {
+			$.get("https://qithy.my.id/4p1.php", {
+					action: 'token',
+					email,
+					password
 				})
 				.done(function(data) {
+
 					let token = data.token;
-					// alert("https://qithy.my.id:8000/send-message?email="+email+"&token="+token+"&message="+message+"&number="+number+"&id="+server);
+
 					$.get("https://qithy.my.id:8000/send-message", {
-							email: email,
-							'token': token,
-							message: message,
-							number: number,
+							email,
+							token,
+							message,
+							number,
 							id: server
 						})
-						.done(function(data) {
-							pesankirim = "Pesan terkirim pada ".number;
-							// alert(pesankirim);
-						});
-				});
-			return pesankirim;
-		}, 1000);
+						.done(function(data2) {
 
+							let hasil = `Pesan terkirim pada ${number}`;
+							resolve(hasil);
+
+						})
+						.fail(err => reject(err));
+
+				})
+				.fail(err => reject(err));
+		});
 	}
+
 
 	//kirimpesan
 	function dikirimpesan(message, number, server, email, password, nominal, user_id) {
