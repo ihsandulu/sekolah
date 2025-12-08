@@ -454,7 +454,7 @@
 											for ($i = 1; $i <= $pages; $i++) { ?>
 												<a class="btn btn-xs btn-default halaman" href="<?= $url; ?>&halaman=<?php echo $i; ?>"><?php echo $i; ?></a>
 											<?php } ?>
-											<table id="dataTabletransaksi" class="table table-condensed table-hover">
+											<table id="dataTabletransaksi111" class="table table-condensed table-hover">
 												<thead>
 													<tr>
 														<?php if (isset($_GET['laporan'])) {

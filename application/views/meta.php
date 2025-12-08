@@ -113,6 +113,44 @@ if (current_url() != site_url("login") && current_url() != site_url("scanabsengu
 		opacity: 0.9;
 	}
 </style>
+<script>
+$(document).ready(function() {
+    $('#dataTabletransaksi111').DataTable({
+        dom: 'Bfrtip',
+        buttons: [
+            { extend: 'pdf',  className: 'btn-danger text-white' },
+            { extend: 'print', className: 'btn-warning text-white' },
+            { 
+                extend: 'excel', 
+                className: 'btn-success text-white',
+                exportOptions: {
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Hapus spasi
+                            data = $.trim(data);
+
+                            // Jika bukan angka, langsung return
+                            if (!data.match(/^[0-9.,]+$/)) {
+                                return data;
+                            }
+
+                            // Hilangkan semua titik
+                            data = data.replace(/\./g, '');
+
+                            // Ubah koma jadi titik
+                            data = data.replace(/,/g, '.');
+
+                            return data;
+                        }
+                    }
+                }
+            }
+        ],
+        "order": [[0, 'desc']],
+        "lengthMenu": [[200, -1, 100, 50, 25], [200, "All", 100, 50, 25]]
+    });
+});
+</script>
 
 <script>
 	$(document).ready(function() {
