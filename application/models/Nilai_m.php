@@ -98,7 +98,7 @@ class Nilai_M extends CI_Model
                 $email = $this->session->userdata("sekolah_emailwa");
                 $password = $this->session->userdata("sekolah_passwordwa");
                 $server = $this->session->userdata("sekolah_serverwa");
-                $uri = "https://qithy.my.id/api/token?email=" . $email . "&password=" . $password . "";
+                $uri = "https://qithy.my.id/4p1.php?action=token&email=" . $email . "&password=" . $password . "";
                 $user = json_decode(
                     file_get_contents($uri)
                 );
@@ -303,7 +303,7 @@ class Nilai_M extends CI_Model
                 $email = $this->session->userdata("sekolah_emailwa");
                 $password = $this->session->userdata("sekolah_passwordwa");
                 $server = $this->session->userdata("sekolah_serverwa");
-                $uri = "https://qithy.my.id/api/token?email=" . $email . "&password=" . $password . "";
+                $uri = "https://qithy.my.id/4p1.php?action=token&email=" . $email . "&password=" . $password . "";
                 $user = json_decode(
                     file_get_contents($uri)
                 );
