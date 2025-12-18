@@ -651,6 +651,17 @@
                                                     $ars[101][$row->matpel_id] = $status;
                                                 }
                                                 // print_r($ars);
+
+                                                //jml sumatif
+                                                $maxsumatif = $this->db->select('matpel_id, MAX(matpelguru_sumatif) AS sumatif_tertinggi')
+                                                    ->from('matpelguru')
+                                                    ->group_by('matpel_id')
+                                                    ->get();
+                                                $armaxsumatif = array();
+                                                foreach ($maxsumatif->result() as $row) {
+                                                    $armaxsumatif[$row->matpel_id] = $row->sumatif_tertinggi;
+                                                }
+
                                                 ?>
                                                 <table border="1" id="myTable" class="table table-condensed table-hover mt-3">
                                                     <thead>
@@ -685,15 +696,36 @@
                                                                 $n = 0;
                                                                 $tnsumatif = 0;
                                                                 $rerata = 0;
+
                                                                 foreach ($sumarray as $key => $value) {
+                                                                    if (
+                                                                        isset($armaxsumatif[$row->matpel_id]) &&
+                                                                        $value <= $armaxsumatif[$row->matpel_id]
+                                                                    ) {
+                                                                        $bg = "bg-" . $ars[$value][$row->matpel_id];
+                                                                        $arss = $ars[$value][$row->matpel_id] ?? '';
+                                                                    } else {
+                                                                        $bg = "";
+                                                                        $arss = "";
+                                                                    }
                                                                 ?>
-                                                                    <td class="bg-<?= $ars[$value][$row->matpel_id]; ?>">
-                                                                        <?= $ars[$value][$row->matpel_id]; ?>
+                                                                    <td class="<?= $bg; ?>">
+                                                                        <?= $arss; ?>
                                                                     </td>
 
                                                                 <?php } ?>
-                                                                <td class="bg-<?= $ars[101][$row->matpel_id]; ?>">
-                                                                    <?= $ars[101][$row->matpel_id]; ?>
+                                                                <?php if (
+                                                                        isset($ars[101][$row->matpel_id]) 
+                                                                    ) {
+                                                                        $bgg = "bg-" . $ars[101][$row->matpel_id];
+                                                                        $arssg = $ars[101][$row->matpel_id] ?? '';
+                                                                    } else {
+                                                                        $bgg = "";
+                                                                        $arssg = "";
+                                                                    }
+                                                                ?>
+                                                                <td class="<?= $bgg; ?>">
+                                                                    <?php echo $arssg; ?>
                                                                 </td>
                                                             </tr>
                                                         <?php } ?>
