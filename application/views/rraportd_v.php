@@ -166,6 +166,8 @@
                         $nilai = $this->db
                             ->where("sekolah_id", $this->session->userdata("sekolah_id"))
                             ->where("user_id", $this->input->get("user_id"))
+                            ->where("nilai_year", date("Y"))
+                            // ->where("user.user_tahunajaran !=", "0")
                             ->order_by("matpel_id", "ASC")
                             ->order_by("sumatif_id", "ASC")
                             ->get("nilai");
@@ -307,7 +309,8 @@
                 Wali Kelas <?= $kelas_name; ?><br><br><br><br><br>
 
 
-                <b><u><?= $guru; ?></u></b><div style="top:-10px;"><?= $nik; ?></div>
+                <b><u><?= $guru; ?></u></b>
+                <div style="top:-10px;"><?= $nik; ?></div>
 
             </div>
         </div>
