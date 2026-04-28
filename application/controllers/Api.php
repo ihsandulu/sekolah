@@ -1943,6 +1943,7 @@ class api extends CI_Controller
 		$mat = $this->db
 			->where("user.user_tahunajaran !=", "0")
 			->where("position_id", "4")
+			->order_by("user.user_name")
 			->get("user");
 		foreach ($mat->result() as $user) { ?>
 			<option value="<?= $user->user_id; ?>" <?= ($user_id == $user->user_id) ? 'selected="selected"' : ""; ?>><?= $user->user_name; ?></option>

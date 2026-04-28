@@ -289,7 +289,7 @@
                                                         ->join("sekolah", "sekolah.sekolah_id=absen.sekolah_id", "left")
                                                         ->join("kelas", "kelas.kelas_id=absen.kelas_id", "left")
                                                         ->join("user", "user.user_id=absen.user_id", "left")
-                                                        ->where("absen_year", date("Y"))
+                                                        // ->where("absen_year", date("Y"))
                                                         ->order_by("kelas.kelas_name", "ASC")
                                                         ->order_by("user.user_name", "ASC")
                                                         ->get("absen");

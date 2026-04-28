@@ -66,6 +66,8 @@
     // echo $this->db->last_query();
     $sekolah_picture = "";
     $sekolah_picture2 = "";
+    $semester1 = "";
+    $semester2 = "";
     foreach ($sekolah->result() as $row) {
         $sekolah_picture = $row->sekolah_picture;
         $sekolah_picture2 = $row->sekolah_picture2;
@@ -77,6 +79,8 @@
         $website = $row->sekolah_website;
         $npsn = $row->sekolah_npsn;
         $nss = $row->sekolah_nss;
+        $semester1 = $row->sekolah_semester1;
+        $semester2 = $row->sekolah_semester2;
     }
 
     $usern = $this->db
@@ -223,6 +227,7 @@
             <div class="col-md-12">
                 <table class="table table-bordered">
                     <?php
+
                     $absen = $this->db
                         ->select("SUM(CASE WHEN absen_type = 0 THEN 1 ELSE 0 END) AS alpha, 
                                 SUM(CASE WHEN absen_type = 1 THEN 1 ELSE 0 END) AS masuk, 
@@ -231,14 +236,15 @@
                               SUM(CASE WHEN absen_type = 4 THEN 1 ELSE 0 END) AS izin")
                         ->where("sekolah_id", $this->session->userdata("sekolah_id"))
                         ->where("user_id", $this->input->get("user_id"))
-                        ->where("absen_date >=", $this->session->userdata("sekolah_semester1"))
-                        ->where("absen_date <", $this->session->userdata("sekolah_semester2"))
+                        ->where("absen_date >=", $semester2)
+                        ->where("absen_date <", date("Y-m-d"))
                         ->group_by("user_id")
                         ->get("absen");
                     $hadir = 0;
                     $sakit = 0;
                     $izin = 0;
                     $alpha = 0;
+                    // echo $this->db->last_query();
                     foreach ($absen->result() as $rowabsen) {
                         $masuk = $rowabsen->masuk;
                         $pulang = $rowabsen->pulang;
