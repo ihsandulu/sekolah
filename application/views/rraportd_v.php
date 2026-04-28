@@ -316,7 +316,7 @@
 
 
                 <b><u><?= $guru; ?></u></b>
-                <div style="top:-10px;"><?= $nik; ?></div>
+                <div style="top:-10px;">NIP. <?= $nik; ?></div>
 
             </div>
         </div>
