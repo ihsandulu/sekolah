@@ -187,7 +187,6 @@ class Nilai_M extends CI_Model
                                     }
                                     // Aktifkan kembali error reporting
                                     error_reporting(E_ALL);
-                                    
                                 } else {
                                     $input2["nilaigagal_temporary"] = $this->input->post("nilaigagal_temporary");
                                     $input2["kelas_id"] = $this->input->post("kelas_id");
@@ -212,7 +211,7 @@ class Nilai_M extends CI_Model
                                         ]
                                     ];
                                     $context = stream_context_create($options);
-                                    
+
                                     // Nonaktifkan error reporting sementara
                                     error_reporting(0);
                                     $uripesan = file_get_contents($urimessage, false, $context);
@@ -220,7 +219,7 @@ class Nilai_M extends CI_Model
                                         $wapesan = "Gagal mengirim pesan.";
                                     } else {
                                         $wapesan = "Pesan berhasil dikirim.";
-                                    }                                    
+                                    }
                                     // Aktifkan kembali error reporting
                                     error_reporting(E_ALL);
                                 }
@@ -296,10 +295,12 @@ class Nilai_M extends CI_Model
                 ->where("matpel_id", $input["matpel_id"])
                 ->where("nilai_semester", $input["nilai_semester"])
                 ->get("nilai");
-            if ($double->num_rows() == 0) {
+                //  echo $this->db->last_query();die;
+                $nilai_id=0;
+            if ($double->num_rows() == 0) {                
                 $input["nilai_year"] = date("Y");
                 $this->db->insert("nilai", $input);
-                // echo $this->db->last_query();
+                // echo $this->db->last_query();die;
                 $email = $this->session->userdata("sekolah_emailwa");
                 $password = $this->session->userdata("sekolah_passwordwa");
                 $server = $this->session->userdata("sekolah_serverwa");
@@ -344,7 +345,15 @@ class Nilai_M extends CI_Model
                     $data["message"] = "Insert Data Success. " . $wapesan;
                 }
             } else {
-                $data["message"] = "Nilai sudah ada!";
+                foreach ($this->input->post() as $e => $f) {
+                    if ($e != 'change' && $e != 'nilai_picture' && $e != 'kelas_name' && $e != 'matpel_name' && $e != 'user_name' && $e != 'sumatif_name' && $e != 'nilai_id' && $e != 'create') {
+                        $inputu[$e] = $this->input->post($e);
+                    }
+                }
+                $nilai_id=$double->row()->nilai_id;
+                $this->db->update("nilai", $inputu, array("nilai_id" => $nilai_id));
+                // echo $this->db->last_query();die;
+                $data["message"] = "Update Success";
             }
         }
         //echo $_POST["create"];die;
