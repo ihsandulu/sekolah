@@ -22,6 +22,77 @@ class api extends CI_Controller
 		$this->djson(array("connect" => "ok"));
 	}
 
+	public function login()
+	{
+		header("Access-Control-Allow-Origin: *");
+		header("Content-Type: application/json");
+
+		// CI3 pakai input->get()
+		$nisn = $this->input->get("nisn");
+		$passwordInput = $this->input->get("password");
+
+		$response = [];
+
+		if ($nisn && $passwordInput) {
+
+			$this->db->select('user.*, position.position_name');
+			$this->db->from('user');
+			$this->db->join('position', 'position.position_id = user.position_id', 'left');
+			$this->db->where('user_nisn', $nisn);
+
+			$query = $this->db->get();
+
+			if ($query->num_rows() > 0) {
+
+				$user = $query->row(); // cukup ambil 1
+
+				$password = $user->user_password;
+				$key = "ihsandulu123456";
+				$method = "AES-256-CBC";
+
+				$datak = base64_decode($password);
+				$iv_dec = substr($datak, 0, openssl_cipher_iv_length($method));
+				$encrypted_data = substr($datak, openssl_cipher_iv_length($method));
+				$decrypted = openssl_decrypt($encrypted_data, $method, $key, 0, $iv_dec);
+
+				if ($passwordInput === $decrypted) {
+
+					$response = [
+						'status' => 'success',
+						'id' => $user->user_id,
+						'username' => $user->user_name,
+						'nisn' => $user->user_nisn,
+						'nama' => $user->user_nama,
+						'position_id' => $user->position_id,
+						'position_name' => $user->position_name,
+						'message' => 'Login Berhasil!',
+						'password' => $passwordInput // ⚠️ jangan dipakai di production
+					];
+				} else {
+
+					$response = [
+						'status' => 'fail',
+						'message' => 'Password Salah!'
+					];
+				}
+			} else {
+
+				$response = [
+					'status' => 'fail',
+					'message' => 'NISN Salah!'
+				];
+			}
+		} else {
+
+			$response = [
+				'status' => 'fail',
+				'message' => 'Login Tidak Valid!'
+			];
+		}
+
+		echo json_encode($response);
+	}
+
 	function datasiswahutang()
 	{
 		//user
