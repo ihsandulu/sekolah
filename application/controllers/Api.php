@@ -46,16 +46,9 @@ class api extends CI_Controller
 
 				$user = $query->row(); // cukup ambil 1
 
-				$password = $user->user_password;
-				$key = "ihsandulu123456";
-				$method = "AES-256-CBC";
+				$password = $user->user_password;			
 
-				$datak = base64_decode($password);
-				$iv_dec = substr($datak, 0, openssl_cipher_iv_length($method));
-				$encrypted_data = substr($datak, openssl_cipher_iv_length($method));
-				$decrypted = openssl_decrypt($encrypted_data, $method, $key, 0, $iv_dec);
-
-				if ($passwordInput === $decrypted) {
+				if ($passwordInput === $password) {
 
 					$response = [
 						'status' => 'success',
