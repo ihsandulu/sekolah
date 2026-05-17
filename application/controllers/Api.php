@@ -55,7 +55,7 @@ class api extends CI_Controller
 						'id' => $user->user_id,
 						'username' => $user->user_name,
 						'nisn' => $user->user_nisn,
-						'nama' => $user->user_nama,
+						'nama' => $user->user_name,
 						'position_id' => $user->position_id,
 						'position_name' => $user->position_name,
 						'message' => 'Login Berhasil!',
