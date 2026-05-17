@@ -203,9 +203,9 @@
                     <div class="well col-md-offset-1 col-md-5" style="padding:30px; height:210px;" align="center">
                       <a target="_blank" href="<?= base_url("siswa1.xlsx"); ?>" class="fa fa-download btn btn-lg btn-success" style="top:50%; position:relative; top:50%; transform:translate(0,-50%);" /> Download Excel Template</a>
                     </div>
-                    <form method="post" style="float:right; margin-bottom:20px;">
+                    <!-- <form method="post" style="float:right; margin-bottom:20px;">
                       <button name="repair_tahun_ajaran" value="OK">Repair Tahun Ajaran Sesuai Kelas</button>
-                    </form>
+                    </form> -->
 
                     <div id="collapse4" class="body table-responsive col-md-12">
                       <table id="dataTable" class="table table-condensed table-hover">
