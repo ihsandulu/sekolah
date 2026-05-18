@@ -35,9 +35,10 @@ class api extends CI_Controller
 
 		if ($nisn && $passwordInput) {
 
-			$this->db->select('user.*, position.position_name');
+			$this->db->select('user.*, position.position_name, kelas.kelas_name');
 			$this->db->from('user');
 			$this->db->join('position', 'position.position_id = user.position_id', 'left');
+			$this->db->join('kelas', 'kelas.kelas_id = user.kelas_id', 'left');
 			$this->db->where('user_nisn', $nisn);
 
 			$query = $this->db->get();
@@ -56,6 +57,7 @@ class api extends CI_Controller
 						'username' => $user->user_name,
 						'nisn' => $user->user_nisn,
 						'nama' => $user->user_name,
+						'kelas' => $user->kelas_name,
 						'position_id' => $user->position_id,
 						'position_name' => $user->position_name,
 						'message' => 'Login Berhasil!',
