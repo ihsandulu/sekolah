@@ -37,6 +37,7 @@ class api extends CI_Controller
 
 			$this->db->select('user.*, position.position_name, kelas.kelas_name');
 			$this->db->from('user');
+			$this->db->join('sekolah', 'sekolah.sekolah_id = user.sekolah_id', 'left');
 			$this->db->join('position', 'position.position_id = user.position_id', 'left');
 			$this->db->join('kelas', 'kelas.kelas_id = user.kelas_id', 'left');
 			$this->db->where('user_nisn', $nisn);
@@ -54,6 +55,7 @@ class api extends CI_Controller
 					$response = [
 						'status' => 'success',
 						'id' => $user->user_id,
+						'latlon' => $user->sekolah_latlon,
 						'username' => $user->user_name,
 						'nisn' => $user->user_nisn,
 						'nama' => $user->user_name,
