@@ -35,7 +35,7 @@ class api extends CI_Controller
 
 		if ($nisn && $passwordInput) {
 
-			$this->db->select('user.*, position.position_name, kelas.kelas_name');
+			$this->db->select('user.*, position.position_name, kelas.kelas_name, sekolah.sekolah_latlon, sekolah.sekolah_absenmeter');
 			$this->db->from('user');
 			$this->db->join('sekolah', 'sekolah.sekolah_id = user.sekolah_id', 'left');
 			$this->db->join('position', 'position.position_id = user.position_id', 'left');
