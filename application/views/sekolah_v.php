@@ -179,6 +179,12 @@
                                                 </div>
                                             </div>
                                             <div class="form-group">
+                                                <label class="control-label col-sm-2" for="sekolah_absenmeter">Radius Absen (meter):</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="sekolah_absenmeter" name="sekolah_absenmeter" placeholder="Enter City" value="<?= $sekolah_absenmeter; ?>">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
                                                 <label class="control-label col-sm-2" for="sekolah_telp">Telp.:</label>
                                                 <div class="col-sm-10">
                                                     <input type="text" class="form-control" id="sekolah_telp" name="sekolah_telp" placeholder="Enter City" value="<?= $sekolah_telp; ?>">
