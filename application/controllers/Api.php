@@ -56,6 +56,7 @@ class api extends CI_Controller
 						'status' => 'success',
 						'id' => $user->user_id,
 						'latlon' => $user->sekolah_latlon,
+						'radius' => $user->sekolah_absenmeter,
 						'username' => $user->user_name,
 						'nisn' => $user->user_nisn,
 						'nama' => $user->user_name,
