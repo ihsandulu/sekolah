@@ -1510,6 +1510,131 @@ class api extends CI_Controller
 		$this->djson($data);
 	}
 
+	public function absensiswaapi()
+	{
+
+		$data["id"] = 0;
+		$data["name"] = '';
+		$data["number"] = '';
+		$data["type"] = 0;
+		$data["typename"] = '';
+		$data["datetime"] = date("d, M Y H:i:s");
+		$data["url"] = '';
+		$data["success"] = 0;
+		$data["message"] = "Tidak ada data!";
+		$data["terlambat"] = 0;
+		$data["kaliterlambat"] = 0;
+
+		if ($_GET["type"] == 1) {
+			$type = "Masuk";
+		} else {
+			$type = "Pulang";
+		}
+		$absen = $this->db
+			->join("user", "user.user_id=absen.user_id", "left")
+			->join("telpon", "telpon.user_id=user.user_id", "left")
+			->where("absen_date", date("Y-m-d"))
+			->where("absen_nisn", $_GET["nisn"])
+			->group_start()
+			->where("absen_type", "0")
+			->or_where("absen_type", "3")
+			->or_where("absen_type", "4")
+			->or_where("absen_type", $_GET["type"])
+			->group_end()
+			->get("absen");
+		// echo $this->db->last_query();
+		if ($absen->num_rows() == 0) {
+			$where["user_nisn"] = $_GET["nisn"];
+			$user = $this->db
+				->get_where("user", $where);
+			// echo $this->db->last_query();
+			if ($user->num_rows() > 0) {
+				foreach ($user->result() as $user) {
+					$input["absen_datetime"] = date("Y-m-d H:i:s");
+					$input["absen_year"] = date("Y");
+					$input["absen_date"] = date("Y-m-d");
+					$input["absen_nisn"] = $user->user_nisn;
+					$input["kelas_id"] = $user->kelas_id;
+					$input["user_id"] = $user->user_id;
+					$input["absen_remarks"] = "Absen Barcode";
+					$input["sekolah_id"] = 1;
+					$input["absen_status"] = 1;
+					$input["absen_type"] = $_GET["type"];
+					$this->db->insert("absen", $input);
+					// echo $this->db->last_query();
+
+					$data["success"] = 1;
+					$data["id"] = $user->user_id;
+					$data["name"] = $user->user_name;
+					$data["type"] = $_GET["type"];
+					$data["typename"] = $type;
+					$data["datetime"] = date("d, M Y H:i:s");
+					$data["message"] = "Absensi Anda Berhasil!";
+					$data["url"] = base_url("api/qrcodesiswa?nisn=" . $user->user_nisn);
+
+					//cek terlambat
+					if ($_GET["type"] == 1) {
+						$jamkelas = $this->db
+							->join("jamabsen", "jamabsen.jamabsen_id=jamkelas.jamabsen_id", "left")
+							->where("kelas_id", $user->kelas_id)
+							->get("jamkelas");
+						$jammasuk = "07:00:00"; // default
+						foreach ($jamkelas->result() as $rows) {
+							$jammasuk = $rows->jamabsen_masuk;
+						}
+						$jammasuk = date("Y-m-d " . $jammasuk);
+						if ($input["absen_datetime"] > $jammasuk) {
+							//cek point
+							$pelanggaran_point = 1;
+							$mpelanggaran = $this->db->where("mpelanggaran_id", "-1")->get("mpelanggaran");
+							foreach ($mpelanggaran->result() as $rows) {
+								$pelanggaran_point = $rows->mpelanggaran_point;
+							}
+							$inputpelanggaran["mpelanggaran_id"] = -1;
+							$inputpelanggaran["pelanggaran_point"] = $pelanggaran_point;
+							$inputpelanggaran["user_nisn"] = $_GET["nisn"];
+							$inputpelanggaran["sekolah_id"] = 1;
+							$inputpelanggaran["kelas_id"] = $user->kelas_id;
+							$inputpelanggaran["pelanggaran_notes"] = "";
+							$inputpelanggaran["pelanggaran_date"] = date("Y-m-d");
+							$inputpelanggaran["pelanggaran_year"] = date("Y");
+							$this->db->insert("pelanggaran", $inputpelanggaran);
+
+							//update berapa kali terlambat
+							$terlambat = $user->user_terlambat + 1;
+							$inputuser["user_terlambat"] = $terlambat;
+							if ($terlambat >= 5) {
+								$data["terlambat"] = 1;
+								$data["kaliterlambat"] = $terlambat;
+								$inputuser["user_terlambat"] = 0;
+							}
+							$this->db->update("user", $inputuser, array("user_id" => $user->user_id));
+						}
+					}
+				}
+			} else {
+				$data["success"] = 0;
+				$data["message"] = "Data Siswa Tidak Ditemukan!";
+			}
+		} else {
+
+			foreach ($absen->result() as $absen) {
+				$data["success"] = 1;
+				$data["id"] = $absen->user_id;
+				$data["name"] = $absen->user_name;
+				$data["type"] = $_GET["type"];
+				$data["typename"] = $type;
+				$data["datetime"] = date("d, M Y H:i:s");
+				$data["message"] = "Absen berhasil!";
+				$data["url"] = base_url("api/qrcodesiswa?nisn=" . $absen->user_nisn);
+			}
+
+			$data["success"] = 0;
+			$data["message"] = "Duplikat data!";
+		}
+		$this->djson($data);
+	}
+
 	public function qrcodesiswa()
 	{
 		require_once("phpqrcode/qrlib.php");
