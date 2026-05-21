@@ -166,6 +166,7 @@ class Siswa_M extends CI_Model
 				}
 				$data["sukses"] = $sukses;
 				$data["gagal"] = $gagal;
+				$data["message"] = "Sukses: " . $sukses . ", Gagal: " . $gagal;
 			}
 		}
 
