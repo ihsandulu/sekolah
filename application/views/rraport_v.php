@@ -173,7 +173,7 @@
                                         $this->db->where("kelas.sekolah_id", $this->session->userdata("sekolah_id"));
                                     }
                                     if ($this->session->userdata("position_id") != 1 && $this->session->userdata("position_id") != 2) {
-                                        $this->db->where("kelas_guru.user_id", $this->session->userdata("user_id"));
+                                        // $this->db->where("kelas_guru.user_id", $this->session->userdata("user_id"));
                                     }
                                     $gru = $this->db->group_by("kelas_guru.kelas_id")
                                         ->get("kelas_guru");
