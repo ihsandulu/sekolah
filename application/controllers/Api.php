@@ -1695,6 +1695,7 @@ class api extends CI_Controller
 			$data[] = [
 				"success" => 0,
 				"absen_type" => -1,
+				"typename" => "",
 				"absen_date" => date("Y-m-d"),
 				"jam" => date("H:i:s"),
 				"message" => "Tidak ada data!"
