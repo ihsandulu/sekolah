@@ -49,7 +49,7 @@ class api extends CI_Controller
 
 				$user = $query->row(); // cukup ambil 1
 
-				$password = $user->user_password;			
+				$password = $user->user_password;
 
 				if ($passwordInput === $password) {
 
@@ -1637,6 +1637,70 @@ class api extends CI_Controller
 			$data["success"] = 0;
 			$data["message"] = "Duplikat data!";
 		}
+		$this->djson($data);
+	}
+
+	public function riwayatabsensi()
+	{
+
+		$this->db->where("absen_nisn", $_GET["nisn"]);
+
+		if (!empty($_GET["absen_date1"])) {
+			$this->db->where("absen_date >=", $_GET["absen_date1"]);
+		}
+
+		if (!empty($_GET["absen_date2"])) {
+			$this->db->where("absen_date <=", $_GET["absen_date2"]);
+		}
+
+		if ($_GET["type"] != "") {
+			$this->db->where("absen_type", $_GET["type"]);
+		}
+
+		$absen = $this->db
+			->order_by("absen_datetime", "DESC")
+			->get("absen");
+
+		$data = [];
+
+		if ($absen->num_rows() > 0) {
+
+			foreach ($absen->result() as $row) {
+
+				if ($row->absen_type == 0) {
+					$typename = "Alpha";
+				} elseif ($row->absen_type == 1) {
+					$typename = "Masuk";
+				} elseif ($row->absen_type == 2) {
+					$typename = "Pulang";
+				} elseif ($row->absen_type == 3) {
+					$typename = "Sakit";
+				} elseif ($row->absen_type == 4) {
+					$typename = "Izin";
+				} else {
+					$typename = "Lainnya";
+				}
+
+				$data[] = [
+					"success" => 1,
+					"absen_type" => $row->absen_type,
+					"typename" => $typename,
+					"absen_date" => $row->absen_date,
+					"jam" => date("H:i:s", strtotime($row->absen_datetime)),
+					"message" => ""
+				];
+			}
+		} else {
+
+			$data[] = [
+				"success" => 0,
+				"absen_type" => -1,
+				"absen_date" => date("Y-m-d"),
+				"jam" => date("H:i:s"),
+				"message" => "Tidak ada data!"
+			];
+		}
+
 		$this->djson($data);
 	}
 
