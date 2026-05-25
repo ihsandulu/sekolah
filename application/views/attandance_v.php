@@ -248,8 +248,8 @@
                                         <div id="collapse4" class="body table-responsive">
                                             <table id="dataTable" class="table table-condensed table-hover">
                                                 <thead>
-                                                    <tr>
-                                                        <th class="col-md-2">Action</th>
+                                                    <tr><?php if (!isset($_GET['report'])) { ?>
+                                                            <th class="col-md-2">Action</th><?php } ?>
                                                         <th>Datetime</th>
                                                         <th>Attandance</th>
                                                         <th>Remarks</th>
@@ -297,17 +297,17 @@
                                                     foreach ($usr->result() as $absen) {
                                                         $type = array("Alpha", "In", "Out", "Sick", "Permission")
                                                     ?>
-                                                        <tr>
-                                                            <td style="padding-left:0px; padding-right:0px;">
-                                                                <form method="post" class="col-md-3" style="padding:0px;">
-                                                                    <button class="btn btn-warning " name="edit" value="OK"><span class="fa fa-edit" style="color:white;"></span> </button>
-                                                                    <input type="hidden" name="absen_id" value="<?= $absen->absen_id; ?>" />
-                                                                </form>
-                                                                <form method="post" class="col-md-3" style="padding:0px;">
-                                                                    <button class="btn btn-danger delete" name="delete" value="OK"><span class="fa fa-close" style="color:white;"></span> </button>
-                                                                    <input type="hidden" name="absen_id" value="<?= $absen->absen_id; ?>" />
-                                                                </form>
-                                                            </td>
+                                                        <tr><?php if (!isset($_GET['report'])) { ?>
+                                                                <td style="padding-left:0px; padding-right:0px;">
+                                                                    <form method="post" class="col-md-3" style="padding:0px;">
+                                                                        <button class="btn btn-warning " name="edit" value="OK"><span class="fa fa-edit" style="color:white;"></span> </button>
+                                                                        <input type="hidden" name="absen_id" value="<?= $absen->absen_id; ?>" />
+                                                                    </form>
+                                                                    <form method="post" class="col-md-3" style="padding:0px;">
+                                                                        <button class="btn btn-danger delete" name="delete" value="OK"><span class="fa fa-close" style="color:white;"></span> </button>
+                                                                        <input type="hidden" name="absen_id" value="<?= $absen->absen_id; ?>" />
+                                                                    </form>
+                                                                </td><?php } ?>
                                                             <td><?= $absen->absen_datetime; ?></td>
                                                             <td><?= $type[$absen->absen_type]; ?></td>
                                                             <td><?= $absen->absen_remarks; ?></td>

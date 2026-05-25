@@ -494,7 +494,7 @@
                             <i class="menu-icon fa fa-caret-right"></i>
                             Attendance
                         </a> -->
-                            <a href="<?= site_url("rabsen"); ?>">
+                            <a href="<?= site_url("attandance?report=ok"); ?>">
                                 <i class="menu-icon fa fa-caret-right"></i>
                                 Attendance
                             </a>
