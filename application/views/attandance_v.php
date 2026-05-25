@@ -240,7 +240,7 @@
 
                                                     </select>
                                                 </div>
-                                                <input type="hidden1" name="report" value="<?= isset($_GET['report']) ? $_GET['report'] : ''; ?>" />
+                                                <input type="hidden" name="report" value="<?= isset($_GET['report']) ? $_GET['report'] : ''; ?>" />
                                                 <button type="submit" class="btn btn-default">Submit</button>
                                             </form>
                                         </div>
