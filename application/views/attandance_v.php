@@ -250,7 +250,7 @@
                                             <table id="dataTable" class="table table-condensed table-hover">
                                                 <thead>
                                                     <tr>
-                                                        <?php if (!isset($_GET['report']) && $_GET['report'] != 'ok') { ?>
+                                                        <?php if (!isset($_GET['report']) || (isset($_GET['report']) && $_GET['report'] != 'ok')) { ?>
                                                             <th class="col-md-2">Action</th>
                                                         <?php } ?>
                                                         <th>Datetime</th>
@@ -301,7 +301,7 @@
                                                         $type = array("Alpha", "In", "Out", "Sick", "Permission")
                                                     ?>
                                                         <tr>
-                                                            <?php if (!isset($_GET['report']) && $_GET['report'] != 'ok') { ?>
+                                                            <?php if (!isset($_GET['report']) || (isset($_GET['report']) && $_GET['report'] != 'ok')) { ?>
                                                                 <td style="padding-left:0px; padding-right:0px;">
                                                                     <form method="post" class="col-md-3" style="padding:0px;">
                                                                         <button class="btn btn-warning " name="edit" value="OK"><span class="fa fa-edit" style="color:white;"></span> </button>
