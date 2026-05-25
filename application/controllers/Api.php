@@ -1696,8 +1696,8 @@ class api extends CI_Controller
 				"success" => 0,
 				"absen_type" => -1,
 				"typename" => "",
-				"absen_date" => date("Y-m-d"),
-				"jam" => date("H:i:s"),
+				"absen_date" => "",
+				"jam" => "",
 				"message" => "Tidak ada data!"
 			];
 		}
