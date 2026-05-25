@@ -417,7 +417,7 @@
                                                                     $this->db->where("kelas.sekolah_id", $this->session->userdata("sekolah_id"));
                                                                 }
                                                                 if ($this->session->userdata("position_id") != 1 && $this->session->userdata("position_id") != 2) {
-                                                                    $this->db->where("kelas_guru.user_id", $this->session->userdata("user_id"));
+                                                                    // $this->db->where("kelas_guru.user_id", $this->session->userdata("user_id"));
                                                                 }
                                                                 $gru = $this->db->group_by("kelas_guru.kelas_id")
                                                                     ->get("kelas_guru");
@@ -715,14 +715,14 @@
 
                                                                 <?php } ?>
                                                                 <?php if (
-                                                                        isset($ars[101][$row->matpel_id]) 
-                                                                    ) {
-                                                                        $bgg = "bg-" . $ars[101][$row->matpel_id];
-                                                                        $arssg = $ars[101][$row->matpel_id] ?? '';
-                                                                    } else {
-                                                                        $bgg = "";
-                                                                        $arssg = "";
-                                                                    }
+                                                                    isset($ars[101][$row->matpel_id])
+                                                                ) {
+                                                                    $bgg = "bg-" . $ars[101][$row->matpel_id];
+                                                                    $arssg = $ars[101][$row->matpel_id] ?? '';
+                                                                } else {
+                                                                    $bgg = "";
+                                                                    $arssg = "";
+                                                                }
                                                                 ?>
                                                                 <td class="<?= $bgg; ?>">
                                                                     <?php echo $arssg; ?>
@@ -831,16 +831,28 @@
                                                         ->where("nilai_year", date("Y"))
                                                         ->where("user.user_tahunajaran !=", "0");
                                                     if ($this->session->userdata("position_id") == 3) {
-                                                        $usr->group_start();
-                                                        foreach ($kelas_guru->result() as $kelas_guru) {
-                                                            $usr->or_where("nilai.kelas_id", $kelas_guru->kelas_id);
+
+                                                        if ($kelas_guru->num_rows() > 0) {
+
+                                                            $usr->group_start();
+
+                                                            foreach ($kelas_guru->result() as $kg) {
+                                                                $usr->or_where("nilai.kelas_id", $kg->kelas_id);
+                                                            }
+
+                                                            $usr->group_end();
                                                         }
-                                                        $usr->group_end();
-                                                        $usr->group_start();
-                                                        foreach ($matpelguru->result() as $matpelguru) {
-                                                            $usr->or_where("nilai.matpel_id", $matpelguru->matpel_id);
+
+                                                        if ($matpelguru->num_rows() > 0) {
+
+                                                            $usr->group_start();
+
+                                                            foreach ($matpelguru->result() as $mg) {
+                                                                $usr->or_where("nilai.matpel_id", $mg->matpel_id);
+                                                            }
+
+                                                            $usr->group_end();
                                                         }
-                                                        $usr->group_end();
                                                     }
                                                     $usrr = $usr
                                                         ->order_by("matpel_name", "ASC")
