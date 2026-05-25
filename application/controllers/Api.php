@@ -65,7 +65,7 @@ class api extends CI_Controller
 						'telpon' => $user->telpon_number,
 						'position_id' => $user->position_id,
 						'position_name' => $user->position_name,
-						'tahun_ajaran' => $user->user_tahunajaran,
+						'tahunajaran' => $user->user_tahunajaran,
 						'message' => 'Login Berhasil!',
 						'password' => $passwordInput // ⚠️ jangan dipakai di production
 					];
