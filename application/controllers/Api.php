@@ -1653,7 +1653,7 @@ class api extends CI_Controller
 			$this->db->where("absen_date <=", $_GET["absen_date2"]);
 		}
 
-		if ($_GET["type"] != "") {
+		if ($_GET["type"] > -1) {
 			$this->db->where("absen_type", $_GET["type"]);
 		}
 
