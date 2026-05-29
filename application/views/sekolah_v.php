@@ -227,9 +227,21 @@
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label class="control-label col-sm-2" for="sekolah_kkm">KKM:</label>
+                                                <label class="control-label col-sm-2" for="sekolah_kkm">KKM Jenjang 1:</label>
                                                 <div class="col-sm-10">
-                                                    <input type="text" class="form-control" id="sekolah_kkm" name="sekolah_kkm" placeholder="Enter KKM" value="<?= $sekolah_kkm; ?>">
+                                                    <input type="text" class="form-control" id="sekolah_kkm" name="sekolah_kkm" placeholder="Enter KKM Jenjang 1" value="<?= $sekolah_kkm; ?>">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-2" for="sekolah_kkm2">KKM Jenjang 2:</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="sekolah_kkm2" name="sekolah_kkm2" placeholder="Enter KKM Jenjang 2" value="<?= $sekolah_kkm2; ?>">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-2" for="sekolah_kkm3">KKM Jenjang 3:</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="sekolah_kkm3" name="sekolah_kkm3" placeholder="Enter KKM Jenjang 3" value="<?= $sekolah_kkm3; ?>">
                                                 </div>
                                             </div>
                                             <div class="form-group">
