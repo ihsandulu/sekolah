@@ -225,6 +225,23 @@
                                                 <div class="col-sm-10">
                                                     <input type="date" class="form-control" id="sekolah_tglajar" name="sekolah_tglajar" placeholder="Enter Date" value="<?= $sekolah_tglajar; ?>">
                                                 </div>
+                                            </div><div class="form-group">
+                                                <label class="control-label col-sm-2" for="sekolah_jenjang">Jenjang 1:</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="sekolah_jenjang" name="sekolah_jenjang" placeholder="Enter Jenjang 1" value="<?= $sekolah_jenjang; ?>">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-2" for="sekolah_jenjang2">Jenjang 2:</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="sekolah_jenjang2" name="sekolah_jenjang2" placeholder="Enter Jenjang 2" value="<?= $sekolah_jenjang2; ?>">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-2" for="sekolah_jenjang3">Jenjang 3:</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="sekolah_jenjang3" name="sekolah_jenjang3" placeholder="Enter Jenjang 3" value="<?= $sekolah_jenjang3; ?>">
+                                                </div>
                                             </div>
                                             <div class="form-group">
                                                 <label class="control-label col-sm-2" for="sekolah_kkm">KKM Jenjang 1:</label>
