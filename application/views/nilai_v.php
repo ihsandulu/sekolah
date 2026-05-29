@@ -85,12 +85,23 @@
                                                     <select onchange="kelasname()" class="form-control select2" id="kelas_id" name="kelas_id">
                                                         <option value="" <?= ($kelas_id == "") ? "selected" : ""; ?>>Choose Class</option>
                                                         <?php
-                                                        $kelas = $this->db->from("kelas_guru")
-                                                            ->join("kelas", "kelas.kelas_id=kelas_guru.kelas_id", "left")
-                                                            ->where("kelas_guru.sekolah_id", $this->session->userdata("sekolah_id"))
-                                                            ->where("kelas_guru.user_id", $this->session->userdata("user_id"))
-                                                            ->order_by("kelas_name", "ASC")
-                                                            ->get();
+                                                        if ($this->session->userdata("position_id") == 3) {
+
+                                                            $kelas = $this->db->from("kelas_guru")
+                                                                ->join("kelas", "kelas.kelas_id=kelas_guru.kelas_id", "left")
+                                                                ->where("kelas_guru.sekolah_id", $this->session->userdata("sekolah_id"))
+                                                                ->where("kelas_guru.user_id", $this->session->userdata("user_id"))
+                                                                ->order_by("SUBSTRING_INDEX(kelas_name, '.', 1)", "ASC", FALSE)
+                                                                ->order_by("CAST(SUBSTRING_INDEX(kelas_name, '.', -1) AS UNSIGNED)", "ASC", FALSE)
+                                                                ->get();
+                                                        } else {
+
+                                                            $kelas = $this->db->from("kelas")
+                                                                ->where("kelas.sekolah_id", $this->session->userdata("sekolah_id"))
+                                                                ->order_by("SUBSTRING_INDEX(kelas_name, '.', 1)", "ASC", FALSE)
+                                                                ->order_by("CAST(SUBSTRING_INDEX(kelas_name, '.', -1) AS UNSIGNED)", "ASC", FALSE)
+                                                                ->get();
+                                                        }
                                                         foreach ($kelas->result() as $row) { ?>
                                                             <option kelas_name="<?= $row->kelas_name; ?>" value="<?= $row->kelas_id; ?>" <?= ($kelas_id == $row->kelas_id) ? "selected" : ""; ?>><?= $row->kelas_name; ?></option>
                                                         <?php } ?>
@@ -98,8 +109,19 @@
                                                     <input type="hidden" id="kelas_name" name="kelas_name" />
                                                     <script>
                                                         function kelasname() {
-                                                            let kelas_name = $("#kelas_id option:selected").attr("kelas_name");
+                                                            let selected = $("#kelas_id option:selected");
+                                                            let kelas_name = selected.attr("kelas_name");
+                                                            let jenjang = kelas_name.split(".")[0];
                                                             $("#kelas_name").val(kelas_name);
+                                                            let min = <?= $this->session->userdata("sekolah_kkm"); ?>;
+                                                            if (jenjang == "<?= $this->session->userdata("sekolah_jenjang"); ?>") {
+                                                                min = <?= $this->session->userdata("sekolah_kkm"); ?>;
+                                                            } else if (jenjang == "<?= $this->session->userdata("sekolah_jenjang2"); ?>") {
+                                                                min = <?= $this->session->userdata("sekolah_kkm2"); ?>;
+                                                            } else if (jenjang == "<?= $this->session->userdata("sekolah_jenjang3"); ?>") {
+                                                                min = <?= $this->session->userdata("sekolah_kkm3"); ?>;
+                                                            }
+                                                            $("#nilai_score").attr("min", min);
                                                         }
                                                     </script>
                                                 </div>
@@ -162,7 +184,7 @@
                                             <div class="form-group">
                                                 <label class="control-label col-sm-2" for="nilai_score">Score:</label>
                                                 <div class="col-sm-10">
-                                                    <input type="number" min="<?= $this->session->userdata("sekolah_kkm"); ?>" class="form-control" id="nilai_score" name="nilai_score" value="<?= $nilai_score; ?>">
+                                                    <input required type="number" min="<?= $this->session->userdata("sekolah_kkm"); ?>" class="form-control" id="nilai_score" name="nilai_score" value="<?= $nilai_score; ?>">
                                                 </div>
                                             </div>
 
