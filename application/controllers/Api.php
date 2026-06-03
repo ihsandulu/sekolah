@@ -1732,7 +1732,7 @@ class api extends CI_Controller
 			->order_by("nilai_year", "DESC")
 			->order_by("sumatif_id", "ASC")
 			->get("nilai");
-
+echo $this->db->last_query();die;
 		$data = [];
 
 		if ($nilai->num_rows() > 0) {
