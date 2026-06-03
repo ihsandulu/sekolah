@@ -1722,7 +1722,7 @@ class api extends CI_Controller
 		}
 
 		if (!empty($_GET["sumatif_id"])) {
-			$this->db->where("sumatif_id", $_GET["sumatif_id"]);
+			$this->db->where("nilai.sumatif_id", $_GET["sumatif_id"]);
 		}
 
 
@@ -1730,9 +1730,9 @@ class api extends CI_Controller
 			->join("matpel", "matpel.matpel_id=nilai.matpel_id", "left")
 			->join("sumatif", "sumatif.sumatif_id=nilai.sumatif_id", "left")
 			->order_by("nilai_year", "DESC")
-			->order_by("sumatif_id", "ASC")
+			->order_by("nilai.sumatif_id", "ASC")
 			->get("nilai");
-echo $this->db->last_query();die;
+// echo $this->db->last_query();die;
 		$data = [];
 
 		if ($nilai->num_rows() > 0) {
