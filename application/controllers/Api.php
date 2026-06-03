@@ -1711,6 +1711,7 @@ class api extends CI_Controller
 	{
 
 		$this->db->where("user_id", $_GET["user_id"]);
+		$this->db->where("kelas_id", $_GET["kelas_id"]);
 
 		if (!empty($_GET["nilai_year"])) {
 			$this->db->where("nilai_year", $_GET["nilai_year"]);
