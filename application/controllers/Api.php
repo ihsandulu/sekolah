@@ -1728,6 +1728,7 @@ class api extends CI_Controller
 
 		$nilai = $this->db
 			->join("matpel", "matpel.matpel_id=nilai.matpel_id", "left")
+			->join("sumatif", "sumatif.sumatif_id=nilai.sumatif_id", "left")
 			->order_by("nilai_year", "DESC")
 			->order_by("sumatif_id", "ASC")
 			->get("nilai");
