@@ -1709,6 +1709,7 @@ class api extends CI_Controller
 
 	public function riwayatNilai()
 	{
+
 		$this->db->where("user_id", $_GET["user_id"]);
 		$this->db->where("kelas_id", $_GET["kelas_id"]);
 
@@ -1720,9 +1721,10 @@ class api extends CI_Controller
 			$this->db->where("nilai_semester", $_GET["nilai_semester"]);
 		}
 
-		if (!empty($_GET["nilai_sumatif"])) {
-			$this->db->where("sumatif_id", $_GET["nilai_sumatif"]);
+		if (!empty($_GET["sumatif_id"])) {
+			$this->db->where("sumatif_id", $_GET["sumatif_id"]);
 		}
+
 
 		$nilai = $this->db
 			->join("matpel", "matpel.matpel_id=nilai.matpel_id", "left")
@@ -1733,13 +1735,30 @@ class api extends CI_Controller
 
 		$data = [];
 
-		foreach ($nilai->result() as $row) {
+		if ($nilai->num_rows() > 0) {
+
+			foreach ($nilai->result() as $row) {
+
+				$data[] = [
+					"success" => 1,
+					"nilai_year" => $row->nilai_year,
+					"nilai_semester" => $row->nilai_semester,
+					"sumatif_name" => $row->sumatif_name,
+					"matpel_name" => $row->matpel_name,
+					"nilai_score" => $row->nilai_score,
+					"message" => ""
+				];
+			}
+		} else {
+
 			$data[] = [
-				"nilai_year" => $row->nilai_year,
-				"nilai_semester" => $row->nilai_semester,
-				"nilai_sumatif" => $row->sumatif_name,
-				"matpel_name" => $row->matpel_name,
-				"nilai_score" => $row->nilai_score
+				"success" => 0,
+				"nilai_year" => "",
+				"nilai_semester" => "",
+				"sumatif_name" => "",
+				"matpel_name" => "",
+				"nilai_score" => "",
+				"message" => "Tidak ada data!"
 			];
 		}
 
