@@ -1727,6 +1727,7 @@ class api extends CI_Controller
 
 
 		$nilai = $this->db
+			->join("matpel", "matpel.matpel_id=nilai.matpel_id", "left")
 			->order_by("nilai_year", "DESC")
 			->order_by("sumatif_id", "ASC")
 			->get("nilai");
@@ -1742,7 +1743,7 @@ class api extends CI_Controller
 					"nilai_year" => $row->nilai_year,
 					"nilai_semester" => $row->nilai_semester,
 					"sumatif_name" => $row->sumatif_name,
-					"mapel_name" => $row->mapel_name,
+					"matpel_name" => $row->matpel_name,
 					"nilai_score" => $row->nilai_score,
 					"message" => ""
 				];
