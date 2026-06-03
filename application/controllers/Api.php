@@ -61,6 +61,7 @@ class api extends CI_Controller
 						'username' => $user->user_name,
 						'nisn' => $user->user_nisn,
 						'nama' => $user->user_name,
+						'kelasid' => $user->kelas_id,
 						'kelas' => $user->kelas_name,
 						'telpon' => $user->telpon_number,
 						'position_id' => $user->position_id,
@@ -1699,6 +1700,61 @@ class api extends CI_Controller
 				"typename" => "",
 				"absen_date" => "",
 				"jam" => "",
+				"message" => "Tidak ada data!"
+			];
+		}
+
+		$this->djson($data);
+	}
+
+	public function riwayatNilai()
+	{
+
+		$this->db->where("user_id", $_GET["user_id"]);
+
+		if (!empty($_GET["nilai_year"])) {
+			$this->db->where("nilai_year", $_GET["nilai_year"]);
+		}
+
+		if (!empty($_GET["nilai_semester"])) {
+			$this->db->where("nilai_semester", $_GET["nilai_semester"]);
+		}
+
+		if (!empty($_GET["sumatif_id"])) {
+			$this->db->where("sumatif_id", $_GET["sumatif_id"]);
+		}
+
+
+		$nilai = $this->db
+			->order_by("nilai_year", "DESC")
+			->order_by("sumatif_id", "ASC")
+			->get("nilai");
+
+		$data = [];
+
+		if ($nilai->num_rows() > 0) {
+
+			foreach ($nilai->result() as $row) {
+
+				$data[] = [
+					"success" => 1,
+					"nilai_year" => $row->nilai_year,
+					"nilai_semester" => $row->nilai_semester,
+					"sumatif_name" => $row->sumatif_name,
+					"mapel_name" => $row->mapel_name,
+					"nilai_score" => $row->nilai_score,
+					"message" => ""
+				];
+			}
+		} else {
+
+			$data[] = [
+				"success" => 0,
+				"nilai_year" => "",
+				"nilai_semester" => "",
+				"sumatif_name" => "",
+				"mapel_name" => "",
+				"nilai_score" => "",
 				"message" => "Tidak ada data!"
 			];
 		}
