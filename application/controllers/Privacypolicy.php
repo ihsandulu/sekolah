@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class absen extends CI_Controller
+class Privacypolicy extends CI_Controller
 {
 
 
