@@ -295,13 +295,28 @@ class Nilai_M extends CI_Model
                 ->where("matpel_id", $input["matpel_id"])
                 ->where("nilai_semester", $input["nilai_semester"])
                 ->get("nilai");
-                //  echo $this->db->last_query();die;
-                $nilai_id=0;
-            if ($double->num_rows() == 0) {                
+            //  echo $this->db->last_query();die;
+            $nilai_id = 0;
+            if ($double->num_rows() == 0) {
                 $input["nilai_year"] = date("Y");
                 $this->db->insert("nilai", $input);
                 // echo $this->db->last_query();die;
-                $email = $this->session->userdata("sekolah_emailwa");
+                $siswa = $this->db->from("user")->where("user_id", $input["user_id"])->get();
+                foreach ($siswa->result() as $siswa) {
+                    $nisn = $siswa->user_nisn;
+                    $tipe = "walimurid";
+                    $pesan = "Nilai Ananda " . $siswa->user_name . " Mapel " . $this->input->post("matpel_name") . ", " . $this->input->post("sumatif_name") . ", Semester  " . $this->input->post("nilai_semester") . ", Tahun " . date("Y") . " adalah " . $input["nilai_score"];
+                    $message = $nisn . '|' . $tipe . '|' . $pesan;
+                    $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?message=" . urlencode($message);
+                    $response = @file_get_contents($url);
+
+                    if ($response === false) {
+                        error_log("Gagal kirim notif");
+                        return false;
+                    }
+                }
+
+                /* $email = $this->session->userdata("sekolah_emailwa");
                 $password = $this->session->userdata("sekolah_passwordwa");
                 $server = $this->session->userdata("sekolah_serverwa");
                 $uri = "https://qithy.my.id/4p1.php?action=token&email=" . $email . "&password=" . $password . "";
@@ -343,15 +358,31 @@ class Nilai_M extends CI_Model
                     }
 
                     $data["message"] = "Insert Data Success. " . $wapesan;
-                }
+                } */
             } else {
+                $inputu=array();
                 foreach ($this->input->post() as $e => $f) {
                     if ($e != 'change' && $e != 'nilai_picture' && $e != 'kelas_name' && $e != 'matpel_name' && $e != 'user_name' && $e != 'sumatif_name' && $e != 'nilai_id' && $e != 'create') {
                         $inputu[$e] = $this->input->post($e);
                     }
                 }
-                $nilai_id=$double->row()->nilai_id;
+                $nilai_id = $double->row()->nilai_id;
                 $this->db->update("nilai", $inputu, array("nilai_id" => $nilai_id));
+
+                $siswa = $this->db->from("user")->where("user_id", $inputu["user_id"])->get();
+                foreach ($siswa->result() as $siswa) {
+                    $nisn = $siswa->user_nisn;
+                    $tipe = "walimurid";
+                    $pesan = "Nilai Ananda " . $siswa->user_name . " Mapel " . $this->input->post("matpel_name") . ", " . $this->input->post("sumatif_name") . ", Semester  " . $this->input->post("nilai_semester") . ", Tahun " . date("Y") . " adalah " . $inputu["nilai_score"];
+                    $message = $nisn . '|' . $tipe . '|' . $pesan;
+                    $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?message=" . urlencode($message);
+                    $response = @file_get_contents($url);
+
+                    if ($response === false) {
+                        error_log("Gagal kirim notif");
+                        return false;
+                    }
+                }
                 // echo $this->db->last_query();die;
                 $data["message"] = "Update Success";
             }
@@ -365,6 +396,22 @@ class Nilai_M extends CI_Model
                 }
             }
             $this->db->update("nilai", $input, array("nilai_id" => $this->input->post("nilai_id")));
+
+            $siswa = $this->db->from("user")->where("user_id", $input["user_id"])->get();
+                foreach ($siswa->result() as $siswa) {
+                    $nisn = $siswa->user_nisn;
+                    $tipe = "walimurid";
+                    $pesan = "Nilai Ananda " . $siswa->user_name . " Mapel " . $this->input->post("matpel_name") . ", " . $this->input->post("sumatif_name") . ", Semester  " . $this->input->post("nilai_semester") . ", Tahun " . date("Y") . " adalah " . $input["nilai_score"];
+                    $message = $nisn . '|' . $tipe . '|' . $pesan;
+                    $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?message=" . urlencode($message);
+                    $response = @file_get_contents($url);
+
+                    if ($response === false) {
+                        error_log("Gagal kirim notif");
+                        return false;
+                    }
+                }
+
             $data["message"] = "Update Success";
             // echo $this->db->last_query();die;
         }

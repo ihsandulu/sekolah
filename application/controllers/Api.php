@@ -1517,6 +1517,13 @@ class api extends CI_Controller
 		$this->djson($data);
 	}
 
+	public function simpan_token()
+	{
+		$inputuser["user_token"] = $this->input->get("token");
+		$where["user_nisn"] = $this->input->get("nisn");
+		$this->db->update("user", $inputuser, $where);
+	}
+
 	public function absensiswaapi()
 	{
 
@@ -1732,7 +1739,7 @@ class api extends CI_Controller
 			->order_by("nilai_year", "DESC")
 			->order_by("nilai.sumatif_id", "ASC")
 			->get("nilai");
-// echo $this->db->last_query();die;
+		// echo $this->db->last_query();die;
 		$data = [];
 
 		if ($nilai->num_rows() > 0) {

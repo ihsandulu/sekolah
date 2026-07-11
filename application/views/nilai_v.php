@@ -122,7 +122,10 @@
                                                                 min = <?= $this->session->userdata("sekolah_kkm3"); ?>;
                                                             }
                                                             $("#nilai_score").attr("min", min);
-                                                        }
+                                                        }   
+                                                        $(document).ready(function() {
+                                                            kelasname();
+                                                        });                                                   
                                                     </script>
                                                 </div>
                                             </div>
@@ -137,7 +140,7 @@
                                                         function username() {
                                                             let user_name = $("#user_id option:selected").text();
                                                             $("#user_name").val(user_name);
-                                                        }
+                                                        }                                                        
                                                     </script>
                                                 </div>
                                             </div>
@@ -177,7 +180,7 @@
                                                         function sumatifname() {
                                                             let sumatif_name = $("#sumatif_id option:selected").text();
                                                             $("#sumatif_name").val(sumatif_name);
-                                                        }
+                                                        }                                                        
                                                     </script>
                                                 </div>
                                             </div>
@@ -204,6 +207,7 @@
                                                         })
                                                         .done(function(data) {
                                                             $('#user_id').html(data);
+                                                            username();
                                                         });
 
                                                     //matapelajaran
@@ -214,6 +218,7 @@
                                                         })
                                                         .done(function(data) {
                                                             $('#matpel_id').html(data);
+                                                            matpelname();
                                                         });
 
                                                     //sumatif
@@ -224,6 +229,7 @@
                                                         })
                                                         .done(function(data) {
                                                             $('#sumatif_id').html(data);
+                                                            sumatifname();
                                                         });
                                                 }
                                                 $("#kelas_id").change(carinilai);
