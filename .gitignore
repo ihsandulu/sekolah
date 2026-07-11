@@ -1,6 +1,8 @@
 *.zip
-application/config/database.php
-application/config/config.php
-.htaccess
-vendor/
-composer.lock
+/application/config/database.php
+/application/config/config.php
+/.htaccess
+/vendor/
+/assets/images/sekolah_picture/
+/assets/images/sekolah_picture2/
+/assets/images/user_picture/
