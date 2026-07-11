@@ -304,9 +304,10 @@ class Nilai_M extends CI_Model
                 $siswa = $this->db->from("user")->where("user_id", $input["user_id"])->get();
                 foreach ($siswa->result() as $siswa) {
                     $nisn = $siswa->user_nisn;
+                    $token = $siswa->user_token;
                     $tipe = "walimurid";
                     $pesan = "Nilai Ananda " . $siswa->user_name . " Mapel " . $this->input->post("matpel_name") . ", " . $this->input->post("sumatif_name") . ", Semester  " . $this->input->post("nilai_semester") . ", Tahun " . date("Y") . " adalah " . $input["nilai_score"];
-                    $message = $nisn . '|' . $tipe . '|' . $pesan;
+                    $message = $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
                     $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?message=" . urlencode($message);
                     $response = @file_get_contents($url);
 
@@ -372,9 +373,10 @@ class Nilai_M extends CI_Model
                 $siswa = $this->db->from("user")->where("user_id", $inputu["user_id"])->get();
                 foreach ($siswa->result() as $siswa) {
                     $nisn = $siswa->user_nisn;
+                    $token = $siswa->user_token;
                     $tipe = "walimurid";
                     $pesan = "Nilai Ananda " . $siswa->user_name . " Mapel " . $this->input->post("matpel_name") . ", " . $this->input->post("sumatif_name") . ", Semester  " . $this->input->post("nilai_semester") . ", Tahun " . date("Y") . " adalah " . $inputu["nilai_score"];
-                    $message = $nisn . '|' . $tipe . '|' . $pesan;
+                    $message = $nisn . '|' . $tipe . '|' . $pesan. '|' . $token;
                     $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?message=" . urlencode($message);
                     $response = @file_get_contents($url);
 
@@ -400,9 +402,10 @@ class Nilai_M extends CI_Model
             $siswa = $this->db->from("user")->where("user_id", $input["user_id"])->get();
                 foreach ($siswa->result() as $siswa) {
                     $nisn = $siswa->user_nisn;
+                    $token = $siswa->user_token;
                     $tipe = "walimurid";
                     $pesan = "Nilai Ananda " . $siswa->user_name . " Mapel " . $this->input->post("matpel_name") . ", " . $this->input->post("sumatif_name") . ", Semester  " . $this->input->post("nilai_semester") . ", Tahun " . date("Y") . " adalah " . $input["nilai_score"];
-                    $message = $nisn . '|' . $tipe . '|' . $pesan;
+                    $message = $nisn . '|' . $tipe . '|' . $pesan. '|' . $token;
                     $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?message=" . urlencode($message);
                     $response = @file_get_contents($url);
 
