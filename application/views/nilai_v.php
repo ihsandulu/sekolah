@@ -235,7 +235,7 @@
                                             <div class="form-group">
                                                 <div class="col-sm-offset-2 col-sm-10">
                                                     <button type="submit" id="submit" class="btn btn-primary col-md-5" <?= $namabutton; ?> value="OK">Submit</button>
-                                                    <button class="btn btn-warning col-md-offset-1 col-md-5" onClick="location.href=<?= site_url("user"); ?>">Back</button>
+                                                    <a class="btn btn-warning col-md-offset-1 col-md-5" href="<?= site_url("nilai"); ?>">Back</a>
                                                 </div>
                                             </div>
                                         </form>
