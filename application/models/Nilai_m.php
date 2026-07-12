@@ -415,8 +415,8 @@ class Nilai_M extends CI_Model
                     }
                 }
 
-            // $data["message"] = "Update Success";
-            $data["message"] = $token;
+            $data["message"] = "Update Success";
+            // $data["message"] = $token;
             // echo $this->db->last_query();die;
         }
         return $data;
