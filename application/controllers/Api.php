@@ -1541,10 +1541,7 @@ class api extends CI_Controller
 					$token = $user->user_token;
 					$tipe = "walimurid";
 					$pesan = "Nilai Ananda " . $user->user_name . " Mapel " . $this->input->post("matpel_name") . ", " . $this->input->post("sumatif_name") . ", Semester  " . $this->input->post("nilai_semester") . ", Tahun " . date("Y") . " adalah " . $input["nilai_score"];
-					$message = $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
-					$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?message=" . urlencode($message);
-					$response = @file_get_contents($url);
-
+					
 					$inputpesan["user_nisn"] = $user->user_nisn;
 					$inputpesan["user_nik"] = $user->user_nik;
 					$inputpesan["pesan_code"] = 2;
@@ -1552,6 +1549,11 @@ class api extends CI_Controller
 					$inputpesan["pesan_isi"] = $pesan;
 					$inputpesan["user_token"] = $user->user_token;
 					$this->db->insert("pesan", $inputpesan);
+					$pesan_id = $this->db->insert_id();
+
+					$message = $nisn . '|' . $tipe . '|' . $pesan . '|' . $token . '|' . $pesan_id;
+					$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?message=" . urlencode($message);
+					$response = @file_get_contents($url);
 
 					if ($response === false) {
 						error_log("Gagal kirim notif");
@@ -1559,6 +1561,16 @@ class api extends CI_Controller
 					}
 				}
 			}
+		}
+	}
+
+	public function hapus_pesan(){		
+		$where["pesan_id"] = $this->input->get("pesan_id");
+		$this->db->delete("pesan", $where);
+		if ($this->db->affected_rows() > 0) {
+			echo "Hapus Pesan Berhasil";
+		} else {
+			echo "Hapus Pesan Gagal";
 		}
 	}
 

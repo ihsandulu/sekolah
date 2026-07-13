@@ -308,10 +308,7 @@ class Nilai_M extends CI_Model
                     $token = $siswa->user_token;
                     $tipe = "walimurid";
                     $pesan = "Nilai Ananda " . $siswa->user_name . " Mapel " . $this->input->post("matpel_name") . ", " . $this->input->post("sumatif_name") . ", Semester  " . $this->input->post("nilai_semester") . ", Tahun " . date("Y") . " adalah " . $input["nilai_score"];
-                    $message = $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
-                    $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?message=" . urlencode($message);
-                    $response = @file_get_contents($url);
-                    
+
                     $inputpesan["user_nisn"] = $siswa->user_nisn;
                     $inputpesan["user_nik"] = $siswa->user_nik;
                     $inputpesan["pesan_code"] = 2;
@@ -319,6 +316,11 @@ class Nilai_M extends CI_Model
                     $inputpesan["pesan_isi"] = $pesan;
                     $inputpesan["user_token"] = $siswa->user_token;
                     $this->db->insert("pesan", $inputpesan);
+                    $pesan_id = $this->db->insert_id();
+
+                    $message = $nisn . '|' . $tipe . '|' . $pesan . '|' . $token . '|' . $pesan_id;
+                    $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?message=" . urlencode($message);
+                    $response = @file_get_contents($url);
 
                     if ($response === false) {
                         error_log("Gagal kirim notif");
@@ -384,8 +386,18 @@ class Nilai_M extends CI_Model
                     $nisn = $siswa->user_nisn;
                     $token = $siswa->user_token;
                     $tipe = "walimurid";
-                    $pesan = "Nilai Ananda " . $siswa->user_name . " Mapel " . $this->input->post("matpel_name") . ", " . $this->input->post("sumatif_name") . ", Semester  " . $this->input->post("nilai_semester") . ", Tahun " . date("Y") . " adalah " . $inputu["nilai_score"];
-                    $message = $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
+                    $pesan = "Nilai Ananda " . $siswa->user_name . " Mapel " . $this->input->post("matpel_name") . ", " . $this->input->post("sumatif_name") . ", Semester  " . $this->input->post("nilai_semester") . ", Tahun " . date("Y") . " adalah " . $input["nilai_score"];
+
+                    $inputpesan["user_nisn"] = $siswa->user_nisn;
+                    $inputpesan["user_nik"] = $siswa->user_nik;
+                    $inputpesan["pesan_code"] = 2;
+                    $inputpesan["pesan_tipe"] = "walimurid";
+                    $inputpesan["pesan_isi"] = $pesan;
+                    $inputpesan["user_token"] = $siswa->user_token;
+                    $this->db->insert("pesan", $inputpesan);
+                    $pesan_id = $this->db->insert_id();
+
+                    $message = $nisn . '|' . $tipe . '|' . $pesan . '|' . $token . '|' . $pesan_id;
                     $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?message=" . urlencode($message);
                     $response = @file_get_contents($url);
 
@@ -414,7 +426,17 @@ class Nilai_M extends CI_Model
                 $token = $siswa->user_token;
                 $tipe = "walimurid";
                 $pesan = "Nilai Ananda " . $siswa->user_name . " Mapel " . $this->input->post("matpel_name") . ", " . $this->input->post("sumatif_name") . ", Semester  " . $this->input->post("nilai_semester") . ", Tahun " . date("Y") . " adalah " . $input["nilai_score"];
-                $message = $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
+
+                $inputpesan["user_nisn"] = $siswa->user_nisn;
+                $inputpesan["user_nik"] = $siswa->user_nik;
+                $inputpesan["pesan_code"] = 2;
+                $inputpesan["pesan_tipe"] = "walimurid";
+                $inputpesan["pesan_isi"] = $pesan;
+                $inputpesan["user_token"] = $siswa->user_token;
+                $this->db->insert("pesan", $inputpesan);
+                $pesan_id = $this->db->insert_id();
+
+                $message = $nisn . '|' . $tipe . '|' . $pesan . '|' . $token . '|' . $pesan_id;
                 $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?message=" . urlencode($message);
                 $response = @file_get_contents($url);
 
