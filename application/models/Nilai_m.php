@@ -436,7 +436,7 @@ class Nilai_M extends CI_Model
                 $this->db->insert("pesan", $inputpesan);
                 $pesan_id = $this->db->insert_id();
 
-                $message = $nisn . '|' . $tipe . '|' . $pesan_isi . '|' . $token . '|' . $pesan_id;
+                $message = $pesan_id . '|' . $nisn . '|' . $tipe . '|' .  $pesan_isi . '|' . $token;
                 $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?message=" . urlencode($message);
                 $response = @file_get_contents($url);
 

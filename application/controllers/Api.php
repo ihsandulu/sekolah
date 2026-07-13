@@ -1529,9 +1529,9 @@ class api extends CI_Controller
 		$pesan = $this->db->get("pesan");
 		foreach ($pesan->result() as $pesan) {
 			$this->db->from("user");
-			if($pesan->user_nik!=""){
+			if ($pesan->user_nik != "") {
 				$this->db->where("user_nik", $pesan->user_nik);
-			}elseif($pesan->user_nisn!=""){
+			} elseif ($pesan->user_nisn != "") {
 				$this->db->where("user_nisn", $pesan->user_nisn);
 			}
 			$user = $this->db->get();
@@ -1539,11 +1539,11 @@ class api extends CI_Controller
 				if ($pesan->pesan_code == 2) {
 					$nisn = $user->user_nisn;
 					$token = $user->user_token;
-					$tipe = "walimurid";					
+					$tipe = "walimurid";
 					$pesan_isi = $pesan->pesan_isi;
 					$pesan_id = $pesan->pesan_id;
 
-					$message = $nisn . '|' . $tipe . '|' . $pesan_isi . '|' . $token . '|' . $pesan_id;
+					$message =  $pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan_isi . '|' . $token;
 					$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?message=" . urlencode($message);
 					$response = @file_get_contents($url);
 
@@ -1556,7 +1556,8 @@ class api extends CI_Controller
 		}
 	}
 
-	public function hapus_pesan(){		
+	public function hapus_pesan()
+	{
 		$where["pesan_id"] = $this->input->get("pesan_id");
 		$this->db->delete("pesan", $where);
 		if ($this->db->affected_rows() > 0) {
