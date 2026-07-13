@@ -1524,6 +1524,44 @@ class api extends CI_Controller
 		$this->db->update("user", $inputuser, $where);
 	}
 
+	public function baca_pesan()
+	{
+		$pesan = $this->db->get("pesan");
+		foreach ($pesan->result() as $pesan) {
+			$this->db->from("user");
+			if($pesan->user_nik!=""){
+				$this->db->where("user_nik", $pesan->user_nik);
+			}elseif($pesan->user_nisn!=""){
+				$this->db->where("user_nisn", $pesan->user_nisn);
+			}
+			$user = $this->db->get();
+			foreach ($user->result() as $user) {
+				if ($pesan->pesan_code == 2) {
+					$nisn = $user->user_nisn;
+					$token = $user->user_token;
+					$tipe = "walimurid";
+					$pesan = "Nilai Ananda " . $user->user_name . " Mapel " . $this->input->post("matpel_name") . ", " . $this->input->post("sumatif_name") . ", Semester  " . $this->input->post("nilai_semester") . ", Tahun " . date("Y") . " adalah " . $input["nilai_score"];
+					$message = $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
+					$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?message=" . urlencode($message);
+					$response = @file_get_contents($url);
+
+					$inputpesan["user_nisn"] = $user->user_nisn;
+					$inputpesan["user_nik"] = $user->user_nik;
+					$inputpesan["pesan_code"] = 2;
+					$inputpesan["pesan_tipe"] = "walimurid";
+					$inputpesan["pesan_isi"] = $pesan;
+					$inputpesan["user_token"] = $user->user_token;
+					$this->db->insert("pesan", $inputpesan);
+
+					if ($response === false) {
+						error_log("Gagal kirim notif");
+						return false;
+					}
+				}
+			}
+		}
+	}
+
 	public function absensiswaapi()
 	{
 

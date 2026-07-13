@@ -303,6 +303,7 @@ class Nilai_M extends CI_Model
                 // echo $this->db->last_query();die;
                 $siswa = $this->db->from("user")->where("user_id", $input["user_id"])->get();
                 foreach ($siswa->result() as $siswa) {
+
                     $nisn = $siswa->user_nisn;
                     $token = $siswa->user_token;
                     $tipe = "walimurid";
@@ -310,6 +311,14 @@ class Nilai_M extends CI_Model
                     $message = $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
                     $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?message=" . urlencode($message);
                     $response = @file_get_contents($url);
+                    
+                    $inputpesan["user_nisn"] = $siswa->user_nisn;
+                    $inputpesan["user_nik"] = $siswa->user_nik;
+                    $inputpesan["pesan_code"] = 2;
+                    $inputpesan["pesan_tipe"] = "walimurid";
+                    $inputpesan["pesan_isi"] = $pesan;
+                    $inputpesan["user_token"] = $siswa->user_token;
+                    $this->db->insert("pesan", $inputpesan);
 
                     if ($response === false) {
                         error_log("Gagal kirim notif");
@@ -361,7 +370,7 @@ class Nilai_M extends CI_Model
                     $data["message"] = "Insert Data Success. " . $wapesan;
                 } */
             } else {
-                $inputu=array();
+                $inputu = array();
                 foreach ($this->input->post() as $e => $f) {
                     if ($e != 'change' && $e != 'nilai_picture' && $e != 'kelas_name' && $e != 'matpel_name' && $e != 'user_name' && $e != 'sumatif_name' && $e != 'nilai_id' && $e != 'create') {
                         $inputu[$e] = $this->input->post($e);
@@ -376,7 +385,7 @@ class Nilai_M extends CI_Model
                     $token = $siswa->user_token;
                     $tipe = "walimurid";
                     $pesan = "Nilai Ananda " . $siswa->user_name . " Mapel " . $this->input->post("matpel_name") . ", " . $this->input->post("sumatif_name") . ", Semester  " . $this->input->post("nilai_semester") . ", Tahun " . date("Y") . " adalah " . $inputu["nilai_score"];
-                    $message = $nisn . '|' . $tipe . '|' . $pesan. '|' . $token;
+                    $message = $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
                     $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?message=" . urlencode($message);
                     $response = @file_get_contents($url);
 
@@ -400,20 +409,20 @@ class Nilai_M extends CI_Model
             $this->db->update("nilai", $input, array("nilai_id" => $this->input->post("nilai_id")));
 
             $siswa = $this->db->from("user")->where("user_id", $input["user_id"])->get();
-                foreach ($siswa->result() as $siswa) {
-                    $nisn = $siswa->user_nisn;
-                    $token = $siswa->user_token;
-                    $tipe = "walimurid";
-                    $pesan = "Nilai Ananda " . $siswa->user_name . " Mapel " . $this->input->post("matpel_name") . ", " . $this->input->post("sumatif_name") . ", Semester  " . $this->input->post("nilai_semester") . ", Tahun " . date("Y") . " adalah " . $input["nilai_score"];
-                    $message = $nisn . '|' . $tipe . '|' . $pesan. '|' . $token;
-                    $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?message=" . urlencode($message);
-                    $response = @file_get_contents($url);
+            foreach ($siswa->result() as $siswa) {
+                $nisn = $siswa->user_nisn;
+                $token = $siswa->user_token;
+                $tipe = "walimurid";
+                $pesan = "Nilai Ananda " . $siswa->user_name . " Mapel " . $this->input->post("matpel_name") . ", " . $this->input->post("sumatif_name") . ", Semester  " . $this->input->post("nilai_semester") . ", Tahun " . date("Y") . " adalah " . $input["nilai_score"];
+                $message = $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
+                $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?message=" . urlencode($message);
+                $response = @file_get_contents($url);
 
-                    if ($response === false) {
-                        error_log("Gagal kirim notif");
-                        return false;
-                    }
+                if ($response === false) {
+                    error_log("Gagal kirim notif");
+                    return false;
                 }
+            }
 
             $data["message"] = "Update Success";
             // $data["message"] = $token;
