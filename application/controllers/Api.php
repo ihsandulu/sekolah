@@ -1529,8 +1529,11 @@ class api extends CI_Controller
 		//delete pesan 2 hari lalu atau sebelumnya
 		$this->db->where("pesan_date <=", date("Y-m-d", strtotime("-2 days")));
 		$this->db->delete("pesan");
-		
-
+		if (isset($_GET["kirim"])) {
+			$kirim = $this->input->get("kirim");
+		} else {
+			$kirim = "fcmio";
+		}
 		$pesan = $this->db->get("pesan");
 		foreach ($pesan->result() as $pesan) {
 			$this->db->from("user");
@@ -1549,7 +1552,7 @@ class api extends CI_Controller
 					$pesan_id = $pesan->pesan_id;
 
 					$message =  $pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan_isi . '|' . $token;
-					$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?message=" . urlencode($message);
+					$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=" . $kirim . "&message=" . urlencode($message);
 					$response = @file_get_contents($url);
 
 					if ($response === false) {

@@ -319,7 +319,7 @@ class Nilai_M extends CI_Model
                     $pesan_id = $this->db->insert_id();
 
                     $message = $nisn . '|' . $tipe . '|' . $pesan . '|' . $token . '|' . $pesan_id;
-                    $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?message=" . urlencode($message);
+                    $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
                     $response = @file_get_contents($url);
 
                     if ($response === false) {
@@ -398,7 +398,7 @@ class Nilai_M extends CI_Model
                     $pesan_id = $this->db->insert_id();
 
                     $message = $nisn . '|' . $tipe . '|' . $pesan . '|' . $token . '|' . $pesan_id;
-                    $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?message=" . urlencode($message);
+                    $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
                     $response = @file_get_contents($url);
 
                     if ($response === false) {
@@ -437,7 +437,7 @@ class Nilai_M extends CI_Model
                 $pesan_id = $this->db->insert_id();
 
                 $message = $pesan_id . '|' . $nisn . '|' . $tipe . '|' .  $pesan_isi . '|' . $token;
-                $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?message=" . urlencode($message);
+                $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
                 $response = @file_get_contents($url);
 
                 if ($response === false) {
