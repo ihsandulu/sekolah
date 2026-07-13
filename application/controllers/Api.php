@@ -1526,6 +1526,11 @@ class api extends CI_Controller
 
 	public function baca_pesan()
 	{
+		//delete pesan 2 hari lalu atau sebelumnya
+		$this->db->where("pesan_date <=", date("Y-m-d", strtotime("-2 days")));
+		$this->db->delete("pesan");
+		
+
 		$pesan = $this->db->get("pesan");
 		foreach ($pesan->result() as $pesan) {
 			$this->db->from("user");
