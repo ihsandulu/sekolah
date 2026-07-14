@@ -305,7 +305,7 @@ class Nilai_M extends CI_Model
                 foreach ($siswa->result() as $siswa) {
 
                     $nisn = $siswa->user_nisn;
-                    $token = $siswa->user_token;
+                    $token = $siswa->user_tokenortu;
                     $tipe = "walimurid";
                     $pesan = "Nilai Ananda " . $siswa->user_name . " Mapel " . $this->input->post("matpel_name") . ", " . $this->input->post("sumatif_name") . ", Semester  " . $this->input->post("nilai_semester") . ", Tahun " . date("Y") . " adalah " . $input["nilai_score"];
 
@@ -315,9 +315,12 @@ class Nilai_M extends CI_Model
                     $inputpesan["pesan_tipe"] = "walimurid";
                     $inputpesan["pesan_isi"] = $pesan;
                     $inputpesan["user_token"] = $siswa->user_token;
+                    $inputpesan["user_tokenguru"] = $siswa->user_tokenguru;
+                    $inputpesan["user_tokenortu"] = $siswa->user_tokenortu;
                     $this->db->insert("pesan", $inputpesan);
                     $pesan_id = $this->db->insert_id();
 
+                    //ulang bagian ini jika ingin mengirim pesan ke orang tua, guru, dan siswa sekaligus, maka token yang digunakan adalah token masing-masing. Jika ingin mengirim ke orang tua saja, gunakan token orang tua. Jika ingin mengirim ke guru saja, gunakan token guru. Jika ingin mengirim ke siswa saja, gunakan token siswa.
                     $message = $nisn . '|' . $tipe . '|' . $pesan . '|' . $token . '|' . $pesan_id;
                     $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
                     $response = @file_get_contents($url);
