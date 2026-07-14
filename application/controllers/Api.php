@@ -1519,7 +1519,15 @@ class api extends CI_Controller
 
 	public function simpan_token()
 	{
+		if ($this->input->get("tipe") == "siswa") {
 		$inputuser["user_token"] = $this->input->get("token");
+		}
+		if ($this->input->get("tipe") == "guru") {
+		$inputuser["user_tokenguru"] = $this->input->get("token");
+		}
+		if ($this->input->get("tipe") == "walimurid") {
+		$inputuser["user_tokenortu"] = $this->input->get("token");
+		}
 		$where["user_nisn"] = $this->input->get("nisn");
 		$this->db->update("user", $inputuser, $where);
 	}
