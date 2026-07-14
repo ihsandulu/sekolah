@@ -1520,13 +1520,13 @@ class api extends CI_Controller
 	public function simpan_token()
 	{
 		if ($this->input->get("tipe") == "siswa") {
-		$inputuser["user_token"] = $this->input->get("token");
+			$inputuser["user_token"] = $this->input->get("token");
 		}
 		if ($this->input->get("tipe") == "guru") {
-		$inputuser["user_tokenguru"] = $this->input->get("token");
+			$inputuser["user_tokenguru"] = $this->input->get("token");
 		}
 		if ($this->input->get("tipe") == "walimurid") {
-		$inputuser["user_tokenortu"] = $this->input->get("token");
+			$inputuser["user_tokenortu"] = $this->input->get("token");
 		}
 		$where["user_nisn"] = $this->input->get("nisn");
 		$this->db->update("user", $inputuser, $where);
@@ -1534,6 +1534,8 @@ class api extends CI_Controller
 
 	public function baca_pesan()
 	{
+		
+		$statuspesan = "Gagal kirim notif";
 		//delete pesan 2 hari lalu atau sebelumnya
 		$this->db->where("pesan_date <=", date("Y-m-d", strtotime("-2 days")));
 		$this->db->delete("pesan");
@@ -1565,11 +1567,19 @@ class api extends CI_Controller
 
 					if ($response === false) {
 						error_log("Gagal kirim notif");
-						return false;
+						// return false;
+						$statuspesan = "Gagal kirim notif :". $url;
+					}else{						
+						$statuspesan = "Berhasil kirim notif :". $url;
 					}
 				}
 			}
 		}
+
+		echo json_encode([
+			"status" => true,
+			"message" => $statuspesan
+		]);
 	}
 
 	public function hapus_pesan()
