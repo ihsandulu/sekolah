@@ -304,7 +304,7 @@ if (current_url() != site_url("login") && current_url() != site_url("scanabsengu
 	}
 </script>
 <script>
-	function kirimpesan(message, number, server, email, password) {
+	/* function kirimpesan(message, number, server, email, password) {
 		return new Promise((resolve, reject) => {
 			$.get("https://qithy.my.id/4p1.php", {
 					action: 'token',
@@ -333,11 +333,11 @@ if (current_url() != site_url("login") && current_url() != site_url("scanabsengu
 				})
 				.fail(err => reject(err));
 		});
-	}
+	} */
 
 
 	//kirimpesan
-	function dikirimpesan(message, number, server, email, password, nominal, user_id) {
+	/* function dikirimpesan(message, number, server, email, password, nominal, user_id) {
 		// alert(message+','+number+','+server);
 		$kirimpesan = kirimpesan(message, number, server, email, password);
 		let swa = "";
@@ -349,9 +349,9 @@ if (current_url() != site_url("login") && current_url() != site_url("scanabsengu
 		}
 		$("#statuswa").html(swa);
 		// alert(kirimpesan);                                    
-	}
+	} */
 
-	function insertpesan(number, nominal, user_id) {
+	/* function insertpesan(number, nominal, user_id) {
 		// alert("<?= base_url("api/insertpesan"); ?>?nominal="+nominal+"&number="+number+"&user_id="+user_id);
 		$.get("<?= base_url("api/insertpesan"); ?>", {
 				number: number,
@@ -362,10 +362,10 @@ if (current_url() != site_url("login") && current_url() != site_url("scanabsengu
 				// alert(data);
 				refreshwa();
 			});
-	}
+	} */
 
 	//cronjob    
-	function cektelpon() {
+	/* function cektelpon() {
 		$.get("<?= base_url("api/tagihpelunasan"); ?>", {
 				filter: 1
 			})
@@ -387,7 +387,7 @@ if (current_url() != site_url("login") && current_url() != site_url("scanabsengu
 					}
 				});
 			});
-	}
+	} */
 
 	function cektidakmasuk() {
 		$.get("<?= base_url("api/tidakhadir"); ?>")
@@ -397,13 +397,13 @@ if (current_url() != site_url("login") && current_url() != site_url("scanabsengu
 					// alert(value.message+','+value.number+','+value.server);
 					if (notel < 4) {
 						setTimeout(function() {
-							kirimpesan(value.message, value.number, value.server, value.email, value.password);
+							// kirimpesan(value.message, value.number, value.server, value.email, value.password);
 							notel = 1;
 						}, <?= rand(10000, 15000); ?>);
 						notel++;
 					} else {
 						setTimeout(function() {
-							kirimpesan(value.message, value.number, value.server, value.email, value.password);
+							// kirimpesan(value.message, value.number, value.server, value.email, value.password);
 							notel = 1;
 						}, <?= rand(15000, 18000); ?>);
 					}
@@ -411,7 +411,7 @@ if (current_url() != site_url("login") && current_url() != site_url("scanabsengu
 			});
 	}
 	setInterval(() => {
-		cektelpon();
+		// cektelpon();
 		<?php
 		$aktif = $this->session->userdata("sekolah_tidakhadir");
 		if ($aktif == 1) {
