@@ -1445,6 +1445,34 @@ class api extends CI_Controller
 					$this->db->insert("absen", $input);
 					// echo $this->db->last_query();
 
+					//MULAI KIRIM PESAN KE ORTU
+					$nisn = $user->user_nisn;
+					$token = $user->user_tokenortu;
+					$tipe = "walimurid";
+					$pesan = "Ananda " . $user->user_name . " telah " . $type . " pada " . $input["absen_datetime"];
+
+					$inputpesan["user_nisn"] = $user->user_nisn;
+					$inputpesan["user_nik"] = $user->user_nik;
+					$inputpesan["pesan_code"] = 2;
+					$inputpesan["pesan_tipe"] = "walimurid";
+					$inputpesan["pesan_isi"] = $pesan;
+					$inputpesan["user_token"] = $user->user_token;
+					$inputpesan["user_tokenguru"] = $user->user_tokenguru;
+					$inputpesan["user_tokenortu"] = $user->user_tokenortu;
+					$this->db->insert("pesan", $inputpesan);
+					$pesan_id = $this->db->insert_id();
+
+					//ulang bagian ini jika ingin mengirim pesan ke orang tua, guru, dan siswa sekaligus, maka token yang digunakan adalah token masing-masing. Jika ingin mengirim ke orang tua saja, gunakan token orang tua. Jika ingin mengirim ke guru saja, gunakan token guru. Jika ingin mengirim ke siswa saja, gunakan token siswa.
+					$message = $nisn . '|' . $tipe . '|' . $pesan . '|' . $token . '|' . $pesan_id;
+					$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
+					$response = @file_get_contents($url);
+
+					if ($response === false) {
+						error_log("Gagal kirim notif");
+						return false;
+					}
+					//AKHIR KIRIM PESAN KE ORTU
+
 					$data["success"] = 1;
 					$data["id"] = $user->user_id;
 					$data["name"] = $user->user_name;
@@ -1534,7 +1562,7 @@ class api extends CI_Controller
 
 	public function baca_pesan()
 	{
-		
+
 		$statuspesan = "Gagal kirim notif";
 		//delete pesan 2 hari lalu atau sebelumnya
 		$this->db->where("pesan_date <=", date("Y-m-d", strtotime("-2 days")));
@@ -1568,9 +1596,9 @@ class api extends CI_Controller
 					if ($response === false) {
 						error_log("Gagal kirim notif");
 						// return false;
-						$statuspesan = "Gagal kirim notif :". $url;
-					}else{						
-						$statuspesan = "Berhasil kirim notif :". $url;
+						$statuspesan = "Gagal kirim notif :" . $url;
+					} else {
+						$statuspesan = "Berhasil kirim notif :" . $url;
 					}
 				}
 			}
@@ -1855,9 +1883,11 @@ class api extends CI_Controller
 			<thead>
 				<tr>
 					<th>Sekolah</th>
+					<th>NISN</th>
 					<th>Nama</th>
 					<th>Kelas</th>
 					<th>Absen</th>
+					<th>Delete</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -1878,15 +1908,28 @@ class api extends CI_Controller
 				?>
 					<tr>
 						<td><?= $absen->absen_datetime; ?></td>
+						<td><?= $absen->user_nisn; ?></td>
 						<td><?= $absen->user_name; ?></td>
 						<td><?= $absen->kelas_name; ?></td>
 						<td><?= $type; ?></td>
+						<td><button onclick="hapusAbsen(<?= $absen->absen_id; ?>)" class="btn btn-danger btn-xs"><i class="fa fa-times"></i></button></td>
 					</tr>
 				<?php } ?>
 			</tbody>
 		</table>
 	<?php
 	}
+
+	public function hapusabsen()
+	{
+		$where["absen_id"] = $this->input->get("absen_id");
+		$this->db->delete("absen", $where);
+		if ($this->db->affected_rows() > 0) {
+			echo "Hapus Absen Berhasil";
+		} else {
+			echo "Hapus Absen Gagal";
+		}
+	}	
 
 	public function cektelpon()
 	{

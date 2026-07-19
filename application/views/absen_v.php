@@ -148,37 +148,7 @@
 
 
 						<script>
-							function cektelponpesan(name, typename, datetime, number, id, pesanwa) {
-								// alert('<?= base_url("api/cektelpon"); ?>?message='+pesanwa+'&number='+number+'&server=<?= $this->session->userdata('server_name'); ?>&id='+id);	
-
-								$.get("<?= base_url("api/cektelpon"); ?>", {
-										message: pesanwa,
-										id: id
-									})
-									.done(function(data) {
-										$.each(data, function(key, value) {
-											// alert(value.message+','+value.number+','+value.server);
-											kirimpesan(value.message, value.number, value.server, value.email, value.password);
-										});
-									});
-							}
-
-							function cektelpon(name, typename, datetime, number, id) {
-								let pesanwa = 'Ananda ' + name + ' telah ' + typename + ' pada ' + datetime;
-								// alert('<?= base_url("api/cektelpon"); ?>?message='+pesanwa+'&number='+number+'&server=<?= $this->session->userdata('server_name'); ?>&id='+id);	
-
-								$.get("<?= base_url("api/cektelpon"); ?>", {
-										message: pesanwa,
-										id: id
-									})
-									.done(function(data) {
-										$.each(data, function(key, value) {
-											// alert(value.message+','+value.number+','+value.server);
-											kirimpesan(value.message, value.number, value.server, value.email, value.password);
-										});
-									});
-							}
-
+							
 							function qrcodesiswa(nisn) {
 								$("#tampilqrcode").attr("src", "");
 								$.get("<?= base_url("api/absensiswa"); ?>", {
@@ -194,20 +164,28 @@
 											$("#status").css("color", "green");
 											$("#status").css("font-size", "25px");
 											// alert(data.name+','+data.typename+','+data.datetime+','+data.number+','+data.id);
-											cektelpon(data.name, data.typename, data.datetime, data.number, data.id);
 											setTimeout(() => {
 												tablesiswa();
-											}, 1000);
-											if (data.terlambat == 1) {
-												let pesanwaterlambat = 'Ananda ' + data.name + ' telah terlambat sebanyak ' + data.kaliterlambat + ' kali. ';
-												cektelponpesan(data.name, data.typename, data.datetime, data.number, data.id, pesanwaterlambat);
-											}
+											}, 1000);											
 										} else {
 											$("#status").css("color", "red");
 											$("#tampilqrcode").hide();
 										}
 									});
 								$("#nisn").val("");
+							}
+							function hapusAbsen(absen_id) {
+								let konfirmasi = confirm("Apakah anda yakin akan menghapus data ini ?");
+								if (!konfirmasi) {
+									return false;
+								}
+								$.get("<?= base_url("api/hapusabsen"); ?>", {
+										absen_id: absen_id
+									})
+									.done(function(data) {
+										alert(data);
+										tablesiswa();
+									});
 							}
 						</script>
 						<div id="listsiswa-belumabsen" class="panel-body" style="padding-bottom:40px;">

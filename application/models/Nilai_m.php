@@ -301,6 +301,7 @@ class Nilai_M extends CI_Model
                 $input["nilai_year"] = date("Y");
                 $this->db->insert("nilai", $input);
                 // echo $this->db->last_query();die;
+                //MULAI KIRIM PESAN KE ORTU
                 $siswa = $this->db->from("user")->where("user_id", $input["user_id"])->get();
                 foreach ($siswa->result() as $siswa) {
 
@@ -330,6 +331,7 @@ class Nilai_M extends CI_Model
                         return false;
                     }
                 }
+                //AKHIR KIRIM PESAN KE ORTU
 
                 /* $email = $this->session->userdata("sekolah_emailwa");
                 $password = $this->session->userdata("sekolah_passwordwa");

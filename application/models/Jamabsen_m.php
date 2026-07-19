@@ -69,19 +69,21 @@ class jamabsen_M extends CI_Model
         }
 
         //cek jamabsen
-        $jamabsend["jamabsen.jamabsen_id"] = $this->input->post("jamabsen_id");
-        $mater = $this->db
-            ->get_where('jamabsen', $jamabsend);
-        // echo $this->db->last_query();	
-        if ($mater->num_rows() > 0) {
-            foreach ($mater->result() as $jamabsen) {
-                foreach ($this->db->list_fields('jamabsen') as $field) {
-                    $data[$field] = $jamabsen->$field;
+        if (isset($_POST["jamabsen_id"]) && $_POST["jamabsen_id"] != "") {
+            $jamabsend["jamabsen.jamabsen_id"] = $this->input->post("jamabsen_id");
+            $mater = $this->db
+                ->get_where('jamabsen', $jamabsend);
+            // echo $this->db->last_query();	
+            if ($mater->num_rows() > 0) {
+                foreach ($mater->result() as $jamabsen) {
+                    foreach ($this->db->list_fields('jamabsen') as $field) {
+                        $data[$field] = $jamabsen->$field;
+                    }
                 }
-            }
-        } else {
-            foreach ($this->db->list_fields('jamabsen') as $field) {
-                $data[$field] = "";
+            } else {
+                foreach ($this->db->list_fields('jamabsen') as $field) {
+                    $data[$field] = "";
+                }
             }
         }
         return $data;
