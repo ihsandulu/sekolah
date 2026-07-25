@@ -147,10 +147,10 @@
 						</script>
 
 
-						<script>
-							
+						<script>							
 							function qrcodesiswa(nisn) {
 								$("#tampilqrcode").attr("src", "");
+								alert("<?= base_url("api/absensiswa"); ?>?nisn=" + nisn + "&type=<?= $_GET["type"]; ?>");
 								$.get("<?= base_url("api/absensiswa"); ?>", {
 										nisn: nisn,
 										type: '<?= $_GET["type"]; ?>'

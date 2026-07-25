@@ -1429,7 +1429,7 @@ class api extends CI_Controller
 			$where["user_nisn"] = $_GET["nisn"];
 			$user = $this->db
 				->get_where("user", $where);
-			// echo $this->db->last_query();
+			echo $this->db->last_query();
 			if ($user->num_rows() > 0) {
 				foreach ($user->result() as $user) {
 					$input["absen_datetime"] = date("Y-m-d H:i:s");
@@ -1465,6 +1465,7 @@ class api extends CI_Controller
 					//ulang bagian ini jika ingin mengirim pesan ke orang tua, guru, dan siswa sekaligus, maka token yang digunakan adalah token masing-masing. Jika ingin mengirim ke orang tua saja, gunakan token orang tua. Jika ingin mengirim ke guru saja, gunakan token guru. Jika ingin mengirim ke siswa saja, gunakan token siswa.
 					$message = $nisn . '|' . $tipe . '|' . $pesan . '|' . $token . '|' . $pesan_id;
 					$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
+					$data["urlbroadcast"] = urldecode($url);
 					$response = @file_get_contents($url);
 
 					if ($response === false) {
