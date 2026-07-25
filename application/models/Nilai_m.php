@@ -98,11 +98,11 @@ class Nilai_M extends CI_Model
                 $email = $this->session->userdata("sekolah_emailwa");
                 $password = $this->session->userdata("sekolah_passwordwa");
                 $server = $this->session->userdata("sekolah_serverwa");
-                $uri = "https://qithy.my.id/4p1.php?action=token&email=" . $email . "&password=" . $password . "";
+                /* $uri = "https://qithy.my.id/4p1.php?action=token&email=" . $email . "&password=" . $password . "";
                 $user = json_decode(
                     file_get_contents($uri)
                 );
-                $token = $user->token;
+                $token = $user->token; */
 
                 $sumatif = $this->db->from("sumatif")
                     ->where("sumatif_id", $this->input->post("sumatif_id"))
@@ -128,7 +128,7 @@ class Nilai_M extends CI_Model
 
                 for ($x = 2; $x <= $row; $x++) {
                     //cek data
-
+                    $url = "";
                     if ($arr_data[$x]["C"] > $this->session->userdata("sekolah_kkm")) {
                         $userrows = $this->db
                             ->select("*,user.user_id as user_id")
@@ -164,10 +164,38 @@ class Nilai_M extends CI_Model
                                     $input1["nilai_score"] = $arr_data[$x]["C"];
                                     $input1["nilaigagal_temporary"] = $this->input->post("nilaigagal_temporary");
                                     $this->db->update("nilai", $input1, $where1);
+
+                                    //MULAI KIRIM PESAN KE ORTU    
+                                    $nisn = $urow->user_nisn;
+                                    $token = $urow->user_tokenortu;
+                                    $tipe = "walimurid";
+                                    $pesan = "Nilai Ananda " . $urow->user_name . " Mapel " . $this->input->post("matpel_name") . ", " . $this->input->post("sumatif_name") . ", Semester  " . $this->input->post("nilai_semester") . ", Tahun " . date("Y") . " adalah " . $input1["nilai_score"];
+
+                                    $inputpesan["user_nisn"] = $urow->user_nisn;
+                                    $inputpesan["user_nik"] = $urow->user_nik;
+                                    $inputpesan["pesan_code"] = 2;
+                                    $inputpesan["pesan_tipe"] = "walimurid";
+                                    $inputpesan["pesan_isi"] = $pesan;
+                                    $inputpesan["user_token"] = $urow->user_token;
+                                    $inputpesan["user_tokenguru"] = $urow->user_tokenguru;
+                                    $inputpesan["user_tokenortu"] = $urow->user_tokenortu;
+                                    $this->db->insert("pesan", $inputpesan);
+                                    $pesan_id = $this->db->insert_id();
+
+                                    //ulang bagian ini jika ingin mengirim pesan ke orang tua, guru, dan siswa sekaligus, maka token yang digunakan adalah token masing-masing. Jika ingin mengirim ke orang tua saja, gunakan token orang tua. Jika ingin mengirim ke guru saja, gunakan token guru. Jika ingin mengirim ke siswa saja, gunakan token siswa.
+                                    $message = $pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
+                                    $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
+                                    $response = @file_get_contents($url);
+
+                                    if ($response === false) {
+                                        error_log("Gagal kirim notif");
+                                        return false;
+                                    }
+                                    //AKHIR KIRIM PESAN KE ORTU
                                     // echo $this->db->last_query();
                                     $sukses++;
 
-                                    $message = "Siswa " . $user_name . " telah mengikuti " . $sumatif_name . " Mapel " . $matpel_name . " dengan nilai " . $nilai_score;
+                                    /* $message = "Siswa " . $user_name . " telah mengikuti " . $sumatif_name . " Mapel " . $matpel_name . " dengan nilai " . $nilai_score;
                                     $urimessage = "https://qithy.my.id:8000/send-message?email=" . $email . "&token=" . $token . "&id=" . $server . "&message=" . urlencode($message) . "&number=" . $telpon_number;
                                     $options = [
                                         "http" => [
@@ -186,7 +214,7 @@ class Nilai_M extends CI_Model
                                         $wapesan = "Pesan berhasil dikirim.";
                                     }
                                     // Aktifkan kembali error reporting
-                                    error_reporting(E_ALL);
+                                    error_reporting(E_ALL); */
                                 } else {
                                     $input2["nilaigagal_temporary"] = $this->input->post("nilaigagal_temporary");
                                     $input2["kelas_id"] = $this->input->post("kelas_id");
@@ -199,10 +227,39 @@ class Nilai_M extends CI_Model
                                     $input2["nilai_score"] = $arr_data[$x]["C"];
                                     $this->db->insert("nilai", $input2);
                                     $user_id = $this->db->insert_id();
+
+                                    //MULAI KIRIM PESAN KE ORTU    
+                                    $nisn = $urow->user_nisn;
+                                    $token = $urow->user_tokenortu;
+                                    $tipe = "walimurid";
+                                    $pesan = "Nilai Ananda " . $urow->user_name . " Mapel " . $this->input->post("matpel_name") . ", " . $this->input->post("sumatif_name") . ", Semester  " . $this->input->post("nilai_semester") . ", Tahun " . date("Y") . " adalah " . $input2["nilai_score"];
+
+                                    $inputpesan["user_nisn"] = $urow->user_nisn;
+                                    $inputpesan["user_nik"] = $urow->user_nik;
+                                    $inputpesan["pesan_code"] = 2;
+                                    $inputpesan["pesan_tipe"] = "walimurid";
+                                    $inputpesan["pesan_isi"] = $pesan;
+                                    $inputpesan["user_token"] = $urow->user_token;
+                                    $inputpesan["user_tokenguru"] = $urow->user_tokenguru;
+                                    $inputpesan["user_tokenortu"] = $urow->user_tokenortu;
+                                    $this->db->insert("pesan", $inputpesan);
+                                    $pesan_id = $this->db->insert_id();
+
+                                    //ulang bagian ini jika ingin mengirim pesan ke orang tua, guru, dan siswa sekaligus, maka token yang digunakan adalah token masing-masing. Jika ingin mengirim ke orang tua saja, gunakan token orang tua. Jika ingin mengirim ke guru saja, gunakan token guru. Jika ingin mengirim ke siswa saja, gunakan token siswa.
+                                    $message = $pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
+                                    $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
+                                    $response = @file_get_contents($url);
+
+                                    if ($response === false) {
+                                        error_log("Gagal kirim notif");
+                                        return false;
+                                    }
+                                    //AKHIR KIRIM PESAN KE ORTU
+
                                     $sukses++;
                                     // echo $this->db->last_query();
 
-                                    $message = "Siswa " . $user_name . " telah mengikuti " . $sumatif_name . " Mapel " . $matpel_name . " dengan nilai " . $nilai_score;
+                                    /* $message = "Siswa " . $user_name . " telah mengikuti " . $sumatif_name . " Mapel " . $matpel_name . " dengan nilai " . $nilai_score;
                                     $urimessage = "https://qithy.my.id:8000/send-message?email=" . $email . "&token=" . $token . "&id=" . $server . "&message=" . urlencode($message) . "&number=" . $telpon_number;
                                     $options = [
                                         "http" => [
@@ -221,7 +278,7 @@ class Nilai_M extends CI_Model
                                         $wapesan = "Pesan berhasil dikirim.";
                                     }
                                     // Aktifkan kembali error reporting
-                                    error_reporting(E_ALL);
+                                    error_reporting(E_ALL); */
                                 }
                             }
                         } else {
@@ -245,7 +302,7 @@ class Nilai_M extends CI_Model
                 }
                 $data["sukses"] = $sukses;
                 $data["gagal"] = $gagal;
-                $data["message"] = "Import Excel Success = " . $sukses . ", Failed = " . $gagal;
+                $data["message"] = "Import Excel Success = " . $sukses . ", Failed = " . $gagal . $url;
             }
         }
 
@@ -322,7 +379,7 @@ class Nilai_M extends CI_Model
                     $pesan_id = $this->db->insert_id();
 
                     //ulang bagian ini jika ingin mengirim pesan ke orang tua, guru, dan siswa sekaligus, maka token yang digunakan adalah token masing-masing. Jika ingin mengirim ke orang tua saja, gunakan token orang tua. Jika ingin mengirim ke guru saja, gunakan token guru. Jika ingin mengirim ke siswa saja, gunakan token siswa.
-                    $message = $nisn . '|' . $tipe . '|' . $pesan . '|' . $token . '|' . $pesan_id;
+                    $message = $pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
                     $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
                     $response = @file_get_contents($url);
 
@@ -404,7 +461,7 @@ class Nilai_M extends CI_Model
                     $this->db->insert("pesan", $inputpesan);
                     $pesan_id = $this->db->insert_id();
 
-                    $message = $nisn . '|' . $tipe . '|' . $pesan . '|' . $token . '|' . $pesan_id;
+                    $message = $pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
                     $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
                     $response = @file_get_contents($url);
 
