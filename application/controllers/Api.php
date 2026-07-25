@@ -1463,7 +1463,7 @@ class api extends CI_Controller
 					$pesan_id = $this->db->insert_id();
 
 					//ulang bagian ini jika ingin mengirim pesan ke orang tua, guru, dan siswa sekaligus, maka token yang digunakan adalah token masing-masing. Jika ingin mengirim ke orang tua saja, gunakan token orang tua. Jika ingin mengirim ke guru saja, gunakan token guru. Jika ingin mengirim ke siswa saja, gunakan token siswa.
-					$message = $pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan . '|' . $token ;
+					$message = $pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
 					$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
 					$data["urlbroadcast"] = urldecode($url);
 					$response = @file_get_contents($url);
@@ -1674,6 +1674,35 @@ class api extends CI_Controller
 					$input["absen_type"] = $_GET["type"];
 					$this->db->insert("absen", $input);
 					// echo $this->db->last_query();
+
+					//MULAI KIRIM PESAN KE ORTU
+					$nisn = $user->user_nisn;
+					$token = $user->user_tokenortu;
+					$tipe = "walimurid";
+					$pesan = "Ananda " . $user->user_name . " telah " . $type . " pada " . $input["absen_datetime"];
+
+					$inputpesan["user_nisn"] = $user->user_nisn;
+					$inputpesan["user_nik"] = $user->user_nik;
+					$inputpesan["pesan_code"] = 2;
+					$inputpesan["pesan_tipe"] = "walimurid";
+					$inputpesan["pesan_isi"] = $pesan;
+					$inputpesan["user_token"] = $user->user_token;
+					$inputpesan["user_tokenguru"] = $user->user_tokenguru;
+					$inputpesan["user_tokenortu"] = $user->user_tokenortu;
+					$this->db->insert("pesan", $inputpesan);
+					$pesan_id = $this->db->insert_id();
+
+					//ulang bagian ini jika ingin mengirim pesan ke orang tua, guru, dan siswa sekaligus, maka token yang digunakan adalah token masing-masing. Jika ingin mengirim ke orang tua saja, gunakan token orang tua. Jika ingin mengirim ke guru saja, gunakan token guru. Jika ingin mengirim ke siswa saja, gunakan token siswa.
+					$message = $pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
+					$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
+					$data["urlbroadcast"] = urldecode($url);
+					$response = @file_get_contents($url);
+
+					if ($response === false) {
+						error_log("Gagal kirim notif");
+						return false;
+					}
+					//AKHIR KIRIM PESAN KE ORTU
 
 					$data["success"] = 1;
 					$data["id"] = $user->user_id;
@@ -1930,7 +1959,7 @@ class api extends CI_Controller
 		} else {
 			echo "Hapus Absen Gagal";
 		}
-	}	
+	}
 
 	public function cektelpon()
 	{
