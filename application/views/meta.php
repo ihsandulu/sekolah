@@ -417,7 +417,7 @@ if (current_url() != site_url("login") && current_url() != site_url("scanabsengu
 		if ($aktif == 1) {
 			// Cek apakah hari ini bukan Sabtu (6) atau Minggu (7)
 			if (date("N") != 6 && date("N") != 7) { ?>
-				cektidakmasuk();
+				// cektidakmasuk();
 		<?php }
 		} ?>
 	}, 60000);
