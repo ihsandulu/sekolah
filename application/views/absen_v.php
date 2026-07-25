@@ -147,10 +147,10 @@
 						</script>
 
 
-						<script>							
+						<script>
 							function qrcodesiswa(nisn) {
 								$("#tampilqrcode").attr("src", "");
-								alert("<?= base_url("api/absensiswa"); ?>?nisn=" + nisn + "&type=<?= $_GET["type"]; ?>");
+								// alert("<?= base_url("api/absensiswa"); ?>?nisn=" + nisn + "&type=<?= $_GET["type"]; ?>");
 								$.get("<?= base_url("api/absensiswa"); ?>", {
 										nisn: nisn,
 										type: '<?= $_GET["type"]; ?>'
@@ -171,9 +171,12 @@
 											$("#status").css("color", "red");
 											$("#tampilqrcode").hide();
 										}
+									}).fail(function(xhr, status, error) {
+										alert("FAIL : " + error);
 									});
 								$("#nisn").val("");
 							}
+
 							function hapusAbsen(absen_id) {
 								let konfirmasi = confirm("Apakah anda yakin akan menghapus data ini ?");
 								if (!konfirmasi) {

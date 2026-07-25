@@ -1429,7 +1429,7 @@ class api extends CI_Controller
 			$where["user_nisn"] = $_GET["nisn"];
 			$user = $this->db
 				->get_where("user", $where);
-			echo $this->db->last_query();
+			// echo $this->db->last_query();
 			if ($user->num_rows() > 0) {
 				foreach ($user->result() as $user) {
 					$input["absen_datetime"] = date("Y-m-d H:i:s");
