@@ -1463,7 +1463,7 @@ class api extends CI_Controller
 					$pesan_id = $this->db->insert_id();
 
 					//ulang bagian ini jika ingin mengirim pesan ke orang tua, guru, dan siswa sekaligus, maka token yang digunakan adalah token masing-masing. Jika ingin mengirim ke orang tua saja, gunakan token orang tua. Jika ingin mengirim ke guru saja, gunakan token guru. Jika ingin mengirim ke siswa saja, gunakan token siswa.
-					$message = $nisn . '|' . $tipe . '|' . $pesan . '|' . $token . '|' . $pesan_id;
+					$message = $pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan . '|' . $token ;
 					$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
 					$data["urlbroadcast"] = urldecode($url);
 					$response = @file_get_contents($url);
