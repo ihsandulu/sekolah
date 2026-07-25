@@ -173,168 +173,354 @@
                                         $to = date("Y-m-d");
                                     }
                                     ?>
-                                    <?php if ($this->session->userdata("position_id") != 4) { ?>
-                                        <div class="page-header  mb-5">
-                                            <div>
+                                    <?php if (!isset($_GET["type"])) { ?>
+                                        <?php if ($this->session->userdata("position_id") != 4) { ?>
+                                            <div class="page-header  mb-5">
+                                                <div>
 
-                                                <form class="form-inline ">
-                                                    <div class="form-group">
-                                                        <label for="from">From:</label>
-                                                        <input type="date" name="from" id="from" class="form-control" value="<?= $from; ?>">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="to">To:</label>
-                                                        <input type="date" name="to" id="to" class="form-control" value="<?= $to; ?>">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="kelas_id">Class:</label>
-                                                        <?php
-                                                        if (isset($_GET["kelas_id"])) {
-                                                            $kelas_id = $this->input->get("kelas_id");
-                                                        } else {
-                                                            $kelas_id = 0;
-                                                        }
-                                                        if (isset($_GET["user_id"])) {
-                                                            $user_id = $this->input->get("user_id");
-                                                        } else {
-                                                            $user_id = 0;
-                                                        }
-                                                        $this->db->join("kelas", "kelas.kelas_id=kelas_guru.kelas_id", "left");
-                                                        if ($this->session->userdata("sekolah_id") > 0) {
-                                                            $this->db->where("kelas.sekolah_id", $this->session->userdata("sekolah_id"));
-                                                        }
-                                                        if ($this->session->userdata("position_id") != 1 && $this->session->userdata("position_id") != 2) {
-                                                            // $this->db->where("kelas_guru.user_id", $this->session->userdata("user_id"));
-                                                        }
-                                                        $gru = $this->db->group_by("kelas_guru.kelas_id")
-                                                            ->get("kelas_guru");
-                                                        // echo $this->db->last_query();
-                                                        // echo $this->session->userdata("position_id");
-                                                        ?>
-                                                        <select onchange="listsiswasekolah();" name="kelas_id" id="kelas_id" class="form-control" onChange="cari_user(this.value)">
-                                                            <option value="0" <?= ($kelas_id == 0) ? 'selected="selected"' : ""; ?>>Choose Class</option>
+                                                    <form class="form-inline ">
+                                                        <div class="form-group">
+                                                            <label for="from">From:</label>
+                                                            <input type="date" name="from" id="from" class="form-control" value="<?= $from; ?>">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="to">To:</label>
+                                                            <input type="date" name="to" id="to" class="form-control" value="<?= $to; ?>">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="kelas_id">Class:</label>
                                                             <?php
-
-                                                            foreach ($gru->result() as $kelas) { ?>
-                                                                <option value="<?= $kelas->kelas_id; ?>" <?= ($kelas_id == $kelas->kelas_id) ? 'selected="selected"' : ""; ?>><?= $kelas->kelas_name; ?></option>
-                                                            <?php } ?>
-                                                        </select>
-                                                    </div>
-
-                                                    <script>
-                                                        function listsiswasekolah() {
-                                                            let kelas_id = $("#kelas_id").val();
-                                                            // alert("<?= base_url("api/listsiswakelasnisn"); ?>?kelas_id="+kelas_id+"&user_nisn=<?= $user_nisn; ?>");
-                                                            if (kelas_id > 0) {
-                                                                $.get("<?= base_url("api/listsiswakelasnisn"); ?>", {
-                                                                        kelas_id: kelas_id,
-                                                                        user_nisn: '<?= $user_nisn; ?>'
-                                                                    })
-                                                                    .done(function(data) {
-                                                                        $("#user_nisn").html(data);
-                                                                    });
+                                                            if (isset($_GET["kelas_id"])) {
+                                                                $kelas_id = $this->input->get("kelas_id");
                                                             } else {
-                                                                $("#user_nisn").html('');
+                                                                $kelas_id = 0;
+                                                            }
+                                                            if (isset($_GET["user_id"])) {
+                                                                $user_id = $this->input->get("user_id");
+                                                            } else {
+                                                                $user_id = 0;
+                                                            }
+                                                            $this->db->join("kelas", "kelas.kelas_id=kelas_guru.kelas_id", "left");
+                                                            if ($this->session->userdata("sekolah_id") > 0) {
+                                                                $this->db->where("kelas.sekolah_id", $this->session->userdata("sekolah_id"));
+                                                            }
+                                                            if ($this->session->userdata("position_id") != 1 && $this->session->userdata("position_id") != 2) {
+                                                                // $this->db->where("kelas_guru.user_id", $this->session->userdata("user_id"));
+                                                            }
+                                                            $gru = $this->db->group_by("kelas_guru.kelas_id")
+                                                                ->get("kelas_guru");
+                                                            // echo $this->db->last_query();
+                                                            // echo $this->session->userdata("position_id");
+                                                            ?>
+                                                            <select onchange="listsiswasekolah();" name="kelas_id" id="kelas_id" class="form-control" onChange="cari_user(this.value)">
+                                                                <option value="0" <?= ($kelas_id == 0) ? 'selected="selected"' : ""; ?>>Choose Class</option>
+                                                                <?php
+
+                                                                foreach ($gru->result() as $kelas) { ?>
+                                                                    <option value="<?= $kelas->kelas_id; ?>" <?= ($kelas_id == $kelas->kelas_id) ? 'selected="selected"' : ""; ?>><?= $kelas->kelas_name; ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+
+                                                        <script>
+                                                            function listsiswasekolah() {
+                                                                let kelas_id = $("#kelas_id").val();
+                                                                // alert("<?= base_url("api/listsiswakelasnisn"); ?>?kelas_id="+kelas_id+"&user_nisn=<?= $user_nisn; ?>");
+                                                                if (kelas_id > 0) {
+                                                                    $.get("<?= base_url("api/listsiswakelasnisn"); ?>", {
+                                                                            kelas_id: kelas_id,
+                                                                            user_nisn: '<?= $user_nisn; ?>'
+                                                                        })
+                                                                        .done(function(data) {
+                                                                            $("#user_nisn").html(data);
+                                                                        });
+                                                                } else {
+                                                                    $("#user_nisn").html('');
+                                                                }
+                                                            }
+
+                                                            listsiswasekolah();
+                                                        </script>
+
+
+                                                        <div class="form-group">
+                                                            <label for="user_nisn">Student:</label>
+                                                            <select name="user_nisn" id="user_nisn" class="form-control">
+
+                                                            </select>
+                                                        </div>
+
+                                                        <button type="submit" class="btn btn-default">Submit</button>
+                                                        <a href="<?= base_url("pelanggaran") ?>?type=rangkuman" class="btn btn-warning">Rangkuman</a>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+                                        <div class="box">
+                                            <div id="collapse4" class="body table-responsive">
+                                                <table id="dataTable" class="table table-condensed table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <?php if (!isset($_GET["laporan"])) { ?>
+                                                                <th class="col-md-1">Action</th>
+                                                            <?php } ?>
+                                                            <th>Date</th>
+                                                            <th>School</th>
+                                                            <th>Class</th>
+                                                            <th>NISN</th>
+                                                            <th>Student</th>
+                                                            <th>Violation</th>
+                                                            <th>Point</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php
+                                                        $kelasguru = $this->db->where("user_id", $this->session->userdata("user_id"))->get("kelas_guru");
+                                                        $arrkelguru = array();
+                                                        foreach ($kelasguru->result() as $row) {
+                                                            $arrkelguru[] = $row->kelas_id;
+                                                        }
+
+                                                        if ($this->session->userdata("sekolah_id") > 0) {
+                                                            $this->db->where("pelanggaran.sekolah_id", $this->session->userdata("sekolah_id"));
+                                                        }
+
+
+                                                        if (isset($_GET['kelas_id']) && $_GET['kelas_id'] > 0) {
+                                                            $this->db->where("pelanggaran.kelas_id", $_GET['kelas_id']);
+                                                        } else {
+                                                            if (!empty($arrkelguru)) {
+                                                                $this->db->where_in("pelanggaran.kelas_id", $arrkelguru);
                                                             }
                                                         }
+                                                        if (isset($_GET['user_nisn']) && $_GET['user_nisn'] > 0) {
+                                                            $this->db->where("pelanggaran.user_nisn", $_GET['user_nisn']);
+                                                        }
+                                                        if ($this->session->userdata("position_id") == 4) {
+                                                            $this->db->where("pelanggaran.user_nisn", $this->session->userdata("user_nisn"));
+                                                        }
+                                                        $this->db->where("pelanggaran.pelanggaran_date >=", $from);
+                                                        $this->db->where("pelanggaran.pelanggaran_date <=", $to);
+                                                        $usr = $this->db
+                                                            ->join("user", "user.user_nisn=pelanggaran.user_nisn", "left")
+                                                            ->join("kelas", "kelas.kelas_id=user.kelas_id", "left")
+                                                            ->join("sekolah", "sekolah.sekolah_id=pelanggaran.sekolah_id", "left")
+                                                            ->join("mpelanggaran", "mpelanggaran.mpelanggaran_id=pelanggaran.mpelanggaran_id", "left")
+                                                            ->where("pelanggaran.pelanggaran_year", date("Y"))
+                                                            ->get("pelanggaran");
+                                                        // echo $this->db->last_query();
+                                                        foreach ($usr->result() as $pelanggaran) { ?>
+                                                            <tr>
+                                                                <?php if (!isset($_GET["laporan"])) { ?>
+                                                                    <td style="padding-left:0px; padding-right:0px;">
+                                                                        <form method="post" class="col-md-6" style="padding:0px;">
+                                                                            <button class="btn btn-warning " name="edit" value="OK"><span class="fa fa-edit" style="color:white;"></span> </button>
+                                                                            <input type="hidden" name="pelanggaran_id" value="<?= $pelanggaran->pelanggaran_id; ?>" />
+                                                                        </form>
 
-                                                        listsiswasekolah();
-                                                    </script>
+                                                                        <form method="post" class="col-md-6" style="padding:0px;">
+                                                                            <button class="btn btn-danger delete" name="delete" value="OK"><span class="fa fa-close" style="color:white;"></span> </button>
+                                                                            <input type="hidden" name="pelanggaran_id" value="<?= $pelanggaran->pelanggaran_id; ?>" />
+                                                                        </form>
+                                                                    </td>
+                                                                <?php } ?>
+                                                                <td><?= $pelanggaran->pelanggaran_date; ?></td>
+                                                                <td><?= $pelanggaran->sekolah_name; ?></td>
+                                                                <td><?= $pelanggaran->kelas_name; ?></td>
+                                                                <td><?= $pelanggaran->user_nisn; ?></td>
+                                                                <td><?= $pelanggaran->user_name; ?></td>
+                                                                <td><?= $pelanggaran->mpelanggaran_name; ?></td>
+                                                                <td><?= $pelanggaran->pelanggaran_point; ?></td>
+                                                            </tr>
+                                                        <?php } ?>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    <?php } else { ?>
+                                        <?php if ($this->session->userdata("position_id") != 4) { ?>
+                                            <div class="page-header  mb-5">
+                                                <div>
+
+                                                    <form class="form-inline ">
+                                                        <div class="form-group">
+                                                            <label for="kelas_id">Class:</label>
+                                                            <?php
+                                                            if (isset($_GET["kelas_id"])) {
+                                                                $kelas_id = $this->input->get("kelas_id");
+                                                            } else {
+                                                                $kelas_id = 0;
+                                                            }
+                                                            if (isset($_GET["user_id"])) {
+                                                                $user_id = $this->input->get("user_id");
+                                                            } else {
+                                                                $user_id = 0;
+                                                            }
+                                                            $this->db->join("kelas", "kelas.kelas_id=kelas_guru.kelas_id", "left");
+                                                            if ($this->session->userdata("sekolah_id") > 0) {
+                                                                $this->db->where("kelas.sekolah_id", $this->session->userdata("sekolah_id"));
+                                                            }
+                                                            if ($this->session->userdata("position_id") != 1 && $this->session->userdata("position_id") != 2) {
+                                                                // $this->db->where("kelas_guru.user_id", $this->session->userdata("user_id"));
+                                                            }
+                                                            $gru = $this->db->group_by("kelas_guru.kelas_id")
+                                                                ->get("kelas_guru");
+                                                            // echo $this->db->last_query();
+                                                            // echo $this->session->userdata("position_id");
+                                                            ?>
+                                                            <select onchange="listsiswasekolah();" name="kelas_id" id="kelas_id" class="form-control" onChange="cari_user(this.value)">
+                                                                <option value="0" <?= ($kelas_id == 0) ? 'selected="selected"' : ""; ?>>Choose Class</option>
+                                                                <?php
+
+                                                                foreach ($gru->result() as $kelas) { ?>
+                                                                    <option value="<?= $kelas->kelas_id; ?>" <?= ($kelas_id == $kelas->kelas_id) ? 'selected="selected"' : ""; ?>><?= $kelas->kelas_name; ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+
+                                                        <script>
+                                                            function listsiswasekolah() {
+                                                                let kelas_id = $("#kelas_id").val();
+                                                                // alert("<?= base_url("api/listsiswakelasnisn"); ?>?kelas_id="+kelas_id+"&user_nisn=<?= $user_nisn; ?>");
+                                                                if (kelas_id > 0) {
+                                                                    $.get("<?= base_url("api/listsiswakelasnisn"); ?>", {
+                                                                            kelas_id: kelas_id,
+                                                                            user_nisn: '<?= $user_nisn; ?>'
+                                                                        })
+                                                                        .done(function(data) {
+                                                                            $("#user_nisn").html(data);
+                                                                        });
+                                                                } else {
+                                                                    $("#user_nisn").html('');
+                                                                }
+                                                            }
+
+                                                            listsiswasekolah();
+                                                        </script>
 
 
-                                                    <div class="form-group">
-                                                        <label for="user_nisn">Student:</label>
-                                                        <select name="user_nisn" id="user_nisn" class="form-control">
+                                                        <div class="form-group">
+                                                            <label for="user_nisn">Student:</label>
+                                                            <select name="user_nisn" id="user_nisn" class="form-control">
 
-                                                        </select>
-                                                    </div>
+                                                            </select>
+                                                        </div>
+                                                        <input type="hidden" name="type" value="rangkuman" />
+                                                        <button type="submit" class="btn btn-default">Submit</button>
+                                                        <a href="<?= base_url("pelanggaran") ?>" class="btn btn-warning">Detail</a>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+                                        <div class="box">
+                                            <div id="collapse4" class="body table-responsive">
+                                                <table id="dataTable" class="table table-condensed table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <?php if (!isset($_GET["laporan"])) { ?>
+                                                                <th class="col-md-1">Action</th>
+                                                            <?php } ?>
+                                                            <th>Class</th>
+                                                            <th>NISN</th>
+                                                            <th>Student</th>
+                                                            <th>Point</th>
+                                                            <th>Status</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php
+                                                        $kelasguru = $this->db->where("user_id", $this->session->userdata("user_id"))->get("kelas_guru");
+                                                        $arrkelguru = array();
+                                                        foreach ($kelasguru->result() as $row) {
+                                                            $arrkelguru[] = $row->kelas_id;
+                                                        }
 
-                                                    <button type="submit" class="btn btn-default">Submit</button>
-                                                </form>
+                                                        if ($this->session->userdata("sekolah_id") > 0) {
+                                                            $this->db->where("pelanggaran.sekolah_id", $this->session->userdata("sekolah_id"));
+                                                        }
+
+
+                                                        if (isset($_GET['kelas_id']) && $_GET['kelas_id'] > 0) {
+                                                            $this->db->where("pelanggaran.kelas_id", $_GET['kelas_id']);
+                                                        } else {
+                                                            if (!empty($arrkelguru)) {
+                                                                $this->db->where_in("pelanggaran.kelas_id", $arrkelguru);
+                                                            }
+                                                        }
+                                                        if (isset($_GET['user_nisn']) && $_GET['user_nisn'] > 0) {
+                                                            $this->db->where("pelanggaran.user_nisn", $_GET['user_nisn']);
+                                                        }
+                                                        if ($this->session->userdata("position_id") == 4) {
+                                                            $this->db->where("pelanggaran.user_nisn", $this->session->userdata("user_nisn"));
+                                                        }
+                                                        $this->db->select("
+                                                            user.user_nisn,
+                                                            user.user_name,
+                                                            kelas.kelas_name,
+                                                            SUM(mpelanggaran.mpelanggaran_point) AS total_point
+                                                        ");
+
+                                                        $this->db->from("pelanggaran");
+                                                        $this->db->join("user", "user.user_nisn=pelanggaran.user_nisn", "left");
+                                                        $this->db->join("kelas", "kelas.kelas_id=user.kelas_id", "left");
+                                                        $this->db->join("sekolah", "sekolah.sekolah_id=pelanggaran.sekolah_id", "left");
+                                                        $this->db->join("mpelanggaran", "mpelanggaran.mpelanggaran_id=pelanggaran.mpelanggaran_id", "left");
+
+                                                        $this->db->where("pelanggaran.pelanggaran_date >=", $from);
+                                                        $this->db->where("pelanggaran.pelanggaran_date <=", $to);
+                                                        $this->db->where("pelanggaran.pelanggaran_year", date("Y"));
+
+                                                        $this->db->group_by("pelanggaran.user_nisn");
+
+                                                        $usr = $this->db->get();
+                                                        // echo $this->db->last_query();
+                                                        $status = "";
+                                                        foreach ($usr->result() as $pelanggaran) {
+                                                            if ($pelanggaran->total_point >= 100) {
+                                                                $status = "Peringatan Siswa/i dikembalikan pada Orang Tua";
+                                                            } elseif ($pelanggaran->total_point >= 90) {
+                                                                $status = "Peringatan Siswa/i akan dikembalikan pada Orang Tua";
+                                                            } elseif ($pelanggaran->total_point >= 75) {
+                                                                $status = "Peringatan Kedua Wali Murid";
+                                                            } elseif ($pelanggaran->total_point >= 50) {
+                                                                $status = "Peringatan Pertama Wali Murid";
+                                                            } elseif ($pelanggaran->total_point >= 25) {
+                                                                $status = "Panggilan untuk Murid";
+                                                            } else {
+                                                                $status = "";
+                                                            }
+                                                        ?>
+                                                            <tr>
+                                                                <?php if (!isset($_GET["laporan"])) { ?>
+                                                                    <td style="padding-left:0px; padding-right:0px;">
+                                                                        <form method="post" class="col-md-12" style="padding:0px;">
+                                                                            <button
+                                                                                type="submit"
+                                                                                class="btn btn-danger"
+                                                                                name="deletepoint"
+                                                                                value="OK"
+                                                                                data-toggle="tooltip"
+                                                                                data-placement="top"
+                                                                                title="Kosongkan Point">
+                                                                                Kosongkan Point
+                                                                            </button>
+
+                                                                            <input type="hidden" name="user_nisn" value="<?= $pelanggaran->user_nisn; ?>" />
+                                                                        </form>
+                                                                    </td>
+                                                                <?php } ?>
+                                                                <td><?= $pelanggaran->kelas_name; ?></td>
+                                                                <td><?= $pelanggaran->user_nisn; ?></td>
+                                                                <td><?= $pelanggaran->user_name; ?></td>
+                                                                <td><?= $pelanggaran->total_point; ?></td>
+                                                                <td><?= $status; ?></td>
+                                                            </tr>
+                                                        <?php } ?>
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         </div>
                                     <?php } ?>
-                                    <div class="box">
-                                        <div id="collapse4" class="body table-responsive">
-                                            <table id="dataTable" class="table table-condensed table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <?php if (!isset($_GET["laporan"])) { ?>
-                                                            <th class="col-md-1">Action</th>
-                                                        <?php } ?>
-                                                        <th>Date</th>
-                                                        <th>School</th>
-                                                        <th>Class</th>
-                                                        <th>NISN</th>
-                                                        <th>Student</th>
-                                                        <th>Violation</th>
-                                                        <th>Point</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php
-                                                    $kelasguru = $this->db->where("user_id", $this->session->userdata("user_id"))->get("kelas_guru");
-                                                    $arrkelguru = array();
-                                                    foreach ($kelasguru->result() as $row) {
-                                                        $arrkelguru[] = $row->kelas_id;
-                                                    }
-
-                                                    if ($this->session->userdata("sekolah_id") > 0) {
-                                                        $this->db->where("pelanggaran.sekolah_id", $this->session->userdata("sekolah_id"));
-                                                    }
-
-
-                                                    if (isset($_GET['kelas_id']) && $_GET['kelas_id'] > 0) {
-                                                        $this->db->where("pelanggaran.kelas_id", $_GET['kelas_id']);
-                                                    } else {
-                                                        if (!empty($arrkelguru)) {
-                                                            $this->db->where_in("pelanggaran.kelas_id", $arrkelguru);
-                                                        }
-                                                    }
-                                                    if (isset($_GET['user_nisn']) && $_GET['user_nisn'] > 0) {
-                                                        $this->db->where("pelanggaran.user_nisn", $_GET['user_nisn']);
-                                                    }
-                                                    if ($this->session->userdata("position_id")==4) {
-                                                        $this->db->where("pelanggaran.user_nisn", $this->session->userdata("user_nisn"));
-                                                    }
-                                                    $this->db->where("pelanggaran.pelanggaran_date >=", $from);
-                                                    $this->db->where("pelanggaran.pelanggaran_date <=", $to);
-                                                    $usr = $this->db
-                                                        ->join("user", "user.user_nisn=pelanggaran.user_nisn", "left")
-                                                        ->join("kelas", "kelas.kelas_id=user.kelas_id", "left")
-                                                        ->join("sekolah", "sekolah.sekolah_id=pelanggaran.sekolah_id", "left")
-                                                        ->join("mpelanggaran", "mpelanggaran.mpelanggaran_id=pelanggaran.mpelanggaran_id", "left")
-                                                        ->where("pelanggaran.pelanggaran_year", date("Y"))
-                                                        ->get("pelanggaran");
-                                                    // echo $this->db->last_query();
-                                                    foreach ($usr->result() as $pelanggaran) { ?>
-                                                        <tr>
-                                                            <?php if (!isset($_GET["laporan"])) { ?>
-                                                                <td style="padding-left:0px; padding-right:0px;">
-                                                                    <form method="post" class="col-md-6" style="padding:0px;">
-                                                                        <button class="btn btn-warning " name="edit" value="OK"><span class="fa fa-edit" style="color:white;"></span> </button>
-                                                                        <input type="hidden" name="pelanggaran_id" value="<?= $pelanggaran->pelanggaran_id; ?>" />
-                                                                    </form>
-
-                                                                    <form method="post" class="col-md-6" style="padding:0px;">
-                                                                        <button class="btn btn-danger delete" name="delete" value="OK"><span class="fa fa-close" style="color:white;"></span> </button>
-                                                                        <input type="hidden" name="pelanggaran_id" value="<?= $pelanggaran->pelanggaran_id; ?>" />
-                                                                    </form>
-                                                                </td>
-                                                            <?php } ?>
-                                                            <td><?= $pelanggaran->pelanggaran_date; ?></td>
-                                                            <td><?= $pelanggaran->sekolah_name; ?></td>
-                                                            <td><?= $pelanggaran->kelas_name; ?></td>
-                                                            <td><?= $pelanggaran->user_nisn; ?></td>
-                                                            <td><?= $pelanggaran->user_name; ?></td>
-                                                            <td><?= $pelanggaran->mpelanggaran_name; ?></td>
-                                                            <td><?= $pelanggaran->pelanggaran_point; ?></td>
-                                                        </tr>
-                                                    <?php } ?>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
                                 <?php } ?>
                             </div>
                         </div>

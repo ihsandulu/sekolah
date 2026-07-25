@@ -79,6 +79,11 @@ class pelanggaran_M extends CI_Model {
 			$data["message"]="Update Success";
 			//echo $this->db->last_query();die;
 		}
+		//kosongkan nilai
+		if($this->input->post("deletepoint")=="OK"){
+			$this->db->delete("pelanggaran",array("user_nisn"=>$this->input->post("user_nisn")));
+			$data["message"]="Pengosongan Point Sukses";
+		}
 		return $data;
 	}
 	
