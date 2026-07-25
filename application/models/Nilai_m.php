@@ -302,7 +302,7 @@ class Nilai_M extends CI_Model
                 }
                 $data["sukses"] = $sukses;
                 $data["gagal"] = $gagal;
-                $data["message"] = "Import Excel Success = " . $sukses . ", Failed = " . $gagal . $url;
+                $data["message"] = "Import Excel Success = " . $sukses . ", Failed = " . $gagal ;
             }
         }
 
