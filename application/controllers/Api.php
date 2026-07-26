@@ -1585,6 +1585,7 @@ class api extends CI_Controller
 				$this->db->where("user_nisn", $pesan->user_nisn);
 			}
 			$user = $this->db->get();
+			$readdata = $this->db->last_query();
 			foreach ($user->result() as $user) {
 				if ($pesan->pesan_code == 2) {
 					$nisn = $user->user_nisn;
