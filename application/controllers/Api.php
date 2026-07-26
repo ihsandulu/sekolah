@@ -1564,16 +1564,19 @@ class api extends CI_Controller
 	public function baca_pesan()
 	{
 
-		$statuspesan = "Gagal kirim notif";
+		$statuspesan = "Gagal kirim notif ";
 		//delete pesan 2 hari lalu atau sebelumnya
 		$this->db->where("pesan_date <=", date("Y-m-d", strtotime("-2 days")));
 		$this->db->delete("pesan");
+
+		//kirim notif
 		if (isset($_GET["kirim"])) {
 			$kirim = $this->input->get("kirim");
 		} else {
 			$kirim = "fcmio";
 		}
 		$pesan = $this->db->get("pesan");
+		$readdata = $this->db->last_query();
 		foreach ($pesan->result() as $pesan) {
 			$this->db->from("user");
 			if ($pesan->user_nik != "") {
@@ -1607,7 +1610,7 @@ class api extends CI_Controller
 
 		echo json_encode([
 			"status" => true,
-			"message" => $statuspesan
+			"message" => $statuspesan.$readdata
 		]);
 	}
 
