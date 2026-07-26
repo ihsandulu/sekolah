@@ -454,7 +454,11 @@
                                                             $this->db->where("pelanggaran.user_nisn", $this->session->userdata("user_nisn"));
                                                         }
                                                         $this->db->select("
+                                                            user.user_token,
+                                                            user.user_tokenortu,
+                                                            user.user_tokenguru,
                                                             user.user_nisn,
+                                                            user.user_nik,
                                                             user.user_name,
                                                             kelas.kelas_name,
                                                             SUM(mpelanggaran.mpelanggaran_point) AS total_point
@@ -476,18 +480,43 @@
                                                         // echo $this->db->last_query();
                                                         $status = "";
                                                         foreach ($usr->result() as $pelanggaran) {
-                                                            if ($pelanggaran->total_point >= 100) {
+                                                            $tpoint = $pelanggaran->total_point;
+                                                            if ($tpoint >= 100) {
                                                                 $status = "Peringatan Siswa/i dikembalikan pada Orang Tua";
-                                                            } elseif ($pelanggaran->total_point >= 90) {
+                                                                $btnstatus = "btn-danger";
+                                                                $token = $pelanggaran->user_tokenortu;
+                                                                $nama = "Wali Murid " . $pelanggaran->user_name;
+                                                                $tipe = "walimurid";
+                                                            } elseif ($tpoint >= 90) {
                                                                 $status = "Peringatan Siswa/i akan dikembalikan pada Orang Tua";
-                                                            } elseif ($pelanggaran->total_point >= 75) {
+                                                                $btnstatus = "btn-warning";
+                                                                $token = $pelanggaran->user_tokenortu;
+                                                                $nama = "Wali Murid " . $pelanggaran->user_name;
+                                                                $tipe = "walimurid";
+                                                            } elseif ($tpoint >= 75) {
                                                                 $status = "Peringatan Kedua Wali Murid";
-                                                            } elseif ($pelanggaran->total_point >= 50) {
+                                                                $btnstatus = "btn-info";
+                                                                $token = $pelanggaran->user_tokenortu;
+                                                                $nama = "Wali Murid " . $pelanggaran->user_name;
+                                                                $tipe = "walimurid";
+                                                            } elseif ($tpoint >= 50) {
                                                                 $status = "Peringatan Pertama Wali Murid";
-                                                            } elseif ($pelanggaran->total_point >= 25) {
+                                                                $btnstatus = "btn-primary";
+                                                                $token = $pelanggaran->user_tokenortu;
+                                                                $nama = "Wali Murid " . $pelanggaran->user_name;
+                                                                $tipe = "walimurid";
+                                                            } elseif ($tpoint >= 25) {
                                                                 $status = "Panggilan untuk Murid";
+                                                                $btnstatus = "btn-success";
+                                                                $token = $pelanggaran->user_token;
+                                                                $nama = $pelanggaran->user_name;
+                                                                $tipe = "siswa";
                                                             } else {
                                                                 $status = "";
+                                                                $btnstatus = "btn-default";
+                                                                $token = "";
+                                                                $nama = "";
+                                                                $tipe = "";
                                                             }
                                                         ?>
                                                             <tr>
@@ -512,12 +541,160 @@
                                                                 <td><?= $pelanggaran->kelas_name; ?></td>
                                                                 <td><?= $pelanggaran->user_nisn; ?></td>
                                                                 <td><?= $pelanggaran->user_name; ?></td>
-                                                                <td><?= $pelanggaran->total_point; ?></td>
-                                                                <td><?= $status; ?></td>
+                                                                <td><?= $tpoint; ?></td>
+                                                                <td>
+                                                                    <?php if ($tpoint >= 25) { ?>
+                                                                        <button
+                                                                            type="button"
+                                                                            class="btn btn-sm <?= $btnstatus; ?>"
+                                                                            data-toggle="modal"
+                                                                            data-target="#modalStatus"
+                                                                            data-status="<?= $status; ?>"
+                                                                            data-name="<?= $nama; ?>"
+                                                                            data-nisn="<?= $pelanggaran->user_nisn; ?>"
+                                                                            data-nik="<?= $pelanggaran->user_nik; ?>"
+                                                                            data-token="<?= $token; ?>"
+                                                                            data-tipe="<?= $tipe; ?>"
+                                                                            data-code="1"
+                                                                            data-point="<?= $pelanggaran->total_point; ?>">
+                                                                            <?= $status; ?>
+                                                                        </button>
+                                                                    <?php } ?>
+                                                                </td>
                                                             </tr>
                                                         <?php } ?>
                                                     </tbody>
                                                 </table>
+                                                <div class="modal fade" id="modalStatus" tabindex="-1" role="dialog">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">Kirim Notifikasi</h5>
+                                                                <button type="button" class="close" data-dismiss="modal">
+                                                                    <span>&times;</span>
+                                                                </button>
+                                                            </div>
+
+                                                            <div class="modal-body">
+                                                                <p><strong>Penerima :</strong> <span id="penerima"></span></p>
+                                                                <p><strong>Total Point Siswa/i:</strong> <span id="modal_point"></span></p>
+                                                                <p><strong>Pesan :</strong>
+                                                                    <span>
+                                                                        <textarea id="modal_pesan" class="form-control" rows="5"></textarea>
+                                                                    </span>
+                                                                </p>
+                                                                <p><strong>Pesan :</strong>
+                                                                    <span>
+                                                                        <input type="hidden" id="modal_nisn">
+                                                                        <input type="hidden" id="modal_nik">
+                                                                        <input type="hidden" id="modal_token">
+                                                                        <input type="hidden" id="modal_tipe">
+                                                                        <input type="hidden" id="modal_code">
+                                                                        <button
+                                                                            id="modal_kirim"
+                                                                            type="button"
+                                                                            class="btn btn-primary"
+                                                                            onclick="sendNotification()">
+                                                                            Kirim Notifikasi
+                                                                        </button>
+                                                                    </span>
+                                                                </p>
+                                                            </div>
+
+                                                            <div class="modal-footer">
+                                                                <button onclick="kosongkanmodal();" type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <script>
+                                                    function kosongkanmodal() {
+                                                        $("#modal_kirim")
+                                                            .prop("disabled", false)
+                                                            .text("Kirim Notifikasi");
+                                                        $("#modalStatus").modal("hide");
+                                                        $("#modal_nisn").val("");
+                                                        $("#modal_nik").val("");
+                                                        $("#modal_token").val("");
+                                                        $("#modal_tipe").val("");
+                                                        $("#modal_pesan").val("");
+                                                        $("#modal_code").val("");
+                                                    }
+
+                                                    function sendNotification() {
+
+                                                        var nisn = $("#modal_nisn").val();
+                                                        var nik = $("#modal_nik").val();
+                                                        var token = $("#modal_token").val();
+                                                        var tipe = $("#modal_tipe").val();
+                                                        var pesan = $("#modal_pesan").val();
+                                                        var code = $("#modal_code").val();
+
+                                                        $.ajax({
+                                                            url: "<?= base_url('api/kirimnotifikasiandroid'); ?>",
+                                                            type: "GET",
+                                                            data: {
+                                                                nisn: nisn,
+                                                                nik: nik,
+                                                                token: token,
+                                                                tipe: tipe,
+                                                                pesan: pesan,
+                                                                code: code
+                                                            },
+                                                            beforeSend: function() {
+                                                                $("#modal_kirim")
+                                                                    .prop("disabled", true)
+                                                                    .text("Mengirim...");
+                                                            },
+                                                            success: function(res) {
+                                                                console.log(res);
+                                                                alert("Notifikasi berhasil.");
+                                                                $("#modal_kirim")
+                                                                    .prop("disabled", false)
+                                                                    .text("Kirim Notifikasi");
+                                                                kosongkanmodal();
+                                                            },
+                                                            error: function() {
+                                                                alert("Gagal mengirim notifikasi.");
+                                                                $("#modal_kirim")
+                                                                    .prop("disabled", false)
+                                                                    .text("Kirim Notifikasi");
+                                                            }
+                                                        });
+
+                                                    }
+                                                    $('#modalStatus').on('show.bs.modal', function(event) {
+                                                        var button = $(event.relatedTarget);
+                                                        var token = button.data('token');
+                                                        var name = button.data('name');
+                                                        var point = button.data('point');
+                                                        var status = button.data('status');
+                                                        var nisn = button.data('nisn');
+                                                        var nik = button.data('nik');
+                                                        var tipe = button.data('tipe');
+                                                        var code = button.data('code');
+
+                                                        $('#modal_nisn').val(nisn);
+                                                        $('#modal_nik').val(nik);
+                                                        $('#modal_token').val(token);
+                                                        $('#modal_tipe').val(tipe);
+                                                        $('#modal_code').val(code);
+
+                                                        $('#penerima').text(name);
+                                                        $('#modal_point').text(point);
+
+                                                        $('#modal_pesan').val(
+                                                            "Yth. " + name +
+                                                            ", total point pelanggaran siswa/i saat ini adalah " +
+                                                            point +
+                                                            " point.\n\nStatus : " +
+                                                            status
+                                                        );
+                                                        $('#modal_pesan').focus();
+                                                    });
+                                                </script>
                                             </div>
                                         </div>
                                     <?php } ?>

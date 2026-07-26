@@ -1622,6 +1622,43 @@ class api extends CI_Controller
 		}
 	}
 
+	public function kirimnotifikasiandroid()
+	{
+		//MULAI KIRIM PESAN KE ORTU
+		$nisn = $this->input->get("nisn");
+		$nik = $this->input->get("nik");
+		$token = $this->input->get("token");
+		$tipe = $this->input->get("tipe");
+		$pesan = $this->input->get("pesan");
+		$code = $this->input->get("code");
+
+		$inputpesan["user_nisn"] = $nisn;
+		$inputpesan["user_nik"] = $nik;
+		$inputpesan["pesan_code"] = $code;
+		$inputpesan["pesan_tipe"] = $tipe;
+		$inputpesan["pesan_isi"] = $pesan;
+		if ($tipe == "walimurid") {
+			$inputpesan["user_tokenortu"] = $token;
+		}
+		if ($tipe == "siswa") {
+			$inputpesan["user_token"] = $token;
+		}
+		$this->db->insert("pesan", $inputpesan);
+		$pesan_id = $this->db->insert_id();
+
+		//ulang bagian ini jika ingin mengirim pesan ke orang tua, guru, dan siswa sekaligus, maka token yang digunakan adalah token masing-masing. Jika ingin mengirim ke orang tua saja, gunakan token orang tua. Jika ingin mengirim ke guru saja, gunakan token guru. Jika ingin mengirim ke siswa saja, gunakan token siswa.
+		$message = $pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
+		$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
+		$data["urlbroadcast"] = urldecode($url);
+		$response = @file_get_contents($url);
+
+		if ($response === false) {
+			error_log("Gagal kirim notif");
+			return false;
+		}
+		//AKHIR KIRIM PESAN KE ORTU
+	}
+
 	public function absensiswaapi()
 	{
 
