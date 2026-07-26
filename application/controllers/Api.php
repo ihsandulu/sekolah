@@ -1595,7 +1595,7 @@ class api extends CI_Controller
 					$response = @file_get_contents($url);
 
 					if ($response === false) {
-						error_log("Gagal kirim notif");
+						error_log("Gagal kirim notif :" . $url);
 						// return false;
 						$statuspesan = "Gagal kirim notif :" . $url;
 					} else {

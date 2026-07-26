@@ -477,7 +477,7 @@
                                                         $this->db->group_by("pelanggaran.user_nisn");
 
                                                         $usr = $this->db->get();
-                                                        echo $this->db->last_query();
+                                                        // echo $this->db->last_query();
                                                         $status = "";
                                                         foreach ($usr->result() as $pelanggaran) {
                                                             $tpoint = $pelanggaran->total_point;
