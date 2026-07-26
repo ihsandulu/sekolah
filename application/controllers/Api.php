@@ -1587,7 +1587,7 @@ class api extends CI_Controller
 			$user = $this->db->get();
 			$readdata = $this->db->last_query();
 			foreach ($user->result() as $user) {
-				if ($pesan->pesan_code == 2) {
+				// if ($pesan->pesan_code == 2) {
 					$nisn = $user->user_nisn;
 					$token = $user->user_token;
 					$tipe = "walimurid";
@@ -1605,7 +1605,7 @@ class api extends CI_Controller
 					} else {
 						$statuspesan = "Berhasil kirim notif :" . $url;
 					}
-				}
+				// }
 			}
 		}
 
