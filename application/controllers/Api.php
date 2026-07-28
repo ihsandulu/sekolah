@@ -1461,6 +1461,7 @@ class api extends CI_Controller
 					$inputpesan["user_tokenortu"] = $user->user_tokenortu;
 					$this->db->insert("pesan", $inputpesan);
 					$pesan_id = $this->db->insert_id();
+					// echo $this->db->last_query();
 
 					//ulang bagian ini jika ingin mengirim pesan ke orang tua, guru, dan siswa sekaligus, maka token yang digunakan adalah token masing-masing. Jika ingin mengirim ke orang tua saja, gunakan token orang tua. Jika ingin mengirim ke guru saja, gunakan token guru. Jika ingin mengirim ke siswa saja, gunakan token siswa.
 					$message = $pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
@@ -1470,7 +1471,7 @@ class api extends CI_Controller
 
 					if ($response === false) {
 						error_log("Gagal kirim notif");
-						return false;
+						// return false;
 					}
 					//AKHIR KIRIM PESAN KE ORTU
 
