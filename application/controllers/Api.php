@@ -1611,7 +1611,7 @@ class api extends CI_Controller
 				$pesan_id = $pesan->pesan_id;
 				$pesan_code = $pesan->pesan_code;
 
-				$message =   $pesan_code . '|' .$pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan_isi . '|' . $token;
+				$message =   $pesan_code . '|' . $pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan_isi . '|' . $token;
 				$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=" . $kirim . "&message=" . urlencode($message);
 				$response = @file_get_contents($url);
 
@@ -1724,7 +1724,7 @@ class api extends CI_Controller
 		$pesan_code = $code;
 
 		//ulang bagian ini jika ingin mengirim pesan ke orang tua, guru, dan siswa sekaligus, maka token yang digunakan adalah token masing-masing. Jika ingin mengirim ke orang tua saja, gunakan token orang tua. Jika ingin mengirim ke guru saja, gunakan token guru. Jika ingin mengirim ke siswa saja, gunakan token siswa.
-		$message = $pesan_code . '|' .$pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
+		$message = $pesan_code . '|' . $pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
 		$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
 		$data["urlbroadcast"] = urldecode($url);
 		$response = @file_get_contents($url);
@@ -1808,7 +1808,7 @@ class api extends CI_Controller
 					$pesan_code = 2;
 
 					//ulang bagian ini jika ingin mengirim pesan ke orang tua, guru, dan siswa sekaligus, maka token yang digunakan adalah token masing-masing. Jika ingin mengirim ke orang tua saja, gunakan token orang tua. Jika ingin mengirim ke guru saja, gunakan token guru. Jika ingin mengirim ke siswa saja, gunakan token siswa.
-					$message = $pesan_code . '|' .$pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
+					$message = $pesan_code . '|' . $pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
 					$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
 					$data["urlbroadcast"] = urldecode($url);
 					$response = @file_get_contents($url);
@@ -1889,6 +1889,51 @@ class api extends CI_Controller
 			$data["message"] = "Duplikat data!";
 		}
 		$this->djson($data);
+	}
+
+	public function absenguruapi()
+	{
+		if ($this->input->get("sekolah_id") == "") {
+			$sekolah_id = 0;
+		} else {
+			$sekolah_id = $this->input->get("sekolah_id");
+		}
+		$user_nik = $this->input->get("user_nik");
+		$kelas_id = $this->input->get("kelas_id");
+		$user1 = $this->db
+			->join("server", "server.sekolah_id=user.sekolah_id", "left")
+			->join("sekolah", "sekolah.sekolah_id=user.sekolah_id", "left")
+			->where("user_nik", $user_nik)
+			->where("user.sekolah_id", $sekolah_id)
+			->get('user');
+		// echo $this->db->last_query();die;
+		if ($user1->num_rows() > 0 && isset($_GET["sekolah_id"]) && isset($_GET["kelas_id"])) {	
+			//cek absen
+			$abseng = $this->db
+				->where("sekolah_id", $sekolah_id)
+				->where("user_nik", $user_nik)
+				->where("kelas_id", $kelas_id)
+				->where("abseng_date", date("Y-m-d"))
+				->get("abseng");
+			// echo $this->db->last_query();die;
+			if ($abseng->num_rows() == 0) {
+				$input["sekolah_id"] = $sekolah_id;
+				$input["abseng_date"] = date("Y-m-d");
+				$input["abseng_time"] = date("H:i");
+				$input["kelas_id"] = $kelas_id;
+				$input["user_nik"] = $user_nik;
+				$this->db->insert("abseng", $input);
+				// echo $this->db->last_query();die;                    
+				$data["hasil"] = "Absen Success!";
+				$data["kode"] = "success";
+			} else {
+				$data["hasil"] = "Anda telah absen di kelas ini sebelumnya!";
+				$data["kode"] = "warning";
+			}
+		} else {
+			$data["hasil"] = "Access Denied !";
+			$data["kode"] = "danger";
+		}
 	}
 
 	public function riwayatabsensi()
