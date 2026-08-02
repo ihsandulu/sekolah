@@ -29,6 +29,7 @@ class api extends CI_Controller
 
 		// CI3 pakai input->get()
 		$nisn = $this->input->get("nisn");
+		$tipe = $this->input->get("tipe");
 		$passwordInput = $this->input->get("password");
 
 		$response = [];
@@ -41,11 +42,13 @@ class api extends CI_Controller
 			$this->db->join('telpon', 'telpon.user_id = user.user_id', 'left');
 			$this->db->join('position', 'position.position_id = user.position_id', 'left');
 			$this->db->join('kelas', 'kelas.kelas_id = user.kelas_id', 'left');
-			
-			$this->db->Group_start();
-			$this->db->where('user_nisn', $nisn);
-			$this->db->where('user_nik', $nisn);
-			$this->db->Group_end();
+
+			if ($tipe == "siswa" || $tipe == "walimurid") {
+				$this->db->where('user_nisn', $nisn);
+			}
+			if ($tipe == "guru") {
+				$this->db->where('user_nik', $nisn);
+			}
 
 			$query = $this->db->get();
 
@@ -1581,7 +1584,7 @@ class api extends CI_Controller
 		} else {
 			$kirim = "fcmio";
 		}
-		
+
 		$this->db->where("user_nisn", $nisn);
 		$pesan = $this->db->get("pesan");
 		$readdata = $this->db->last_query();
