@@ -75,8 +75,8 @@ class api extends CI_Controller
 						'position_id' => $user->position_id,
 						'position_name' => $user->position_name,
 						'tahunajaran' => $user->user_tahunajaran,
-						'user_token' => $user->user_user_token,
-						'user_tokenguru' => $user->user_user_tokenguru,
+						'user_token' => $user->user_token,
+						'user_tokenguru' => $user->user_tokenguru,
 						'user_tokenortu' => $user->user_tokenortu,
 						'message' => 'Login Berhasil!',
 						'password' => $passwordInput // ⚠️ jangan dipakai di production
