@@ -1934,6 +1934,7 @@ class api extends CI_Controller
 			$data["hasil"] = "Access Denied !";
 			$data["kode"] = "danger";
 		}
+		$this->djson($data);
 	}
 
 	public function riwayatabsensi()
