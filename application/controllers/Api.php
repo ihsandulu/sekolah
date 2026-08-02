@@ -67,6 +67,7 @@ class api extends CI_Controller
 						'radius' => $user->sekolah_absenmeter,
 						'username' => $user->user_name,
 						'nisn' => $user->user_nisn,
+						'nik' => $user->user_nik,
 						'nama' => $user->user_name,
 						'kelasid' => $user->kelas_id,
 						'kelas' => $user->kelas_name,
