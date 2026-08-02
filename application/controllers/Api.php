@@ -1907,7 +1907,7 @@ class api extends CI_Controller
 			->where("user.sekolah_id", $sekolah_id)
 			->get('user');
 		// echo $this->db->last_query();die;
-		if ($user1->num_rows() > 0 && isset($_GET["sekolah_id"]) && isset($_GET["kelas_id"])) {	
+		if ($user1->num_rows() > 0 && isset($_GET["sekolah_id"]) && isset($_GET["kelas_id"])) {
 			//cek absen
 			$abseng = $this->db
 				->where("sekolah_id", $sekolah_id)
@@ -1934,6 +1934,54 @@ class api extends CI_Controller
 			$data["hasil"] = "Access Denied !";
 			$data["kode"] = "danger";
 		}
+		$this->djson($data);
+	}
+
+
+
+	public function riwayatabsensiguru()
+	{
+
+		$this->db->where("user_nik", $_GET["nik"]);
+
+		if (!empty($_GET["abseng_date1"])) {
+			$this->db->where("abseng_date >=", $_GET["abseng_date1"]);
+		}
+
+		if (!empty($_GET["abseng_date2"])) {
+			$this->db->where("abseng_date <=", $_GET["abseng_date2"]);
+		}
+
+		$abseng = $this->db
+			->join("kelas", "kelas.kelas_id=abseng.kelas_id", "left")
+			->order_by("abseng_time", "DESC")
+			->get("abseng");
+
+		$data = [];
+
+		if ($abseng->num_rows() > 0) {
+			foreach ($abseng->result() as $row) {
+				$data[] = [
+					"success" => 1,
+					"absen_date" => $row->abseng_date,
+					"kelas_name" => $row->kelas_name,
+					"user_nik" => $row->user_nik,
+					"jam" => date("H:i:s", strtotime($row->abseng_time)),
+					"message" => ""
+				];
+			}
+		} else {
+
+			$data[] = [
+				"success" => 0,
+				"absen_date" => "",
+				"kelas_name" => "",
+				"user_nik" => "",
+				"jam" => "",
+				"message" => "Tidak ada data!"
+			];
+		}
+
 		$this->djson($data);
 	}
 
