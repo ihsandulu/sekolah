@@ -1472,10 +1472,11 @@ class api extends CI_Controller
 					$inputpesan["user_tokenortu"] = $user->user_tokenortu;
 					$this->db->insert("pesan", $inputpesan);
 					$pesan_id = $this->db->insert_id();
+					$pesan_code = 3;
 					// echo $this->db->last_query();
 
 					//ulang bagian ini jika ingin mengirim pesan ke orang tua, guru, dan siswa sekaligus, maka token yang digunakan adalah token masing-masing. Jika ingin mengirim ke orang tua saja, gunakan token orang tua. Jika ingin mengirim ke guru saja, gunakan token guru. Jika ingin mengirim ke siswa saja, gunakan token siswa.
-					$message = $pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
+					$message = $pesan_code . '|' . $pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
 					$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
 					$data["urlbroadcast"] = urldecode($url);
 					$response = @file_get_contents($url);
@@ -1608,8 +1609,9 @@ class api extends CI_Controller
 				$tipe = "walimurid";
 				$pesan_isi = $pesan->pesan_isi;
 				$pesan_id = $pesan->pesan_id;
+				$pesan_code = $pesan->pesan_code;
 
-				$message =  $pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan_isi . '|' . $token;
+				$message =   $pesan_code . '|' .$pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan_isi . '|' . $token;
 				$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=" . $kirim . "&message=" . urlencode($message);
 				$response = @file_get_contents($url);
 
@@ -1662,8 +1664,9 @@ class api extends CI_Controller
 				$tipe = "walimurid";
 				$pesan_isi = $pesan->pesan_isi;
 				$pesan_id = $pesan->pesan_id;
+				$pesan_code = $pesan->pesan_code;
 
-				$message =  $pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan_isi . '|' . $token;
+				$message =   $pesan_code . '|' . $pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan_isi . '|' . $token;
 				$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=" . $kirim . "&message=" . urlencode($message);
 				$response = @file_get_contents($url);
 
@@ -1718,9 +1721,10 @@ class api extends CI_Controller
 		}
 		$this->db->insert("pesan", $inputpesan);
 		$pesan_id = $this->db->insert_id();
+		$pesan_code = $code;
 
 		//ulang bagian ini jika ingin mengirim pesan ke orang tua, guru, dan siswa sekaligus, maka token yang digunakan adalah token masing-masing. Jika ingin mengirim ke orang tua saja, gunakan token orang tua. Jika ingin mengirim ke guru saja, gunakan token guru. Jika ingin mengirim ke siswa saja, gunakan token siswa.
-		$message = $pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
+		$message = $pesan_code . '|' .$pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
 		$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
 		$data["urlbroadcast"] = urldecode($url);
 		$response = @file_get_contents($url);
@@ -1801,9 +1805,10 @@ class api extends CI_Controller
 					$inputpesan["user_tokenortu"] = $user->user_tokenortu;
 					$this->db->insert("pesan", $inputpesan);
 					$pesan_id = $this->db->insert_id();
+					$pesan_code = 2;
 
 					//ulang bagian ini jika ingin mengirim pesan ke orang tua, guru, dan siswa sekaligus, maka token yang digunakan adalah token masing-masing. Jika ingin mengirim ke orang tua saja, gunakan token orang tua. Jika ingin mengirim ke guru saja, gunakan token guru. Jika ingin mengirim ke siswa saja, gunakan token siswa.
-					$message = $pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
+					$message = $pesan_code . '|' .$pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
 					$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
 					$data["urlbroadcast"] = urldecode($url);
 					$response = @file_get_contents($url);
