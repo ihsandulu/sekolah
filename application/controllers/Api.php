@@ -1942,7 +1942,7 @@ class api extends CI_Controller
 	public function riwayatabsensiguru()
 	{
 
-		$this->db->where("user_nik", $_GET["nik"]);
+		$this->db->where("user_nik", $_GET["user_nik"]);
 
 		if (!empty($_GET["abseng_date1"])) {
 			$this->db->where("abseng_date >=", $_GET["abseng_date1"]);
