@@ -41,7 +41,11 @@ class api extends CI_Controller
 			$this->db->join('telpon', 'telpon.user_id = user.user_id', 'left');
 			$this->db->join('position', 'position.position_id = user.position_id', 'left');
 			$this->db->join('kelas', 'kelas.kelas_id = user.kelas_id', 'left');
+			
+			$this->db->Group_start();
 			$this->db->where('user_nisn', $nisn);
+			$this->db->where('user_nik', $nisn);
+			$this->db->Group_end();
 
 			$query = $this->db->get();
 
@@ -81,7 +85,7 @@ class api extends CI_Controller
 
 				$response = [
 					'status' => 'fail',
-					'message' => 'NISN Salah!'
+					'message' => 'NISN/NIK Salah!'
 				];
 			}
 		} else {
