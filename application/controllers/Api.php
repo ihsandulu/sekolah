@@ -1618,11 +1618,11 @@ class api extends CI_Controller
 				$response = @file_get_contents($url);
 
 				if ($response === false) {
-					error_log("Gagal kirim notif :" . $url);
+					error_log("Gagal kirim notif :" . urldecode($url));
 					// return false;
-					$statuspesan = "Gagal kirim notif :" . $url;
+					$statuspesan = "Gagal kirim notif :" .urldecode($url);
 				} else {
-					$statuspesan = "Berhasil kirim notif :" . $url;
+					$statuspesan = "Berhasil kirim notif :" . urldecode($url);
 				}
 				// }
 			}
