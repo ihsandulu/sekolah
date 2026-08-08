@@ -1630,7 +1630,8 @@ class api extends CI_Controller
 
 		echo json_encode([
 			"status" => true,
-			"message" => $statuspesan . $readdata
+			// "message" => $statuspesan . $readdata
+			"message" => $statuspesan 
 		]);
 	}
 
