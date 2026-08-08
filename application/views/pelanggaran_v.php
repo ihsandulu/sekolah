@@ -588,7 +588,7 @@
                                                                     <span>
                                                                         <input type="hidden" id="modal_nisn">
                                                                         <input type="hidden" id="modal_nik">
-                                                                        <input type="hidden1" id="modal_token">
+                                                                        <input type="hidden" id="modal_token">
                                                                         <input type="hidden" id="modal_tipe">
                                                                         <input type="hidden" id="modal_code">
                                                                         <button
