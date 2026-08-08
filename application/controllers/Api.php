@@ -1579,7 +1579,9 @@ class api extends CI_Controller
 		$nisn = $this->input->get("nisn");
 		$statuspesan = "Gagal kirim notif ";
 		//delete pesan 2 hari lalu atau sebelumnya
-		$this->db->where("user_nisn", $nisn);
+		if (isset($_GET["nisn"])) {
+			$this->db->where("user_nisn", $nisn);
+		}
 		$this->db->where("pesan_date <=", date("Y-m-d", strtotime("-2 days")));
 		$this->db->delete("pesan");
 
