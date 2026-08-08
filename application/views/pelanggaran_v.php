@@ -631,7 +631,7 @@
                                                         var tipe = $("#modal_tipe").val();
                                                         var pesan = $("#modal_pesan").val();
                                                         var code = $("#modal_code").val();
-
+                                                        alert("<?= base_url('api/kirimnotifikasiandroid'); ?>?nisn=" + nisn + "&nik=" + nik + "&token=" + token + "&tipe=" + tipe + "&pesan=" + pesan + "&code=" + code);
                                                         $.ajax({
                                                             url: "<?= base_url('api/kirimnotifikasiandroid'); ?>",
                                                             type: "GET",
