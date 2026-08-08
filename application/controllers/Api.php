@@ -1730,7 +1730,7 @@ class api extends CI_Controller
 		$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
 		$data["urlbroadcast"] = urldecode($url);
 		$response = @file_get_contents($url);
-
+		echo response;
 		if ($response === false) {
 			error_log("Gagal kirim notif");
 			return false;
