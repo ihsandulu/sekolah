@@ -461,6 +461,7 @@
                                                         if ($this->session->userdata("position_id") == 4) {
                                                             $this->db->where("pelanggaran.user_nisn", $this->session->userdata("user_nisn"));
                                                         }
+                                                        // $this->db->where("pelanggaran.user_nisn", "0143178306");
                                                         $this->db->select("
                                                             user.user_token,
                                                             user.user_tokenortu,
@@ -470,7 +471,7 @@
                                                             user.user_name,
                                                             kelas.kelas_name,
                                                             mpelanggaran.mpelanggaran_type,
-                                                            SUM(mpelanggaran.mpelanggaran_point) AS total_point
+                                                            SUM(pelanggaran.pelanggaran_point) AS total_point
                                                         ");
 
                                                         $this->db->from("pelanggaran");
@@ -479,9 +480,9 @@
                                                         $this->db->join("sekolah", "sekolah.sekolah_id=pelanggaran.sekolah_id", "left");
                                                         $this->db->join("mpelanggaran", "mpelanggaran.mpelanggaran_id=pelanggaran.mpelanggaran_id", "left");
 
-                                                        $this->db->where("pelanggaran.pelanggaran_date >=", $from);
-                                                        $this->db->where("pelanggaran.pelanggaran_date <=", $to);
-                                                        $this->db->where("pelanggaran.pelanggaran_year", date("Y"));
+                                                        // $this->db->where("pelanggaran.pelanggaran_date >=", $from);
+                                                        // $this->db->where("pelanggaran.pelanggaran_date <=", $to);
+                                                        // $this->db->where("pelanggaran.pelanggaran_year", date("Y"));
 
                                                         $this->db->group_by("pelanggaran.user_nisn");
 
