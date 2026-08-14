@@ -108,6 +108,7 @@
                           <tr>
                             <th class="col-md-1">Action</th>
                             <th>School</th>
+                            <th>Type</th>
                             <th>Violation Name</th>
                             <th>Point</th>
                           </tr>
@@ -135,6 +136,7 @@
                                 </form>
                               </td>
                               <td><?= $mpelanggaran->sekolah_name; ?></td>
+                              <td><?= ucfirst($mpelanggaran->mpelanggaran_type); ?></td>
                               <td><?= $mpelanggaran->mpelanggaran_name; ?></td>
                               <td><?= $mpelanggaran->mpelanggaran_point; ?></td>
                             </tr>
