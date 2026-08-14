@@ -60,6 +60,15 @@
 
                       
                     <div class="form-group">
+                        <label class="control-label col-sm-2" for="mpelanggaran_type">Type:</label>
+                        <div class="col-sm-10">
+                          <select class="form-control" id="mpelanggaran_type" name="mpelanggaran_type" >
+                            <option value="punishment" <?= $mpelanggaran_type == "punishment" ? "selected" : ""; ?>>Punishment</option>
+                            <option value="reward" <?= $mpelanggaran_type == "reward" ? "selected" : ""; ?>>Reward</option>
+                          </select>
+                        </div>
+                      </div>
+                    <div class="form-group">
                         <label class="control-label col-sm-2" for="mpelanggaran_name">Violation Name:</label>
                         <div class="col-sm-10">
                           <input type="mpelanggaran_name" class="form-control" id="mpelanggaran_name" name="mpelanggaran_name" placeholder="Enter Violation Name" value="<?= $mpelanggaran_name; ?>">

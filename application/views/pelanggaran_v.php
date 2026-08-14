@@ -111,22 +111,27 @@
                                             <div class="form-group">
                                                 <label class="control-label col-sm-2" for="mpelanggaran_id">Violation:</label>
                                                 <div class="col-sm-10">
-                                                    <select onchange="isipoint()" class="form-control" id="mpelanggaran_id" name="mpelanggaran_id" value="<?= $mpelanggaran_id; ?>">
+                                                    <select class="form-control select2" id="mpelanggaran_id" name="mpelanggaran_id" value="<?= $mpelanggaran_id; ?>">
                                                         <option data-point="0" value="0" <?= ($mpelanggaran_id == 0) ? "selected" : ""; ?>>Choose Violation</option>
                                                         <?php
-                                                        $mpelanggaran = $this->db->order_by("mpelanggaran_name", "ASC")->get("mpelanggaran");
+                                                        $mpelanggaran = $this->db
+                                                            ->order_by("mpelanggaran_type", "ASC")
+                                                            ->order_by("mpelanggaran_name", "ASC")
+                                                            ->get("mpelanggaran");
                                                         foreach ($mpelanggaran->result() as $mpelanggaran) { ?>
-                                                            <option data-point="<?= $mpelanggaran->mpelanggaran_point; ?>" value="<?= $mpelanggaran->mpelanggaran_id; ?>" <?= ($mpelanggaran_id == $mpelanggaran->mpelanggaran_id) ? "selected" : ""; ?>><?= $mpelanggaran->mpelanggaran_name; ?></option>
+                                                            <option data-point="<?= $mpelanggaran->mpelanggaran_point; ?>" value="<?= $mpelanggaran->mpelanggaran_id; ?>" <?= ($mpelanggaran_id == $mpelanggaran->mpelanggaran_id) ? "selected" : ""; ?>>[<?= ucfirst($mpelanggaran->mpelanggaran_type); ?> ] <?= $mpelanggaran->mpelanggaran_name; ?></option>
                                                         <?php } ?>
                                                     </select>
                                                     <script>
                                                         $(document).ready(function() {
-                                                            $('#mpelanggaran_id').change(function() {
-                                                                var selectedOption = $(this).find('option:selected');
-                                                                var pointValue = selectedOption.data('point');
-                                                                // alert(pointValue);
-                                                                $("#pelanggaran_point").val(pointValue);
+
+                                                            $('#mpelanggaran_id').select2();
+
+                                                            $('#mpelanggaran_id').on('change', function() {
+                                                                var pointValue = $(this).find('option:selected').data('point');
+                                                                $('#pelanggaran_point').val(pointValue);
                                                             });
+
                                                         });
                                                     </script>
                                                 </div>
@@ -269,6 +274,7 @@
                                                             <th>Class</th>
                                                             <th>NISN</th>
                                                             <th>Student</th>
+                                                            <th>Type</th>
                                                             <th>Violation</th>
                                                             <th>Point</th>
                                                         </tr>
@@ -329,6 +335,7 @@
                                                                 <td><?= $pelanggaran->kelas_name; ?></td>
                                                                 <td><?= $pelanggaran->user_nisn; ?></td>
                                                                 <td><?= $pelanggaran->user_name; ?></td>
+                                                                <td><?= ucfirst($pelanggaran->mpelanggaran_type); ?></td>
                                                                 <td><?= $pelanggaran->mpelanggaran_name; ?></td>
                                                                 <td><?= $pelanggaran->pelanggaran_point; ?></td>
                                                             </tr>
@@ -423,6 +430,7 @@
                                                             <th>Class</th>
                                                             <th>NISN</th>
                                                             <th>Student</th>
+                                                            <th>Type</th>
                                                             <th>Point</th>
                                                             <th>Status</th>
                                                         </tr>
@@ -461,6 +469,7 @@
                                                             user.user_nik,
                                                             user.user_name,
                                                             kelas.kelas_name,
+                                                            mpelanggaran.mpelanggaran_type,
                                                             SUM(mpelanggaran.mpelanggaran_point) AS total_point
                                                         ");
 
@@ -541,6 +550,7 @@
                                                                 <td><?= $pelanggaran->kelas_name; ?></td>
                                                                 <td><?= $pelanggaran->user_nisn; ?></td>
                                                                 <td><?= $pelanggaran->user_name; ?></td>
+                                                                <td><?= ucfirst($pelanggaran->mpelanggaran_type); ?></td>
                                                                 <td><?= $tpoint; ?></td>
                                                                 <td>
                                                                     <?php if ($tpoint >= 25) { ?>

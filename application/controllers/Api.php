@@ -1844,7 +1844,7 @@ class api extends CI_Controller
 						$jammasuk = date("Y-m-d " . $jammasuk);
 						if ($input["absen_datetime"] > $jammasuk) {
 							//cek point
-							$pelanggaran_point = 1;
+							$pelanggaran_point = -1;
 							$mpelanggaran = $this->db->where("mpelanggaran_id", "-1")->get("mpelanggaran");
 							foreach ($mpelanggaran->result() as $rows) {
 								$pelanggaran_point = $rows->mpelanggaran_point;
