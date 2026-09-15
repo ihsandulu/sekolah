@@ -1620,7 +1620,7 @@ class api extends CI_Controller
 				if ($response === false) {
 					error_log("Gagal kirim notif :" . urldecode($url));
 					// return false;
-					$statuspesan = "Gagal kirim notif :" .urldecode($url);
+					$statuspesan = "Gagal kirim notif :" . urldecode($url);
 				} else {
 					$statuspesan = "Berhasil kirim notif :" . urldecode($url);
 				}
@@ -1631,7 +1631,7 @@ class api extends CI_Controller
 		echo json_encode([
 			"status" => true,
 			// "message" => $statuspesan . $readdata
-			"message" => $statuspesan 
+			"message" => $statuspesan
 		]);
 	}
 
@@ -1886,6 +1886,167 @@ class api extends CI_Controller
 				$data["datetime"] = date("d, M Y H:i:s");
 				$data["message"] = "Absen berhasil!";
 				$data["url"] = base_url("api/qrcodesiswa?nisn=" . $absen->user_nisn);
+			}
+
+			$data["success"] = 0;
+			$data["message"] = "Duplikat data!";
+		}
+		$this->djson($data);
+	}
+
+	public function absenguruhapi()
+	{
+
+		$data["id"] = 0;
+		$data["name"] = '';
+		$data["number"] = '';
+		$data["type"] = 0;
+		$data["typename"] = '';
+		$data["datetime"] = date("d, M Y H:i:s");
+		$data["url"] = '';
+		$data["success"] = 0;
+		$data["message"] = "Tidak ada data!";
+		$data["terlambat"] = 0;
+		$data["kaliterlambat"] = 0;
+
+		if ($_GET["type"] == 1) {
+			$type = "Masuk";
+		} else {
+			$type = "Pulang";
+		}
+		$absen = $this->db
+			->join("user", "user.user_id=absen.user_id", "left")
+			->join("telpon", "telpon.user_id=user.user_id", "left")
+			->where("absen_date", date("Y-m-d"))
+			->where("absen_nik", $_GET["nik"])
+			->group_start()
+			->where("absen_type", "0")
+			->or_where("absen_type", "3")
+			->or_where("absen_type", "4")
+			->or_where("absen_type", $_GET["type"])
+			->group_end()
+			->get("absen");
+		// echo $this->db->last_query();
+		if ($absen->num_rows() == 0) {
+			$where["user_nik"] = $_GET["nik"];
+			$user = $this->db
+				->get_where("user", $where);
+			// echo $this->db->last_query();
+			if ($user->num_rows() > 0) {
+				foreach ($user->result() as $user) {
+					$input["absen_datetime"] = date("Y-m-d H:i:s");
+					$input["absen_year"] = date("Y");
+					$input["absen_date"] = date("Y-m-d");
+					$input["absen_nik"] = $user->user_nik;
+					$input["kelas_id"] = $user->kelas_id;
+					$input["user_id"] = $user->user_id;
+					$input["absen_remarks"] = "Absen Barcode";
+					$input["sekolah_id"] = 1;
+					$input["absen_status"] = 1;
+					$input["absen_type"] = $_GET["type"];
+					$this->db->insert("absen", $input);
+					// echo $this->db->last_query();
+
+					//MULAI KIRIM PESAN KE KEPSEK
+					$token = $user->user_tokenortu;
+					$kepsek = $this->db
+						->where("user_kepsek", 1)
+						->get("user");
+					foreach ($kepsek->result() as $kepsek) {
+						$token = $kepsek->user_tokenguru;
+					}
+					$nik = $user->user_nik;
+
+					$tipe = "guru";
+					$pesan = "Ananda " . $user->user_name . " telah " . $type . " pada " . $input["absen_datetime"];
+
+					$inputpesan["user_nik"] = $user->user_nik;
+					$inputpesan["user_nik"] = $user->user_nik;
+					$inputpesan["pesan_code"] = 2;
+					$inputpesan["pesan_tipe"] = $tipe;
+					$inputpesan["pesan_isi"] = $pesan;
+					$inputpesan["user_token"] = $user->user_token;
+					$inputpesan["user_tokenguru"] = $user->user_tokenguru;
+					$inputpesan["user_tokenortu"] = $user->user_tokenortu;
+					$this->db->insert("pesan", $inputpesan);
+					$pesan_id = $this->db->insert_id();
+					$pesan_code = 2;
+
+					//ulang bagian ini jika ingin mengirim pesan ke orang tua, guru, dan siswa sekaligus, maka token yang digunakan adalah token masing-masing. Jika ingin mengirim ke orang tua saja, gunakan token orang tua. Jika ingin mengirim ke guru saja, gunakan token guru. Jika ingin mengirim ke siswa saja, gunakan token siswa.
+					$message = $pesan_code . '|' . $pesan_id . '|' . $nik . '|' . $tipe . '|' . $pesan . '|' . $token;
+					$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
+					$data["urlbroadcast"] = urldecode($url);
+					$response = @file_get_contents($url);
+
+					if ($response === false) {
+						error_log("Gagal kirim notif");
+						return false;
+					}
+					//AKHIR KIRIM PESAN KE ORTU
+
+					$data["success"] = 1;
+					$data["id"] = $user->user_id;
+					$data["name"] = $user->user_name;
+					$data["type"] = $_GET["type"];
+					$data["typename"] = $type;
+					$data["datetime"] = date("d, M Y H:i:s");
+					$data["message"] = "Absensi Anda Berhasil!";
+
+					//cek terlambat
+					if ($_GET["type"] == 1) {
+						$jamkelas = $this->db
+							->join("jamabsen", "jamabsen.jamabsen_id=jamkelas.jamabsen_id", "left")
+							->where("kelas_id", $user->kelas_id)
+							->get("jamkelas");
+						$jammasuk = "07:00:00"; // default
+						foreach ($jamkelas->result() as $rows) {
+							$jammasuk = $rows->jamabsen_masuk;
+						}
+						$jammasuk = date("Y-m-d " . $jammasuk);
+						if ($input["absen_datetime"] > $jammasuk) {
+							//cek point
+							/* $pelanggaran_point = -1;
+							$mpelanggaran = $this->db->where("mpelanggaran_id", "-1")->get("mpelanggaran");
+							foreach ($mpelanggaran->result() as $rows) {
+								$pelanggaran_point = $rows->mpelanggaran_point;
+							}
+							$inputpelanggaran["mpelanggaran_id"] = -1;
+							$inputpelanggaran["pelanggaran_point"] = $pelanggaran_point;
+							$inputpelanggaran["user_nik"] = $_GET["nik"];
+							$inputpelanggaran["sekolah_id"] = 1;
+							$inputpelanggaran["kelas_id"] = $user->kelas_id;
+							$inputpelanggaran["pelanggaran_notes"] = "";
+							$inputpelanggaran["pelanggaran_date"] = date("Y-m-d");
+							$inputpelanggaran["pelanggaran_year"] = date("Y");
+							$this->db->insert("pelanggaran", $inputpelanggaran); */
+
+							//update berapa kali terlambat
+							$terlambat = $user->user_terlambat + 1;
+							$inputuser["user_terlambat"] = $terlambat;
+							if ($terlambat >= 5) {
+								$data["terlambat"] = 1;
+								$data["kaliterlambat"] = $terlambat;
+								$inputuser["user_terlambat"] = 0;
+							}
+							$this->db->update("user", $inputuser, array("user_id" => $user->user_id));
+						}
+					}
+				}
+			} else {
+				$data["success"] = 0;
+				$data["message"] = "Data Siswa Tidak Ditemukan!";
+			}
+		} else {
+
+			foreach ($absen->result() as $absen) {
+				$data["success"] = 1;
+				$data["id"] = $absen->user_id;
+				$data["name"] = $absen->user_name;
+				$data["type"] = $_GET["type"];
+				$data["typename"] = $type;
+				$data["datetime"] = date("d, M Y H:i:s");
+				$data["message"] = "Absen berhasil!";
+				$data["url"] = base_url("api/qrcodesiswa?nik=" . $absen->user_nik);
 			}
 
 			$data["success"] = 0;
@@ -2690,7 +2851,7 @@ class api extends CI_Controller
 			->where("position_id!=", "4")
 			->order_by("user.user_name")
 			->get("user");
-			// echo $this->db->last_query();
+		// echo $this->db->last_query();
 		foreach ($mat->result() as $user) { ?>
 			<option value="<?= $user->user_id; ?>" <?= ($user_id == $user->user_id) ? 'selected="selected"' : ""; ?>><?= $user->user_name; ?></option>
 		<?php } ?>
