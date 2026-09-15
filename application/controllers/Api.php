@@ -2053,6 +2053,71 @@ class api extends CI_Controller
 		$this->djson($data);
 	}
 
+	public function riwayatabsensigh()
+	{
+
+		$this->db->where("absengh_nik", $_GET["nik"]);
+
+		if (!empty($_GET["absengh_date1"])) {
+			$this->db->where("absengh_date >=", $_GET["absengh_date1"]);
+		}
+
+		if (!empty($_GET["absengh_date2"])) {
+			$this->db->where("absengh_date <=", $_GET["absengh_date2"]);
+		}
+
+		if ($_GET["type"] > -1) {
+			$this->db->where("absengh_type", $_GET["type"]);
+		}
+
+		$absengh = $this->db
+			->order_by("absengh_datetime", "DESC")
+			->get("absengh");
+
+		$data = [];
+
+		if ($absengh->num_rows() > 0) {
+
+			foreach ($absengh->result() as $row) {
+
+				if ($row->absengh_type == 0) {
+					$typename = "Alpha";
+				} elseif ($row->absengh_type == 1) {
+					$typename = "Masuk";
+				} elseif ($row->absengh_type == 2) {
+					$typename = "Pulang";
+				} elseif ($row->absengh_type == 3) {
+					$typename = "Sakit";
+				} elseif ($row->absengh_type == 4) {
+					$typename = "Izin";
+				} else {
+					$typename = "Lainnya";
+				}
+
+				$data[] = [
+					"success" => 1,
+					"absengh_type" => $row->absengh_type,
+					"typename" => $typename,
+					"absengh_date" => $row->absengh_date,
+					"jam" => date("H:i:s", strtotime($row->absengh_datetime)),
+					"message" => ""
+				];
+			}
+		} else {
+
+			$data[] = [
+				"success" => 0,
+				"absengh_type" => -1,
+				"typename" => "",
+				"absengh_date" => "",
+				"jam" => "",
+				"message" => "Tidak ada data!"
+			];
+		}
+
+		$this->djson($data);
+	}
+
 	public function riwayatNilai()
 	{
 
@@ -2605,6 +2670,29 @@ class api extends CI_Controller
 			->get("user");
 		foreach ($mat->result() as $user) { ?>
 			<option value="<?= $user->user_nisn; ?>" <?= ($user_nisn == $user->user_nisn) ? 'selected="selected"' : ""; ?>><?= $user->user_name; ?></option>
+		<?php } ?>
+	<?php
+	}
+
+	function listguru()
+	{
+		$user_id = $this->input->get("user_id");
+	?>
+		<option value="0" <?= ($user_id == 0) ? 'selected="selected"' : ""; ?>>All</option>
+		<?php
+		if ($this->session->userdata("sekolah_id") > 0) {
+			$this->db->where("user.sekolah_id", $this->session->userdata("sekolah_id"));
+		}
+		$mat = $this->db
+			->where("position_id!=", "0")
+			->where("position_id!=", "1")
+			->where("position_id!=", "2")
+			->where("position_id!=", "4")
+			->order_by("user.user_name")
+			->get("user");
+			// echo $this->db->last_query();
+		foreach ($mat->result() as $user) { ?>
+			<option value="<?= $user->user_id; ?>" <?= ($user_id == $user->user_id) ? 'selected="selected"' : ""; ?>><?= $user->user_name; ?></option>
 		<?php } ?>
 	<?php
 	}

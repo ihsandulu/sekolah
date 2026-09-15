@@ -363,7 +363,16 @@
                             <li class="">
                                 <a href="<?= site_url("attandanceg"); ?>">
                                     <i class="menu-icon fa fa-caret-right"></i>
-                                    Absen Guru
+                                    Absen Guru Kelas
+                                </a>
+                                <b class="arrow"></b>
+                            </li>
+                        <?php } ?>
+                        <?php if ($this->session->userdata("position_id") != 5) { ?>
+                            <li class="">
+                                <a href="<?= site_url("attandancegh"); ?>">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Absen Guru Harian
                                 </a>
                                 <b class="arrow"></b>
                             </li>
@@ -453,7 +462,16 @@
                         <li class="">
                             <a href="<?= site_url("attandanceg"); ?>">
                                 <i class="menu-icon fa fa-caret-right"></i>
-                                Absen Guru
+                                Absen Guru Kelas
+                            </a>
+                            <b class="arrow"></b>
+                        </li>
+                    <?php } ?>
+                    <?php if ($this->session->userdata("position_id") == 4) { ?>
+                        <li class="">
+                            <a href="<?= site_url("attandancegh"); ?>">
+                                <i class="menu-icon fa fa-caret-right"></i>
+                                Absen Guru Harian
                             </a>
                             <b class="arrow"></b>
                         </li>
