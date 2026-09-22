@@ -1937,7 +1937,6 @@ class api extends CI_Controller
 					$input["absengh_year"] = date("Y");
 					$input["absengh_date"] = date("Y-m-d");
 					$input["absengh_nik"] = $user->user_nik;
-					$input["kelas_id"] = $user->kelas_id;
 					$input["user_id"] = $user->user_id;
 					$input["sekolah_id"] = 1;
 					$input["absengh_status"] = 1;
@@ -1956,9 +1955,8 @@ class api extends CI_Controller
 					$nik = $user->user_nik;
 
 					$tipe = "guru";
-					$pesan = "Ananda " . $user->user_name . " telah " . $type . " pada " . $input["absen_datetime"];
+					$pesan = "Guru " . $user->user_name . " telah " . $type . " pada " . $input["absengh_datetime"];
 
-					$inputpesan["user_nik"] = $user->user_nik;
 					$inputpesan["user_nik"] = $user->user_nik;
 					$inputpesan["pesan_code"] = 2;
 					$inputpesan["pesan_tipe"] = $tipe;
@@ -1980,7 +1978,7 @@ class api extends CI_Controller
 						error_log("Gagal kirim notif");
 						return false;
 					}
-					//AKHIR KIRIM PESAN KE ORTU
+					//AKHIR KIRIM PESAN KE KEPSEK
 
 					$data["success"] = 1;
 					$data["id"] = $user->user_id;
@@ -2001,7 +1999,7 @@ class api extends CI_Controller
 							$jammasuk = $rows->jamabsen_masuk;
 						}
 						$jammasuk = date("Y-m-d " . $jammasuk);
-						if ($input["absen_datetime"] > $jammasuk) {
+						if ($input["absengh_datetime"] > $jammasuk) {
 							//cek point
 							/* $pelanggaran_point = -1;
 							$mpelanggaran = $this->db->where("mpelanggaran_id", "-1")->get("mpelanggaran");
