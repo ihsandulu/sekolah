@@ -1567,7 +1567,7 @@ class api extends CI_Controller
 		}
 		if ($this->input->get("tipe") == "guru") {
 			$inputuser["user_tokenguru"] = $this->input->get("token");
-			$where["user_nik"] = $this->input->get("nik");
+			$where["user_nik"] = $this->input->get("nisn");
 		}
 		if ($this->input->get("tipe") == "walimurid") {
 			$inputuser["user_tokenortu"] = $this->input->get("token");
