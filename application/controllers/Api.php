@@ -1914,37 +1914,35 @@ class api extends CI_Controller
 		} else {
 			$type = "Pulang";
 		}
-		$absen = $this->db
-			->join("user", "user.user_id=absen.user_id", "left")
-			->join("telpon", "telpon.user_id=user.user_id", "left")
-			->where("absen_date", date("Y-m-d"))
-			->where("absen_nik", $_GET["nik"])
+		$absengh = $this->db
+			->join("user", "user.user_id=absengh.user_id", "left")
+			->where("absengh_date", date("Y-m-d"))
+			->where("absengh_nik", $_GET["nik"])
 			->group_start()
-			->where("absen_type", "0")
-			->or_where("absen_type", "3")
-			->or_where("absen_type", "4")
-			->or_where("absen_type", $_GET["type"])
+			->where("absengh_type", "0")
+			->or_where("absengh_type", "3")
+			->or_where("absengh_type", "4")
+			->or_where("absengh_type", $_GET["type"])
 			->group_end()
-			->get("absen");
+			->get("absengh");
 		// echo $this->db->last_query();
-		if ($absen->num_rows() == 0) {
+		if ($absengh->num_rows() == 0) {
 			$where["user_nik"] = $_GET["nik"];
 			$user = $this->db
 				->get_where("user", $where);
 			// echo $this->db->last_query();
 			if ($user->num_rows() > 0) {
 				foreach ($user->result() as $user) {
-					$input["absen_datetime"] = date("Y-m-d H:i:s");
-					$input["absen_year"] = date("Y");
-					$input["absen_date"] = date("Y-m-d");
-					$input["absen_nik"] = $user->user_nik;
+					$input["absengh_datetime"] = date("Y-m-d H:i:s");
+					$input["absengh_year"] = date("Y");
+					$input["absengh_date"] = date("Y-m-d");
+					$input["absengh_nik"] = $user->user_nik;
 					$input["kelas_id"] = $user->kelas_id;
 					$input["user_id"] = $user->user_id;
-					$input["absen_remarks"] = "Absen Barcode";
 					$input["sekolah_id"] = 1;
-					$input["absen_status"] = 1;
-					$input["absen_type"] = $_GET["type"];
-					$this->db->insert("absen", $input);
+					$input["absengh_status"] = 1;
+					$input["absengh_type"] = $_GET["type"];
+					$this->db->insert("absengh", $input);
 					// echo $this->db->last_query();
 
 					//MULAI KIRIM PESAN KE KEPSEK
@@ -2038,15 +2036,15 @@ class api extends CI_Controller
 			}
 		} else {
 
-			foreach ($absen->result() as $absen) {
+			foreach ($absengh->result() as $absengh) {
 				$data["success"] = 1;
-				$data["id"] = $absen->user_id;
-				$data["name"] = $absen->user_name;
+				$data["id"] = $absengh->user_id;
+				$data["name"] = $absengh->user_name;
 				$data["type"] = $_GET["type"];
 				$data["typename"] = $type;
 				$data["datetime"] = date("d, M Y H:i:s");
 				$data["message"] = "Absen berhasil!";
-				$data["url"] = base_url("api/qrcodesiswa?nik=" . $absen->user_nik);
+				$data["url"] = base_url("api/qrcodesiswa?nik=" . $absengh->user_nik);
 			}
 
 			$data["success"] = 0;
