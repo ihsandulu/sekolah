@@ -1638,8 +1638,8 @@ class api extends CI_Controller
 				$tipe = $this->input->get("tipe");
 				$statuspesan = "Gagal kirim notif ";
 				//delete pesan nya				
-				$this->db->where("pesan_id", $pesan_id);
-				$this->db->delete("pesan");
+				/* $this->db->where("pesan_id", $pesan_id);
+				$this->db->delete("pesan"); */
 			}
 			// }
 		}
