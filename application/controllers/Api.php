@@ -1608,7 +1608,7 @@ class api extends CI_Controller
 			$this->db->where("user_nisn", $nisnk);
 		}
 		$pesan = $this->db->get("pesan");
-		echo $readdata = $this->db->last_query();
+		// echo $readdata = $this->db->last_query();
 		foreach ($pesan->result() as $pesan) {
 			// if ($pesan->pesan_code == 2) {
 			// $nisn = $user->user_nisn;
@@ -1640,7 +1640,7 @@ class api extends CI_Controller
 				//delete pesan nya				
 				$this->db->where("pesan_id", $pesan_id);
 				$this->db->delete("pesan");
-				echo $readdata = $this->db->last_query();
+				// echo $readdata = $this->db->last_query();
 			}
 			// }
 		}
