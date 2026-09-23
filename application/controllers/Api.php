@@ -1586,7 +1586,7 @@ class api extends CI_Controller
 		//delete pesan 2 hari lalu atau sebelumnya
 		if ($tipe == "guru") {
 			$nisnk = $this->input->get("nik");
-			$this->db->where("user_nik", $nik);
+			$this->db->where("user_nik", $nisnk);
 		} else if ($tipe == "siswa" || $tipe == "walimurid") {
 			$nisnk = $this->input->get("nisn");
 			$this->db->where("user_nisn", $nisnk);
