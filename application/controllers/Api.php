@@ -1564,16 +1564,18 @@ class api extends CI_Controller
 		if ($this->input->get("tipe") == "siswa") {
 			$inputuser["user_token"] = $this->input->get("token");
 			$where["user_nisn"] = $this->input->get("nisn");
+			$this->db->update("user", $inputuser, $where);
 		}
 		if ($this->input->get("tipe") == "guru") {
 			$inputuser["user_tokenguru"] = $this->input->get("token");
 			$where["user_nik"] = $this->input->get("nik");
+			$this->db->update("user", $inputuser, $where);
 		}
 		if ($this->input->get("tipe") == "walimurid") {
 			$inputuser["user_tokenortu"] = $this->input->get("token");
 			$where["user_nisn"] = $this->input->get("nisn");
+			$this->db->update("user", $inputuser, $where);
 		}
-		$this->db->update("user", $inputuser, $where);
 	}
 
 	public function ambilpesan()
