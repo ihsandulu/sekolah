@@ -1581,11 +1581,15 @@ class api extends CI_Controller
 
 	public function ambilpesan()
 	{
-		$nisn = $this->input->get("nisn");
+		$tipe = $this->input->get("tipe");
 		$statuspesan = "Gagal kirim notif ";
 		//delete pesan 2 hari lalu atau sebelumnya
-		if (isset($_GET["nisn"]) && $_GET["nisn"] != "") {
-			$this->db->where("user_nisn", $nisn);
+		if ($tipe == "guru") {
+			$nisnk = $this->input->get("nik");
+			$this->db->where("user_nik", $nik);
+		} else if ($tipe == "siswa" || $tipe == "walimurid") {
+			$nisnk = $this->input->get("nisn");
+			$this->db->where("user_nisn", $nisnk);
 		}
 		$this->db->where("pesan_date <=", date("Y-m-d", strtotime("-2 days")));
 		$this->db->delete("pesan");
@@ -1597,28 +1601,31 @@ class api extends CI_Controller
 			$kirim = "fcmio";
 		}
 
-		$this->db->where("user_nisn", $nisn);
+
+		if ($tipe == "guru") {
+			$this->db->where("user_nik", $nisnk);
+		} else if ($tipe == "siswa" || $tipe == "walimurid") {
+			$this->db->where("user_nisn", $nisnk);
+		}
 		$pesan = $this->db->get("pesan");
 		$readdata = $this->db->last_query();
 		foreach ($pesan->result() as $pesan) {
-			$this->db->from("user");
-			if ($pesan->user_nik != "") {
-				$this->db->where("user_nik", $pesan->user_nik);
-			} elseif ($pesan->user_nisn != "") {
-				$this->db->where("user_nisn", $pesan->user_nisn);
-			}
-			$user = $this->db->get();
-			$readdata = $this->db->last_query();
-			foreach ($user->result() as $user) {
 				// if ($pesan->pesan_code == 2) {
-				$nisn = $user->user_nisn;
-				$token = $user->user_token;
-				$tipe = "walimurid";
+				// $nisn = $user->user_nisn;
+
+				if ($tipe == "guru") {
+					$token = $pesan->user_tokenguru;
+				} else if ($tipe == "siswa") {
+					$token = $pesan->user_token;
+				} else if ($tipe == "walimurid") {
+					$token = $pesan->user_tokenortu;
+				}
+				// $tipe = "walimurid";
 				$pesan_isi = $pesan->pesan_isi;
 				$pesan_id = $pesan->pesan_id;
 				$pesan_code = $pesan->pesan_code;
 
-				$message =   $pesan_code . '|' . $pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan_isi . '|' . $token;
+				$message =   $pesan_code . '|' . $pesan_id . '|' . $nisnk . '|' . $tipe . '|' . $pesan_isi . '|' . $token;
 				$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=" . $kirim . "&message=" . urlencode($message);
 				$response = @file_get_contents($url);
 
@@ -1630,7 +1637,6 @@ class api extends CI_Controller
 					$statuspesan = "Berhasil kirim notif :" . urldecode($url);
 				}
 				// }
-			}
 		}
 
 		echo json_encode([
