@@ -1935,6 +1935,7 @@ class api extends CI_Controller
 			$message = $pesan_code . '|' . $pesan_id . '|' . $nik . '|' . $tipe . '|' . $pesan . '|' . $token;
 			$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
 			$data["urlbroadcast"] = urldecode($url);
+			$data["message"] = $message;
 			$response = @file_get_contents($url);
 
 			if ($response === false) {
