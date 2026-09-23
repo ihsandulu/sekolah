@@ -1581,6 +1581,7 @@ class api extends CI_Controller
 
 	public function ambilpesan()
 	{
+		$notif=false;
 		$tipe = $this->input->get("tipe");
 		$statuspesan = "Gagal kirim notif ";
 		//delete pesan 2 hari lalu atau sebelumnya
@@ -1633,6 +1634,7 @@ class api extends CI_Controller
 				error_log("Gagal kirim notif :" . urldecode($url));
 				// return false;
 				$statuspesan = "Gagal kirim notif :" . urldecode($url);
+				$notif=false;
 			} else {
 				$statuspesan = "Berhasil kirim notif :" . urldecode($url);
 				$tipe = $this->input->get("tipe");
@@ -1641,12 +1643,14 @@ class api extends CI_Controller
 				$this->db->where("pesan_id", $pesan_id);
 				$this->db->delete("pesan");
 				// echo $readdata = $this->db->last_query();
+				$notif=true;
 			}
 			// }
 		}
 
 		echo json_encode([
 			"status" => true,
+			"notif" => $notif,
 			// "message" => $statuspesan . $readdata
 			"message" => $statuspesan
 		]);
