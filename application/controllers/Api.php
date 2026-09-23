@@ -1610,33 +1610,38 @@ class api extends CI_Controller
 		$pesan = $this->db->get("pesan");
 		$readdata = $this->db->last_query();
 		foreach ($pesan->result() as $pesan) {
-				// if ($pesan->pesan_code == 2) {
-				// $nisn = $user->user_nisn;
+			// if ($pesan->pesan_code == 2) {
+			// $nisn = $user->user_nisn;
 
-				if ($tipe == "guru") {
-					$token = $pesan->user_tokenguru;
-				} else if ($tipe == "siswa") {
-					$token = $pesan->user_token;
-				} else if ($tipe == "walimurid") {
-					$token = $pesan->user_tokenortu;
-				}
-				// $tipe = "walimurid";
-				$pesan_isi = $pesan->pesan_isi;
-				$pesan_id = $pesan->pesan_id;
-				$pesan_code = $pesan->pesan_code;
+			if ($tipe == "guru") {
+				$token = $pesan->user_tokenguru;
+			} else if ($tipe == "siswa") {
+				$token = $pesan->user_token;
+			} else if ($tipe == "walimurid") {
+				$token = $pesan->user_tokenortu;
+			}
+			// $tipe = "walimurid";
+			$pesan_isi = $pesan->pesan_isi;
+			$pesan_id = $pesan->pesan_id;
+			$pesan_code = $pesan->pesan_code;
 
-				$message =   $pesan_code . '|' . $pesan_id . '|' . $nisnk . '|' . $tipe . '|' . $pesan_isi . '|' . $token;
-				$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=" . $kirim . "&message=" . urlencode($message);
-				$response = @file_get_contents($url);
+			$message =   $pesan_code . '|' . $pesan_id . '|' . $nisnk . '|' . $tipe . '|' . $pesan_isi . '|' . $token;
+			$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=" . $kirim . "&message=" . urlencode($message);
+			$response = @file_get_contents($url);
 
-				if ($response === false) {
-					error_log("Gagal kirim notif :" . urldecode($url));
-					// return false;
-					$statuspesan = "Gagal kirim notif :" . urldecode($url);
-				} else {
-					$statuspesan = "Berhasil kirim notif :" . urldecode($url);
-				}
-				// }
+			if ($response === false) {
+				error_log("Gagal kirim notif :" . urldecode($url));
+				// return false;
+				$statuspesan = "Gagal kirim notif :" . urldecode($url);
+			} else {
+				$statuspesan = "Berhasil kirim notif :" . urldecode($url);
+				$tipe = $this->input->get("tipe");
+				$statuspesan = "Gagal kirim notif ";
+				//delete pesan nya				
+				$this->db->where("pesan_id", $pesan_id);
+				$this->db->delete("pesan");
+			}
+			// }
 		}
 
 		echo json_encode([
