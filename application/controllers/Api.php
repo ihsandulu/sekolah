@@ -1576,6 +1576,7 @@ class api extends CI_Controller
 			$where["user_nisn"] = $this->input->get("nisn");
 			$this->db->update("user", $inputuser, $where);
 		}
+		echo $this->db->last_query();
 	}
 
 	public function ambilpesan()
