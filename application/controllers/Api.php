@@ -1918,7 +1918,7 @@ class api extends CI_Controller
 			$nik = $user->user_nik;
 
 			$tipe = "guru";
-			$pesan = "Guru " . $user->user_name . " telah " . $type . " pada " . $input["absengh_datetime"];
+			$pesan = "Guru " . $user->user_name . " telah masuk pada akkhirnya";
 
 			$inputpesan["user_nik"] = $user->user_nik;
 			$inputpesan["pesan_code"] = 2;
