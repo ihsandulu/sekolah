@@ -1584,7 +1584,7 @@ class api extends CI_Controller
 		$nisn = $this->input->get("nisn");
 		$statuspesan = "Gagal kirim notif ";
 		//delete pesan 2 hari lalu atau sebelumnya
-		if (isset($_GET["nisn"])&&$_GET["nisn"]!="") {
+		if (isset($_GET["nisn"]) && $_GET["nisn"] != "") {
 			$this->db->where("user_nisn", $nisn);
 		}
 		$this->db->where("pesan_date <=", date("Y-m-d", strtotime("-2 days")));
@@ -1897,6 +1897,53 @@ class api extends CI_Controller
 			$data["message"] = "Duplikat data!";
 		}
 		$this->djson($data);
+	}
+
+	public function testkirimpesan()
+	{
+
+		$where["user_nik"] = $_GET["nik"];
+		$user = $this->db
+			->get_where("user", $where);
+		// echo $this->db->last_query();
+		foreach ($user->result() as $user) {
+			//MULAI KIRIM PESAN KE KEPSEK
+			$token = $user->user_tokenguru;
+			$kepsek = $this->db
+				->where("user_kepsek", 1)
+				->get("user");
+			foreach ($kepsek->result() as $kepsek) {
+				$token = $kepsek->user_tokenguru;
+			}
+			$nik = $user->user_nik;
+
+			$tipe = "guru";
+			$pesan = "Guru " . $user->user_name . " telah " . $type . " pada " . $input["absengh_datetime"];
+
+			$inputpesan["user_nik"] = $user->user_nik;
+			$inputpesan["pesan_code"] = 2;
+			$inputpesan["pesan_tipe"] = $tipe;
+			$inputpesan["pesan_isi"] = $pesan;
+			$inputpesan["user_token"] = $user->user_token;
+			$inputpesan["user_tokenguru"] = $user->user_tokenguru;
+			$inputpesan["user_tokenortu"] = $user->user_tokenortu;
+			$this->db->insert("pesan", $inputpesan);
+			$pesan_id = $this->db->insert_id();
+			$pesan_code = 2;
+
+			//ulang bagian ini jika ingin mengirim pesan ke orang tua, guru, dan siswa sekaligus, maka token yang digunakan adalah token masing-masing. Jika ingin mengirim ke orang tua saja, gunakan token orang tua. Jika ingin mengirim ke guru saja, gunakan token guru. Jika ingin mengirim ke siswa saja, gunakan token siswa.
+			$message = $pesan_code . '|' . $pesan_id . '|' . $nik . '|' . $tipe . '|' . $pesan . '|' . $token;
+			$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
+			$data["urlbroadcast"] = urldecode($url);
+			$response = @file_get_contents($url);
+
+			if ($response === false) {
+				error_log("Gagal kirim notif");
+				return false;
+			}
+			//AKHIR KIRIM PESAN KE KEPSEK
+			$this->djson($data);
+		}
 	}
 
 	public function absenguruhapi()
