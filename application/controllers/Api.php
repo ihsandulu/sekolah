@@ -2465,6 +2465,15 @@ class api extends CI_Controller
 		}
 	}
 
+	public function cekapk()
+	{
+		$sekolah = $this->db->get("sekolah");
+		// echo $this->db->last_query();die;
+		foreach ($sekolah->result() as $row) {
+			echo $row->sekolah_apk;
+		}
+	}
+
 	public function cektelpon()
 	{
 		$sekolah = $this->db->where("sekolah_id", $this->session->userdata("sekolah_id"))->get("sekolah");
