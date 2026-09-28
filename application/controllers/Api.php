@@ -1581,7 +1581,7 @@ class api extends CI_Controller
 
 	public function ambilpesan()
 	{
-		$notif=false;
+		$notif = false;
 		$tipe = $this->input->get("tipe");
 		$statuspesan = "Gagal kirim notif ";
 		//delete pesan 2 hari lalu atau sebelumnya
@@ -1634,7 +1634,7 @@ class api extends CI_Controller
 				error_log("Gagal kirim notif :" . urldecode($url));
 				// return false;
 				$statuspesan = "Gagal kirim notif :" . urldecode($url);
-				$notif=false;
+				$notif = false;
 			} else {
 				$statuspesan = "Berhasil kirim notif :" . urldecode($url);
 				$tipe = $this->input->get("tipe");
@@ -1643,7 +1643,7 @@ class api extends CI_Controller
 				$this->db->where("pesan_id", $pesan_id);
 				$this->db->delete("pesan");
 				// echo $readdata = $this->db->last_query();
-				$notif=true;
+				$notif = true;
 			}
 			// }
 		}
@@ -2015,12 +2015,7 @@ class api extends CI_Controller
 
 					//MULAI KIRIM PESAN KE KEPSEK
 					$token = $user->user_tokenortu;
-					$kepsek = $this->db
-						->where("user_kepsek", 1)
-						->get("user");
-					foreach ($kepsek->result() as $kepsek) {
-						$token = $kepsek->user_tokenguru;
-					}
+
 					$nik = $user->user_nik;
 
 					$tipe = "guru";
@@ -2037,15 +2032,21 @@ class api extends CI_Controller
 					$pesan_id = $this->db->insert_id();
 					$pesan_code = 2;
 
+					$kepsek = $this->db
+						->where("user_kepsek", 1)
+						->get("user");
 					//ulang bagian ini jika ingin mengirim pesan ke orang tua, guru, dan siswa sekaligus, maka token yang digunakan adalah token masing-masing. Jika ingin mengirim ke orang tua saja, gunakan token orang tua. Jika ingin mengirim ke guru saja, gunakan token guru. Jika ingin mengirim ke siswa saja, gunakan token siswa.
-					$message = $pesan_code . '|' . $pesan_id . '|' . $nik . '|' . $tipe . '|' . $pesan . '|' . $token;
-					$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
-					$data["urlbroadcast"] = urldecode($url);
-					$response = @file_get_contents($url);
+					foreach ($kepsek->result() as $kepsek) {
+						$token = $kepsek->user_tokenguru;
+						$message = $pesan_code . '|' . $pesan_id . '|' . $nik . '|' . $tipe . '|' . $pesan . '|' . $token;
+						$url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
+						$data["urlbroadcast"] = urldecode($url);
+						$response = @file_get_contents($url);
 
-					if ($response === false) {
-						error_log("Gagal kirim notif");
-						return false;
+						if ($response === false) {
+							error_log("Gagal kirim notif");
+							return false;
+						}
 					}
 					//AKHIR KIRIM PESAN KE KEPSEK
 
