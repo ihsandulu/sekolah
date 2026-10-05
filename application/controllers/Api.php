@@ -1638,7 +1638,7 @@ class api extends CI_Controller
 			} else {
 				$statuspesan = "Berhasil kirim notif :" . urldecode($url);
 				$tipe = $this->input->get("tipe");
-				$statuspesan = "Gagal kirim notif ";
+				// $statuspesan = "Gagal kirim notif ";
 				//delete pesan nya				
 				$this->db->where("pesan_id", $pesan_id);
 				$this->db->delete("pesan");
