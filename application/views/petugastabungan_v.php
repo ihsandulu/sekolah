@@ -94,9 +94,27 @@
                       <div class="form-group">
                         <label class="control-label col-sm-2" for="user_password">Password:</label>
                         <div class="col-sm-10">
-                          <input type="password" class="form-control" id="user_password" name="user_password" placeholder="Enter password" value="<?= $user_password; ?>">
+                          <div class="input-group">
+                            <input type="password" class="form-control" id="user_password" name="user_password" placeholder="Enter password" value="<?= $user_password; ?>">
+                            <span class="input-group-btn">
+                              <button class="btn btn-default" type="button" id="togglePassword">
+                                👁️
+                              </button>
+                            </span>
+                          </div>
                         </div>
                       </div>
+
+                      <script>
+                        document.getElementById('togglePassword').addEventListener('click', function() {
+                          const input = document.getElementById('user_password');
+                          const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                          input.setAttribute('type', type);
+
+                          // ganti icon
+                          this.textContent = type === 'password' ? '👁️' : '🙈';
+                        });
+                      </script>
 
                       <div class="form-group">
                         <label class="control-label col-sm-2" for="user_borndate">Tgl Lahir:</label>
