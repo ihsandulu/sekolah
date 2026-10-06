@@ -220,6 +220,11 @@
                                                 <script>
                                                     function listsiswasekolah() {
                                                         let kelas_id = $("#kelas_id").val();
+                                                        <?php
+                                                        if ($this->session->userdata("position_id") == 4) {
+                                                            $user_id = $this->session->userdata("user_id");
+                                                        }
+                                                        ?>
                                                         // alert("<?= base_url("api/listsiswakelas"); ?>?kelas_id="+kelas_id+"&user_id=<?= $user_id; ?>");
                                                         if (kelas_id > 0) {
                                                             $.get("<?= base_url("api/listsiswakelas"); ?>", {
