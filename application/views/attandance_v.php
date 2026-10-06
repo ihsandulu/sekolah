@@ -199,6 +199,9 @@
                                                         //hilangkan filter yang hanya menampilkan kelas yang diajar oleh guru tersebut, karena guru bisa melihat semua kelas di sekolahnya.
                                                         // $this->db->where("kelas_guru.user_id", $this->session->userdata("user_id"));
                                                     }
+                                                    if ($this->session->userdata("position_id") == 4) {
+                                                        $this->db->where("kelas.kelas_id", $this->session->userdata("kelas_id"));
+                                                    }
                                                     $gru = $this->db->group_by("kelas_guru.kelas_id")
                                                         ->get("kelas_guru");
                                                     // echo $this->db->last_query();
