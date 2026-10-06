@@ -287,6 +287,9 @@
                                                     if (isset($_GET['user_id']) && $_GET['user_id'] > 0) {
                                                         $this->db->where("absen.user_id", $_GET['user_id']);
                                                     }
+                                                    if ($this->session->userdata("position_id") == 4) {
+                                                        $this->db->where("absen.user_id", $this->session->userdata("user_id"));
+                                                    }
                                                     $this->db->where("absen.absen_date >=", $from);
                                                     $this->db->where("absen.absen_date <=", $to);
                                                     $usr = $this->db
