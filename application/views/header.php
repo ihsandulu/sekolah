@@ -458,7 +458,7 @@
                 <b class="arrow"></b>
 
                 <ul class="submenu">
-                    <?php if ($this->session->userdata("position_id") == 4) { ?>
+                    <?php if ($this->session->userdata("position_id") != 4) { ?>
                         <li class="">
                             <a href="<?= site_url("attandanceg"); ?>">
                                 <i class="menu-icon fa fa-caret-right"></i>
@@ -467,7 +467,7 @@
                             <b class="arrow"></b>
                         </li>
                     <?php } ?>
-                    <?php if ($this->session->userdata("position_id") == 4) { ?>
+                    <?php if ($this->session->userdata("position_id") != 4) { ?>
                         <li class="">
                             <a href="<?= site_url("attandancegh"); ?>">
                                 <i class="menu-icon fa fa-caret-right"></i>
