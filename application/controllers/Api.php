@@ -2044,8 +2044,7 @@ class api extends CI_Controller
 						$response = @file_get_contents($url);
 
 						if ($response === false) {
-							error_log("Gagal kirim notif");
-							return false;
+							error_log("Gagal kirim notif ke kepala sekolah");
 						}
 					}
 					//AKHIR KIRIM PESAN KE KEPSEK
