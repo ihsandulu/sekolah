@@ -302,7 +302,7 @@ class Nilai_M extends CI_Model
                 }
                 $data["sukses"] = $sukses;
                 $data["gagal"] = $gagal;
-                $data["message"] = "Import Excel Success = " . $sukses . ", Failed = " . $gagal ;
+                $data["message"] = "Import Excel Success = " . $sukses . ", Failed = " . $gagal;
             }
         }
 
@@ -383,9 +383,10 @@ class Nilai_M extends CI_Model
                     $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
                     $response = @file_get_contents($url);
 
+                    $data["url"] = $url;
                     if ($response === false) {
                         error_log("Gagal kirim notif");
-                        return false;
+                        // return false;
                     }
                 }
                 //AKHIR KIRIM PESAN KE ORTU
@@ -465,9 +466,10 @@ class Nilai_M extends CI_Model
                     $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
                     $response = @file_get_contents($url);
 
+                    $data["url"] = $url;
                     if ($response === false) {
                         error_log("Gagal kirim notif");
-                        return false;
+                        // return false;
                     }
                 }
                 // echo $this->db->last_query();die;
@@ -505,10 +507,10 @@ class Nilai_M extends CI_Model
                 $message = $pesan_id . '|' . $nisn . '|' . $tipe . '|' .  $pesan_isi . '|' . $token;
                 $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
                 $response = @file_get_contents($url);
-
+                $data["url"] = $url;
                 if ($response === false) {
                     error_log("Gagal kirim notif");
-                    return false;
+                    // return false;
                 }
             }
 
