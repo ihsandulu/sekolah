@@ -341,6 +341,7 @@ class Nilai_M extends CI_Model
 
         //insert
         if ($this->input->post("create") == "OK") {
+            $pesan_code = 2;
             foreach ($this->input->post() as $e => $f) {
                 if ($e != 'create' && $e != 'kelas_name' && $e != 'matpel_name' && $e != 'user_name' && $e != 'sumatif_name') {
                     $input[$e] = $this->input->post($e);
@@ -379,7 +380,7 @@ class Nilai_M extends CI_Model
                     $pesan_id = $this->db->insert_id();
 
                     //ulang bagian ini jika ingin mengirim pesan ke orang tua, guru, dan siswa sekaligus, maka token yang digunakan adalah token masing-masing. Jika ingin mengirim ke orang tua saja, gunakan token orang tua. Jika ingin mengirim ke guru saja, gunakan token guru. Jika ingin mengirim ke siswa saja, gunakan token siswa.
-                    $message = $pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
+                    $message = $pesan_code . '|' . $pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
                     $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
                     $response = @file_get_contents($url);
 
@@ -462,7 +463,7 @@ class Nilai_M extends CI_Model
                     $this->db->insert("pesan", $inputpesan);
                     $pesan_id = $this->db->insert_id();
 
-                    $message = $pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
+                    $message = $pesan_code . '|' . $pesan_id . '|' . $nisn . '|' . $tipe . '|' . $pesan . '|' . $token;
                     $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
                     $response = @file_get_contents($url);
 
@@ -479,6 +480,7 @@ class Nilai_M extends CI_Model
         //echo $_POST["create"];die;
         //update
         if ($this->input->post("change") == "OK") {
+            $pesan_code = 2;
             foreach ($this->input->post() as $e => $f) {
                 if ($e != 'change' && $e != 'nilai_picture' && $e != 'kelas_name' && $e != 'matpel_name' && $e != 'user_name' && $e != 'sumatif_name') {
                     $input[$e] = $this->input->post($e);
@@ -504,8 +506,9 @@ class Nilai_M extends CI_Model
                 $this->db->insert("pesan", $inputpesan);
                 $pesan_id = $this->db->insert_id();
 
-                $message = $pesan_id . '|' . $nisn . '|' . $tipe . '|' .  $pesan_isi . '|' . $token;
+                $message = $pesan_code . '|' . $pesan_id . '|' . $nisn . '|' . $tipe . '|' .  $pesan_isi . '|' . $token;
                 $url = "https://qithy.my.id:8000/broadcast/TRP-20241010-01?kirim=&message=" . urlencode($message);
+
                 $response = @file_get_contents($url);
                 $data["url"] = $url;
                 if ($response === false) {
